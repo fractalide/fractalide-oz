@@ -1,43 +1,18 @@
 functor
 export
    new:NewComponent
-   bind:Bind
+   addInPort:AddInPort
+   removeInPort:RemoveInPort
+   addOutPort:AddOutPort
+   removeOutPort:RemoveOutPort
+   changeName:ChangeName
+   name:Name
+   changeProc:ChangeProc
+   %bind:Bind
 define
-%NewComponent :
-%InPorts : List of string which are the input port name    ex : [above middle bellow]
-%OutPorts : Idem for the output ports                      ex : [accept reject]
-%Proc : A proc which take 2 args : the Ips by input ports (a record) and the Output ports to send cmd
-%           ex: proc {Filter In Out} {Send Out.accept In.above} end
-   fun {NewComponent InPorts OutPorts Proc}
-   %InToPort : Convert a list of string in a record containing the Port (entry point in the record p:() and the stream in a list s:())
-      fun {InToPort Ls}
-	 fun {InToPortRec Ls Acc}
-	    case Ls
-	    of nil then Acc
-	    [] L|Lr then
-	       P S in
-	       {NewPort S P}
-	       {InToPortRec Lr portIn(p:{Adjoin unit(L: P) Acc.p} s:L#S|Acc.s)}
-	    end
-	 end
-      in
-	 {InToPortRec Ls portIn(p:p() s:nil)}
-      end
-   %OutToPort : Convert a list of string in a record containing cells, destined to be entry point for the Out port
-      fun {OutToPort Ls}
-	 fun {OutToPortRec Ls Acc}
-	    case Ls
-	    of nil then Acc
-	    [] L|Lr then
-	       P in
-	       P = {NewCell nil}
-	       {OutToPortRec Lr {Adjoin unit(L: P) Acc}}
-	    end
-	 end
-      in
-	 {OutToPortRec Ls portOut()}
-      end
-   %MakeIp : Read the first element of every entry port, then return the IPs (the element) and the rest of the lists
+   fun {NewComponent NewName}
+      InP InS Out Name Proc
+      %MakeIp : Read the first element of every entry port, then return the IPs (the element) and the rest of the lists
       fun {MakeIp InStreams}
 	 fun{MakeIpRec Xs Acc}
 	    case Xs
@@ -52,40 +27,51 @@ define
       in
 	 {MakeIpRec InStreams resp(ips:ips() s:nil)}
       end
-   %CellToContent : Take a records of Cells and return a record with the same arity but the content of the cells
-      fun {CellToContent OutPorts}
-	 fun {CellToContentRec Ports Acc}
-	    case Ports
-	    of nil then Acc
-	    [] X|Xr then
-	       T in
-	       T = OutPorts.X
-	       {CellToContentRec Xr {Adjoin unit(X: @T) Acc}}
-	    end
-	 end
-      in
-	 {CellToContentRec {Arity OutPorts} portOut()}
-      end
-   %ExecProc : 
+      %ExecProc : 
       proc {ExecProc InStreams OutPorts Proc}
-	 In in
+	 In B in
 	 In = {MakeIp InStreams}
+	 B = {Dictionary
 	 thread {Proc In.ips {CellToContent OutPorts}} end
 	 {ExecProc In.s OutPorts Proc}
       end
-      In Out
    in
-      In = {InToPort InPorts}
-      Out = {OutToPort OutPorts}
-      thread
-	 {ExecProc In.s Out Proc}
-      end
-      component(inPorts:In.p outPorts:Out)
+      InP = {NewDictionary}
+      InS = {NewDictionary}
+      Out = {NewDictionary}
+      NIp = {NewDictionary}
+      Name = {NewCell NewName}
+      Proc = {NewCell proc {$} skip end}
+      component(inPorts:InP outPorts:Out inStream:InS nIP:NIp name:Name procedure:Proc)
    end
-   proc {Bind Out In}
-      Out := In
+   proc {AddInPort C Name}
+      S P in
+      {NewPort S P}
+      C.inPorts.Name := P
+      C.inStream.Name := S
+   end
+   proc {RemoveInPort C Name}
+      {Dictionary.remove C.inPort Name}
+      {Dictionary.remove C.inStream Name}
+   end
+   proc {AddOutPort C Name}
+      N in
+      N = {NewCell nil}
+      C.outPort.Name := N
+   end
+   proc {RemoveOutPort C Name}
+      {Dictionary.remove C.outPort Name}
+   end
+   fun {Name C}
+      @(C.name)
+   end
+   proc {ChangeName C Name}
+      C.name := Name
+   end
+   proc {ChangeProc C Proc}
+      C.procedure := Proc
+   end
+   proc {CSend C Name Val}
+      {Send @(C.outPort.Name) Val}
    end
 end
-
-
-

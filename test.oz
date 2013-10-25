@@ -31,3 +31,7 @@ Filter = {Component.new
 
 {Send Filter.inPorts.a 7}
 {Send Filter.inPorts.b 2}
+
+{Component.print}
+{Component.set salot}
+{Component.print}
