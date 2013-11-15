@@ -1,130 +1,144 @@
 functor
-import
-   Browser
 export
    new:NewComponent
+   bind:Bind
    addInPort:AddInPort
    removeInPort:RemoveInPort
    addOutPort:AddOutPort
-   removeOutPort:RemoveOutPort
-   changeName:ChangeName
-   name:Name
-   changeProc:ChangeProc
-   bind:Bind
+   removeOutPort: RemoveOutPort
+   changeProc: ChangeProc
+   create: Create
 define
-   proc {Restart C}
-      {Browser.browse restart#@(C.name)#@(C.thr)}
-      if @(C.thr) \= nil andthen {Thread.state @(C.thr)} \= terminated then {Thread.terminate @(C.thr)} end
-      {NewThread C}
-   end
-   proc {NewThread C}
-      %MakeIp : Read the first element of every entry port, then return the IPs (the element) and the rest of the lists
+%NewComponent :
+%InPorts : List of string which are the input port name    ex : [above middle bellow]
+%OutPorts : Idem for the output ports                      ex : [accept reject]
+%Proc : A proc which take 2 args : the Ips by input ports (a record) and the Output ports to send cmd
+%           ex: proc {Filter In Out} {Send Out.accept In.above} end
+   fun {NewComponent InPorts OutPorts Proc}
+   %InToPort : Convert a list of string in a record containing the Port (entry point in the record p:() and the stream in a list s:())
+      fun {InToPort Ls}
+	 fun {InToPortRec Ls Acc}
+	    case Ls
+	    of nil then Acc
+	    [] L|Lr then
+	       P S in
+	       {NewPort S P}
+	       {InToPortRec Lr portIn(p:{Adjoin unit(L: P) Acc.p} s:L#S|Acc.s)}
+	    end
+	 end
+      in
+	 {InToPortRec Ls portIn(p:p() s:nil)}
+      end
+   %OutToPort : Convert a list of string in a record containing cells, destined to be entry point for the Out port
+      fun {OutToPort Ls}
+	 fun {OutToPortRec Ls Acc}
+	    case Ls
+	    of nil then Acc
+	    [] L|Lr then
+	       P in
+	       P = {NewCell nil}
+	       {OutToPortRec Lr {Adjoin unit(L: P) Acc}}
+	    end
+	 end
+      in
+	 {OutToPortRec Ls portOut()}
+      end
+   %MakeIp : Read the first element of every entry port, then return the IPs (the element) and the rest of the lists
       fun {MakeIp InStreams}
 	 fun{MakeIpRec Xs Acc}
 	    case Xs
 	    of nil then Acc
 	    [] X|Xr then
 	       H V in
-	       H = X.1 %Head : the name of the port
-	       V = X.2.1 %Value : The value of the port
-	       Acc.ips.H := V
-	       Acc.s.H := X.2.2
-	       {MakeIpRec Xr Acc}
+	       H = X.1 %Head : The name of the port
+	       V = X.2.1 %Value : The value of the IP
+	       {MakeIpRec Xr resp(ips:{Adjoin unit(H: V) Acc.ips} s:X.1#X.2.2|Acc.s)}
 	    end
 	 end
       in
-	 {MakeIpRec {Dictionary.entries InStreams} resp(ips:{NewDictionary} s:{NewDictionary})}
+	 {MakeIpRec InStreams resp(ips:ips() s:nil)}
       end
-       %CellToContent :
+   %CellToContent : Take a records of Cells and return a record with the same arity but the content of the cells
       fun {CellToContent OutPorts}
 	 fun {CellToContentRec Ports Acc}
 	    case Ports
 	    of nil then Acc
 	    [] X|Xr then
-	       N V in
-	       N = X.1
-	       V = X.2
-	       {CellToContentRec Xr {Adjoin unit(N: @V) Acc}}
+	       T in
+	       T = OutPorts.X
+	       {CellToContentRec Xr {Adjoin unit(X: @T) Acc}}
 	    end
 	 end
       in
-	 {CellToContentRec {Dictionary.entries OutPorts} portOut()}
+	 {CellToContentRec {Arity OutPorts} portOut()}
       end
-      %ExecProc : 
-      proc {ExecProc C}
+   %ExecProc : 
+      proc {ExecProc InStreams OutPorts Proc}
 	 In in
-	 {Browser.browse @(C.name)#'Wait for IPs'}
-	 In = {MakeIp C.inStream}
-	 {Browser.browse @(C.name)#'IPs received'}
-	 thread {@(C.procedure) In.ips {CellToContent C.outPorts}} end
-	 for I in {Dictionary.keys In.s} do
-	    C.inStream.I := In.s.I
-	 end
-	 {ExecProc C}
-      end
-   in
-      thread
-	 (C.thr) := {Thread.this}
-	 if {Dictionary.isEmpty C.inPorts} then
-	    {Browser.browse @(C.name)#'No input port'}
+	 if InStreams \= nil then
+	    In = {MakeIp InStreams}
 	 else
-	    {Browser.browse @(C.name)#'There is ports'}
-	    {ExecProc C}
+	    In = c(ips:nil)
 	 end
+	 thread {Proc In.ips {CellToContent OutPorts}} end
+	 {ExecProc In.s OutPorts Proc}
       end
-   end
-   fun {NewComponent NewName}
-      InP InS Out Name Proc C
+      In Out
    in
-      InP = {NewDictionary}
-      InS = {NewDictionary}
-      Out = {NewDictionary}
-      Name = {NewCell NewName}
-      Proc = {NewCell proc {$} skip end}
-      C = component(inPorts:InP outPorts:Out inStream:InS name:Name procedure:Proc thr:{NewCell nil} l:{NewLock})
-      %{NewThread C}
-      C
-   end
-   proc {AddInPort C Name}
-      S P in
-      lock (C.l) then
-	 {NewPort S P}
-	 C.inPorts.Name := P
-	 C.inStream.Name := S
-	 {Restart C}
-	 {Browser.browse @(C.name)#'port added'}
+      In = {InToPort InPorts}
+      Out = {OutToPort OutPorts}
+      thread
+	 {ExecProc In.s Out Proc}
       end
-   end
-   proc {RemoveInPort C Name}
-      lock (C.l) then
-	 {Dictionary.remove C.inPorts Name}
-	 {Dictionary.remove C.inStream Name}
-	 {Restart C}
-	 {Browser.browse @(C.name)#'port removed'}
-      end
-   end
-   proc {AddOutPort C Name}
-      N in
-      lock C.l then
-	 N = {NewCell nil}
-	 C.outPorts.Name := N
-      end
-   end
-   proc {RemoveOutPort C Name}
-      lock C.l then
-	 {Dictionary.remove C.outPort Name}
-      end
-   end
-   fun {Name C}
-      @(C.name)
-   end
-   proc {ChangeName C Name}
-      (C.name) := Name
-   end
-   proc {ChangeProc C Proc}
-      (C.procedure) := Proc
+      component(inPorts:In.p outPorts:Out procedure:Proc)
    end
    proc {Bind Out In}
       Out := In
    end
+   %TODO : check for existing name
+   fun {AddInPort Comp PortName}
+      {NewComponent
+       PortName|{Arity Comp.inPorts}
+       {Arity Comp.outPorts}
+       Comp.procedure
+      }
+   end
+   fun {RemoveInPort Comp PortName}
+      {NewComponent
+       {Filter {Arity Comp.inPorts} fun {$ X} X \= PortName end}
+       {Arity Comp.outPorts}
+       Comp.procedure
+      }
+   end
+   fun {AddOutPort Comp PortName}
+      {NewComponent
+       {Arity Comp.inPorts}
+       PortName|{Arity Comp.outPorts}
+       Comp.procedure
+      }
+   end
+   fun {RemoveOutPort Comp PortName}
+      {NewComponent
+       {Arity Comp.inPorts}
+       {Filter {Arity Comp.outPorts} fun {$ X} X \= PortName end}
+       Comp.procedure
+      }
+   end
+   fun {ChangeProc Comp Proc}
+      {NewComponent
+       {Arity Comp.inPorts}
+       {Arity Comp.outPorts}
+       Proc
+      }
+   end
+   fun {Create}
+      {NewComponent
+       nil
+       nil
+       proc{$ In Out} skip end
+      }
+   end
 end
+
+
+

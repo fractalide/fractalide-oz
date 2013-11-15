@@ -1,37 +1,55 @@
 declare
-[Component] = {Module.link ["./lib/component.ozf"]}
+[C] = {Module.link ["./lib/component_old.ozf"]}
+[G] = {Module.link ["./lib/graph.ozf"]}
+Filter = {G.new filter}
+{G.addInPort Filter input}
+{G.addOutPort Filter even}
+{G.addOutPort Filter odd}
+Even = {G.new even}
+{G.addInPort Even input}
+Odd = {G.new odd}
+{G.addInPort Odd input}
+CompFilter = {C.new [input] [even odd]
+	      proc{$ In Out}
+		 if In.input mod 2 == 0 then
+		    {Send Out.even In.input}
+		 else
+		    {Send Out.odd In.input}
+		 end
+	      end
+	     }
+CompOdd = {C.new [input] nil
+	   proc {$ In Out}
+	      {Browse In.input#' is a odd number'}
+	   end
+	  }
+CompEven = {C.new [input] nil
+	    proc {$ In Out}
+	       {Browse In.input#' is an even number'}
+	    end
+	   }
+{G.exchange Even CompEven}
+{G.exchange Odd CompOdd}
+{G.exchange Filter CompFilter}
+{G.bind Filter even Even input}
+{G.bind Filter odd Odd input}
 
-%declare Three componenet
-Even = {Component.new
-	[input] %Input ports : input
-	nil % No output ports
-	proc{$ In Out} {Browse In.input # ' is an even Number'} end % The proc to apply
-       }
-Odd = {Component.new
-       [input]
-       nil
-       proc{$ In Out} {Browse In.input # ' is an odd number'} end
-      }
-Filter = {Component.new
-	  [a b]
-	  [even odd]
-	  proc{$ In Out}
-	     Res in
-	     Res = In.a*In.b
-	     case Res mod 2
-	     of 0 then {Send Out.even Res}
-	     else {Send Out.odd Res}
-	     end
-	  end }
+{Send CompFilter.inPorts.input 2}
+{Send CompFilter.inPorts.input 23}
 
+declare
+NewCompFilter = {C.addInPort CompFilter input2}
+NewFilter = {C.changeProc NewCompFilter
+	     proc {$ In Out}
+		Res in
+		Res = In.input * In.input2
+		if Res mod 2 == 0 then
+		   {Send Out.even Res}
+		else
+		   {Send Out.odd Res}
+		end
+	    }
+{G.exchange Filter NewFilter}
 
-%Bind componenet together
-{Component.bind Filter.outPorts.even Even.inPorts.input}
-{Component.bind Filter.outPorts.odd Odd.inPorts.input}
-
-{Send Filter.inPorts.a 7}
-{Send Filter.inPorts.b 2}
-
-{Component.print}
-{Component.set salot}
-{Component.print}
+{Send NewFilter.inPorts.i1 2}
+{Send NewFilter.inPorts.i2 23}
