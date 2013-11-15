@@ -42,6 +42,27 @@ NFilter = {C.new [i1 i2] [even odd]
 	      end
 	   end}
 {G.exchange Filter NFilter}
+%Remap the port of the node, the UI will help a lot for that...
+{G.removeInPort Filter input}
+{G.addInPort Filter i1}
+{G.addInPort Filter i2}
 
 {Send NFilter.inPorts.i1 2}
+{Send NFilter.inPorts.i1 3}
 {Send NFilter.inPorts.i2 21}
+{Send NFilter.inPorts.i2 21}
+
+{G.removeInPort Filter i1}
+{G.removeOutPort Filter odd}
+{G.changeProc Filter
+ proc {$ In Out}
+    if In.i2 mod 2 == 0 then
+       {Send Out.even In.i2}
+    else
+       {Send Out.even (In.i2)+1}
+    end
+ end
+}
+
+{Send @(Filter.comp).inPorts.i2 3}
+{Send @(Filter.comp).inPorts.i2 2}

@@ -38,9 +38,11 @@ define
    proc {RemoveIn N Name}
       T Out OName in
       T = N.inPorts.Name % Out#OName
-      Out = T.1
-      OName = T.2
-      {UnBind Out OName N Name}
+      if T \= nil then %If the link is bind
+	 Out = T.1
+	 OName = T.2
+	 {UnBind Out OName N Name}
+      end
       {Dictionary.remove N.inPorts Name}
       if {HasFeature (@(N.comp)).inPorts Name} then
 	 {Exchange N {Comp.removeInPort @(N.comp) Name}}
@@ -57,9 +59,11 @@ define
    proc {RemoveOut N Name}
       T In IName in
       T = N.outPorts.Name
-      In = T.1
-      IName = T.2
-      {UnBind N Name In IName}
+      if T \= nil then 
+	 In = T.1
+	 IName = T.2
+	 {UnBind N Name In IName}
+      end
       {Dictionary.remove N.outPorts Name}
       if {HasFeature (@(N.comp)).outPorts Name} then
 	 {Exchange N {Comp.removeOutPort @(N.comp) Name}}
