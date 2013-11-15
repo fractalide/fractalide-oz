@@ -15,7 +15,7 @@ define
       node(name: Name
 	   inPorts: {NewDictionary}
 	   outPorts: {NewDictionary}
-	   comp: {NewCell nil}
+	   comp: {NewCell {Comp.new nil nil proc {$ I O} skip end}}
 	  )
    end
    %TODO : For all add and remove, check what to do with the component

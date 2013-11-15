@@ -77,11 +77,9 @@ define
 	 In in
 	 if InStreams \= nil then
 	    In = {MakeIp InStreams}
-	 else
-	    In = c(ips:nil)
+	    thread {Proc In.ips {CellToContent OutPorts}} end
+	    {ExecProc In.s OutPorts Proc}
 	 end
-	 thread {Proc In.ips {CellToContent OutPorts}} end
-	 {ExecProc In.s OutPorts Proc}
       end
       In Out
    in
