@@ -9,6 +9,8 @@ Even = {G.new even}
 {G.addInPort Even input}
 Odd = {G.new odd}
 {G.addInPort Odd input}
+{G.bind Filter even Even input}
+{G.bind Filter odd Odd input}
 CompFilter = {C.new [input] [even odd]
 	      proc{$ In Out}
 		 if In.input mod 2 == 0 then
@@ -31,8 +33,7 @@ CompEven = {C.new [input] nil
 {G.exchange Even CompEven}
 {G.exchange Odd CompOdd}
 {G.exchange Filter CompFilter}
-{G.bind Filter even Even input}
-{G.bind Filter odd Odd input}
+
 
 {Send CompFilter.inPorts.input 2}
 {Send CompFilter.inPorts.input 23}
@@ -48,8 +49,9 @@ NewFilter = {C.changeProc NewCompFilter
 		else
 		   {Send Out.odd Res}
 		end
+	     end
 	    }
 {G.exchange Filter NewFilter}
 
-{Send NewFilter.inPorts.i1 2}
-{Send NewFilter.inPorts.i2 23}
+{Send NewFilter.inPorts.input 3}
+{Send NewFilter.inPorts.input2 23}
