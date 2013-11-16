@@ -1,5 +1,5 @@
 declare
-[C] = {Module.link ["./lib/component_old.ozf"]}
+[C] = {Module.link ["./lib/component.ozf"]}
 [G] = {Module.link ["./lib/graph.ozf"]}
 Filter = {G.new filter}
 {G.addInPort Filter input}
@@ -31,16 +31,8 @@ Even = {G.new even}
 {Send @(Filter.comp).inPorts.input 23}
 
 declare
-NFilter = {C.new [i1 i2] [even odd]
-	   proc {$ In Out}
-	      Res in
-	      Res = In.i1*In.i2
-	      if Res mod 2 == 0 then
-		 {Send Out.even Res}
-	      else
-		 {Send Out.odd Res}
-	      end
-	   end}
+[CF] = {Module.link ["./component/filter.ozf"]}
+NFilter = {CF.new}
 {G.exchange Filter NFilter}
 %Remap the port of the node, the UI will help a lot for that...
 {G.removeInPort Filter input}
