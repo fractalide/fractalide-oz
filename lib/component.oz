@@ -66,17 +66,17 @@ define
 		       case Port
 		       of port(q:Queue p:Proc s:Sync) then IP in
 			  IP = {Queue.get}
-			  thread {Proc IP Out NVar} end
+			  thread {Proc IP Out NVar State.state} end
 			  Sync = IP
 		       [] arrayPort(qs:Qs p:Proc s:Sync) then IPs in
 			  IPs = {Record.foldR Qs fun{$ E Acc} {E.get}|Acc end nil}
-			  thread {Proc IPs Out NVar} end
+			  thread {Proc IPs Out NVar State.state} end
 			  Sync = IPs
 		       end
 		    end
 		   }
 		   for Proc in {Arity State.procs} do
-		      thread {State.procs.Proc Out NVar} end
+		      thread {State.procs.Proc Out NVar State.state} end
 		   end
 		   {Record.adjoinAt {Record.adjoinAt State var NVar} inPorts NInPorts}
 		end
@@ -120,7 +120,7 @@ define
 	     end
 	  end
        %Acc
-	  component(inPorts:'in'() outPorts:out() procs:procs() var:var() sync:sync())
+	  component(inPorts:'in'() outPorts:out() procs:procs() var:var() sync:sync() state:{NewDictionary})
        %Return value (not needed?)
 	  _
 	 }
