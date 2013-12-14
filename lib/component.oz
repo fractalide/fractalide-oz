@@ -1,6 +1,6 @@
 functor
 export
-   new: NewComponent
+   new: NewStateComponent
 define
    % NewQueue : return a bounded buffer, as presented in CTM book
    fun {NewQueue}
@@ -20,7 +20,7 @@ define
 	    get: proc{$ X} {Send TakePort X} end)
    end
    % Return a new component. Several messages can be send to it.
-   fun {NewComponent}
+   fun {NewComponent NewState}
       Stream Point = {NewPort Stream} 
       thread
 	 %Every emssage is deal in this FoldL
@@ -133,12 +133,70 @@ define
 	     end
 	  end
           % The accumulator
-	  component(inPorts:'in'() outPorts:out() procs:procs() var:var() sync:sync() state:{NewDictionary})
+	  NewState
           % The return value (not needed?)
 	  _
 	 }
       end
+   in
       proc {$ Msg} {Send Point Msg} end
+   end
+   %% Functions to build a new component
+   fun {InPorts In}
+      {Record.foldL In
+       fun {$ Acc E}
+	  case E
+	  of port(name:N procedure:P) then
+	     {Record.adjoinAt Acc N port(q:{NewQueue} p:P s:nil)}
+	  [] arrayPort(name:N procedure:P) then
+	     {Record.adjoinAt Acc N arrayPort(qs:queues() p:P s:[nil])}
+	  end
+       end
+       'in'()
+      }
+   end
+   fun {OutPorts Out}
+      {Record.foldL Out
+       fun {$ Acc E}
+	  {Record.adjoinAt Acc E nil}
+       end
+       out()
+      }
+   end
+   fun {Var Vars}
+      {Record.foldL Vars
+       fun {$ Acc E}
+	  {Record.adjoinAt Acc E _}
+       end
+       var()
+      }
+   end
+   fun {NState St} D in
+      D = {NewDictionary}
+      {Record.forAllInd St
+       proc {$ N V} D.N := V end
+      }
+      D
+   end
+   fun {NewState GivenRecord}
+      DefaultState in
+      DefaultState = component(inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary})
+      {Record.foldL GivenRecord
+       fun {$ S Rec}
+	  case {Record.label Rec}
+	  of inPorts then {Record.adjoinAt S inPorts {InPorts Rec}}
+	  [] outPorts then {Record.adjoinAt S outPorts {OutPorts Rec}}
+	  [] procedures then {Record.adjoinAt S procs Rec}
+	  [] var then {Record.adjoinAt S var {Var Rec}}
+	  [] state then
+	     {Record.adjoinAt S state {NState Rec}}
+	  end
+       end
+       DefaultState
+      }
+   end
+   fun {NewStateComponent ARecord}
+      {NewComponent {NewState ARecord}}
    end
 end
 
