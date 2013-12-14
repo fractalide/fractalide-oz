@@ -26,7 +26,9 @@ define
 	 %Every emssage is deal in this FoldL
 	 {FoldL Stream
 	  fun {$ State Msg}
-	     % Return true if all inPorts are synchronized. That means every inPorts have received one IP. 
+	     % Return true if all inPorts are synchronized. That means every inPorts have received one IP.
+	     % A port that is synchronized is a port that is ready to receive the next IP.
+	     % We see that a port is synchronized when the 's' selection on the port record is determine.
 	     fun {CheckSync InPorts}
 		fun {CheckSyncRec Xs}
 		   case Xs
@@ -53,11 +55,11 @@ define
 	        % Look for sync
 		Sync = {CheckSync State.inPorts}
 		if {Not Sync} then
-		   State
+		   State 
 		else NVar NInPorts Out in %All port can receive the next IP
-		   % Restart the sync
+		   % Restart the sync, the 's' selection is now undefined
 		   NInPorts = {Record.map State.inPorts fun {$ Port} {Record.adjoinAt Port s _} end}
-		   % Put at undefined the variables for the sync
+		   % Put at undefined the variables that are common to all procedures
 		   NVar = {Record.map State.var fun{$ _} _ end}
 		   % Build a procedure to send IP to the output ports.
 		   Out = {Record.map State.outPorts
