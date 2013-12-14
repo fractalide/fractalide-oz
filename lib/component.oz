@@ -2,6 +2,7 @@ functor
 export
    new: NewComponent
 define
+   % NewQueue : return a bounded buffer, as presented in CTM book
    fun {NewQueue}
       Given GivePort = {NewPort Given}
       Taken TakePort = {NewPort Taken}
@@ -18,11 +19,14 @@ define
       queue(put: proc{$ X} {Send GivePort X} end
 	    get: proc{$ X} {Send TakePort X} end)
    end
+   % Return a new component. Several messages can be send to it.
    fun {NewComponent}
-      Stream Point = {NewPort Stream} in
+      Stream Point = {NewPort Stream} 
       thread
+	 %Every emssage is deal in this FoldL
 	 {FoldL Stream
 	  fun {$ State Msg}
+	     % Return true if all inPorts are synchronized. That means every inPorts have received one IP. 
 	     fun {CheckSync InPorts}
 		fun {CheckSyncRec Xs}
 		   case Xs
@@ -43,14 +47,19 @@ define
 	     in
 		{CheckSyncRec {Record.toList InPorts}}
 	     end
+	     % Lauch every procedures for the componenet : inPorts procedures (to deal with single IP) and independant procedures.
+	     % That appends only if all the state are synchronized.
 	     fun {Exec State} Sync in
-	     % Look for sync
+	        % Look for sync
 		Sync = {CheckSync State.inPorts}
 		if {Not Sync} then
 		   State
 		else NVar NInPorts Out in %All port can receive the next IP
+		   % Restart the sync
 		   NInPorts = {Record.map State.inPorts fun {$ Port} {Record.adjoinAt Port s _} end}
+		   % Put at undefined the variables for the sync
 		   NVar = {Record.map State.var fun{$ _} _ end}
+		   % Build a procedure to send IP to the output ports.
 		   Out = {Record.map State.outPorts
 			  fun {$ Out}
 			     proc {$ Msg} 
@@ -61,6 +70,7 @@ define
 			     end
 			  end
 			 }
+		   % Launch every ports procedures.
 		   {Record.forAll NInPorts
 		    proc {$ Port}
 		       case Port
@@ -75,15 +85,18 @@ define
 		       end
 		    end
 		   }
+		   % Launch every independant procedures.
 		   for Proc in {Arity State.procs} do
 		      thread {State.procs.Proc Out NVar State.state} end
 		   end
+		   % Return the new state, with the new var record and the new inPorts record.
 		   {Record.adjoinAt {Record.adjoinAt State var NVar} inPorts NInPorts}
 		end
 	     end
 	  in
+	     % Deal with the different messages
 	     case Msg
-	  % Operation on the component
+	     % Operation on the component
 	     of getState(?R) then R=State State
 	     [] changeState(NState) then NState
 	     [] getInPort(Port ?R) then
@@ -102,7 +115,7 @@ define
 		NPort = {Record.adjoinAt State.inPorts.Port p Proc}
 		NInPorts = {Record.adjoinAt State.inPorts Port NPort}
 		{Record.adjoinAt State inPorts NInPorts}
-	  % Interact with the component
+	     % Interact with the component
 	     [] send(InPort#N Msg) then
 		{State.inPorts.InPort.qs.N.put Msg}
 		{Exec State}
@@ -119,9 +132,9 @@ define
 		{Record.adjoinAt State outPorts NOutPorts}
 	     end
 	  end
-       %Acc
+          % The accumulator
 	  component(inPorts:'in'() outPorts:out() procs:procs() var:var() sync:sync() state:{NewDictionary})
-       %Return value (not needed?)
+          % The return value (not needed?)
 	  _
 	 }
       end
