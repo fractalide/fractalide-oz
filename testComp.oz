@@ -78,13 +78,13 @@ D = {Comp.new}
 
 %Second test. A procedure is change while the sync is not ready, so it has no effect
 {D send(x 7)}
+{D send(x 7)}
 {D send(y 1)}
 {D changeProcPort(x proc {$ IP Out Var} {Browse begin2} Var.x = 2*IP end)}
 {D send(z#1 1)}
 {D send(z#2 2)}
 
 %Third test. The new procedure is executed!
-{D send(x 7)}
 {D send(y 1)}
 {D send(z#1 1)}
 {D send(z#2 2)}
