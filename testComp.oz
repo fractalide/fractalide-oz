@@ -50,5 +50,29 @@ Filter = {Comp.new comp(
 %First test
 {Filter send(x 2)}
 {Filter send(y 5)}
-{Filter send(z#1 2)}
+{Filter send(z#1 3)}
 {Filter send(z#2 3)}
+
+{Filter changeProcPort(x proc {$ IP Out Var State} Var.x = IP*2 end )}
+
+
+declare
+[Comp] = {Module.link ['lib/component.ozf']}
+Generator = {Comp.new comp(
+			   procedures(
+			      proc {$ Out Var State}
+				 proc {Rec}
+				    {Browse State.cpt}
+				    State.cpt := State.cpt + 1
+				    {Delay 3000}
+				    {Rec}
+				 end
+			      in
+				 {Rec}
+			      end)
+			   state(cpt:1)
+			 )}
+
+{Generator start}
+
+{Generator stop}

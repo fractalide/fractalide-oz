@@ -1,4 +1,6 @@
 functor
+import
+   Browser
 export
    new: NewStateComponent
 define
@@ -46,8 +48,12 @@ define
 		      else false end
 		   end
 		end
+		A
 	     in
-		{CheckSyncRec {Record.toList InPorts}}
+		{Browser.browse here}
+		A = {CheckSyncRec {Record.toList InPorts}}
+		{Browser.browse A}
+		A
 	     end
 	     % Lauch every procedures for the componenet : inPorts procedures (to deal with single IP) and independant procedures.
 	     % That appends only if all the state are synchronized.
@@ -56,7 +62,7 @@ define
 		Sync = {CheckSync State.inPorts}
 		if {Not Sync} then
 		   State 
-		else NVar NInPorts Out in %All port can receive the next IP
+		else NVar NInPorts Out Th1 Th2 in %All port can receive the next IP
 		   % Restart the sync, the 's' selection is now undefined
 		   NInPorts = {Record.map State.inPorts fun {$ Port} {Record.adjoinAt Port s _} end}
 		   % Put at undefined the variables that are common to all procedures
@@ -72,27 +78,42 @@ define
 			     end
 			  end
 			 }
-		   % Launch every ports procedures.
-		   {Record.forAll NInPorts
-		    proc {$ Port}
-		       case Port
-		       of port(q:Queue p:Proc s:Sync) then IP in
-			  IP = {Queue.get}
-			  thread {Proc IP Out NVar State.state} end
-			  Sync = IP
-		       [] arrayPort(qs:Qs p:Proc s:Sync) then IPs in
-			  IPs = {Record.foldR Qs fun{$ E Acc} {E.get}|Acc end nil}
-			  thread {Proc IPs Out NVar State.state} end
-			  Sync = IPs
-		       end
-		    end
-		   }
-		   % Launch every independant procedures.
-		   for Proc in {Arity State.procs} do
-		      thread {State.procs.Proc Out NVar State.state} end
-		   end
+		   % Launch every ports procedures, keeping the thread.
+		   Th1 = {Record.foldL NInPorts
+			  fun {$ Acc Port} IPs T in
+			     case Port
+			     of port(q:Queue p:_ s:_) then
+				IPs = {Queue.get}
+			     [] arrayPort(qs:Qs p:_ s:_) then
+				IPs = {Record.foldR Qs fun{$ E Acc} {E.get}|Acc end nil}
+			     end
+			     thread
+				T = {Thread.this}
+				{Port.p IPs Out NVar State.state}
+			     end
+			     Port.s = IPs
+			     T|Acc
+			  end
+			  nil
+			 }
+		   % Launch every independant procedures, keeping the thread.
+		   Th2 = {FoldL {Arity State.procs}
+			  fun {$ Acc Proc} T in
+			     thread
+				T = {Thread.this}
+				{State.procs.Proc Out NVar State.state}
+			     end
+			     T|Acc
+			  end
+			  Th1
+			 }
+		   %OLD
+		   % for Proc in {Arity State.procs} do
+		   %    thread {State.procs.Proc Out NVar State.state} end
+		   % end
 		   % Return the new state, with the new var record and the new inPorts record.
-		   {Record.adjoinAt {Record.adjoinAt State var NVar} inPorts NInPorts}
+		   % {Record.adjoinAt {Record.adjoinAt State var NVar} inPorts NInPorts}
+		   {Record.adjoinList State [var#NVar inPorts#NInPorts threads#Th2]}
 		end
 	     end
 	  in
@@ -101,6 +122,10 @@ define
 	     % Operation on the component
 	     of getState(?R) then R=State State
 	     [] changeState(NState) then NState
+	     [] start then {Exec State}
+	     [] stop then
+		for T in State.threads do {Thread.terminate T} end
+		State
 	     [] getInPort(Port ?R) then
 		R=State.inPorts.Port
 		State
@@ -182,7 +207,7 @@ define
    end
    fun {NewState GivenRecord}
       DefaultState in
-      DefaultState = component(inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary})
+      DefaultState = component(inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads())
       {Record.foldL GivenRecord
        fun {$ S Rec}
 	  case {Record.label Rec}
