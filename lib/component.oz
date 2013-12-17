@@ -1,6 +1,4 @@
 functor
-import
-   Browser
 export
    new: NewStateComponent
 define
@@ -48,12 +46,8 @@ define
 		      else false end
 		   end
 		end
-		A
 	     in
-		{Browser.browse here}
-		A = {CheckSyncRec {Record.toList InPorts}}
-		{Browser.browse A}
-		A
+		{CheckSyncRec {Record.toList InPorts}}
 	     end
 	     % Lauch every procedures for the componenet : inPorts procedures (to deal with single IP) and independant procedures.
 	     % That appends only if all the state are synchronized.
