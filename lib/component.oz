@@ -83,7 +83,7 @@ define
 			     end
 			     thread
 				T = {Thread.this}
-				{Port.p IPs Out NVar State.state}
+				{Port.p IPs Out NVar State.state State.options}
 			     end
 			     Port.s = IPs
 			     T|Acc
@@ -95,7 +95,7 @@ define
 			  fun {$ Acc Proc} T in
 			     thread
 				T = {Thread.this}
-				{State.procs.Proc Out NVar State.state}
+				{State.procs.Proc Out NVar State.state State.options}
 			     end
 			     T|Acc
 			  end
@@ -135,6 +135,9 @@ define
 	     [] send(InPort#N Msg) then
 		{State.inPorts.InPort.qs.N.put Msg}
 		{Exec State}
+	     [] send(options Msg) then NOptions in 
+		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
+		{Record.adjoinAt State options NOptions}
 	     [] send(InPort Msg) then
 		{State.inPorts.InPort.q.put Msg}
 		{Exec State}
@@ -196,7 +199,7 @@ define
    end
    fun {NewState GivenRecord}
       DefaultState in
-      DefaultState = component(inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads())
+      DefaultState = component(inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt())
       {Record.foldL GivenRecord
        fun {$ S Rec}
 	  case {Record.label Rec}
@@ -204,8 +207,8 @@ define
 	  [] outPorts then {Record.adjoinAt S outPorts {OutPorts Rec}}
 	  [] procedures then {Record.adjoinAt S procs Rec}
 	  [] var then {Record.adjoinAt S var {Var Rec}}
-	  [] state then
-	     {Record.adjoinAt S state {NState Rec}}
+	  [] state then {Record.adjoinAt S state {NState Rec}}
+	  [] options then {Record.adjoinAt S options Rec}
 	  end
        end
        DefaultState

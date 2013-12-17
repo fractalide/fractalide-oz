@@ -1,4 +1,4 @@
-all: comp library
+all: library comp
 
 comp:
 	cd components/ && ozc -c *.oz && cd ..
