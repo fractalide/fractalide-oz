@@ -101,12 +101,7 @@ define
 			  end
 			  Th1
 			 }
-		   %OLD
-		   % for Proc in {Arity State.procs} do
-		   %    thread {State.procs.Proc Out NVar State.state} end
-		   % end
 		   % Return the new state, with the new var record and the new inPorts record.
-		   % {Record.adjoinAt {Record.adjoinAt State var NVar} inPorts NInPorts}
 		   {Record.adjoinList State [var#NVar inPorts#NInPorts threads#Th2]}
 		end
 	     end
