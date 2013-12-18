@@ -1,6 +1,9 @@
 functor
 export
    new: NewStateComponent
+   setProcedureInPort: SetProcedureInPort
+   resetInPort: ResetInPort
+   setNameInPort: SetNameInPort
 define
    % NewQueue : return a bounded buffer, as presented in CTM book
    fun {NewQueue}
@@ -20,6 +23,22 @@ define
 	    get: proc{$ X} {Send TakePort X} end)
    end
    % Return a new component. Several messages can be send to it.
+   %% Example of component state
+   % component(inPorts:'in'(
+   %                        name:port(q:AQueue
+   %                                  procedure:AProc
+   %                                  s:_)
+   %                        name2:arrayPort(q:queues(AQueue AnOtherQueue)
+   %                                        procedure:Proc
+   %                                        s:[_])
+   %                       )
+   % outPorts:out(name:nil
+   %              name2:...)
+   % procs:procs(Proc1 Proc2)
+   % var:var(x:_ y:_ z:_)
+   % state:{NewDictionary}
+   % threads:[Thread1 Thread2 Thread3]
+   % options:opt(pre:'x' post:'y'))
    fun {NewComponent NewState}
       Stream Point = {NewPort Stream} 
       thread
@@ -217,6 +236,33 @@ define
    fun {NewStateComponent ARecord}
       {NewComponent {NewState ARecord}}
    end
+   %%Function to modify a state
+   % General function
+   fun {ChangeState List Val State}
+      fun {ChangeStateRec Xs S}
+	 case Xs
+	 of nil then Val
+	 [] X|Xr then
+	    {AdjoinAt S X {ChangeStateRec Xr S.X}}
+	 end
+      end
+   in
+      {ChangeStateRec List State}
+   end
+   fun {SetProcedureInPort State Port Proc}
+      {ChangeState [inPorts Port procedure] Proc State}
+   end
+   fun {ResetInPort State Port}
+      % TODO
+      State
+   end
+   fun {SetNameInPort State Port Name} NState in
+      NState = {Record.adjoinAt State.inPorts Name State.inPorts.Port}
+      {Record.subtract NState State.inPorts.Port}
+   end
+   %fun {AddInPort State Port}
+
+   %end
 end
 
 	 
