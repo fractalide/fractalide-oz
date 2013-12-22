@@ -1,6 +1,5 @@
 functor
 import
-   Comp at './component.ozf'
    Compiler
    Open
    Module
