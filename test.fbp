@@ -1,0 +1,4 @@
+gen(generator) output -> input#1 adder(add) output -> input disp(display)
+gen2(generator) output -> input filter(filter) output -> input#2 adder()
+"opt(p:fun{$ IP} IP mod 2 == 0 end)" -> options filter()
+"opt(pre:'The sum is' post:'.')" -> options disp()

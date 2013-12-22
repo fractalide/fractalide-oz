@@ -24,5 +24,4 @@ define
       Generator
    end
 end
-      
-   
+     
