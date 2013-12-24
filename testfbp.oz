@@ -1,10 +1,13 @@
-declare
-[Graph] = {Module.link ["./lib/graph.ozf"]}
-G = {Graph.loadGraph "test.fbp"}
+functor
+import
+   Browser
+   Graph at './lib/graph.ozf'
+define
+   G = {Graph.loadGraph "test.fbp"}
+   {Browser.browse 'The graph is started for 20 seconds'}
+   {Graph.start G}
+   {Delay 20000}
+   {Graph.stop G}
+   {Browser.browse 'The graph is stoped'}
+end
 
-{G.gen start}
-{G.gen2 start}
-
-{G.gen stop}
-
-{G.gen2 stop}

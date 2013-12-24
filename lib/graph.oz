@@ -5,6 +5,8 @@ import
    Module
 export
    loadGraph: LoadGraph
+   start: Start
+   stop: Stop
 define
    fun {LoadGraph File}
       fun {LoadComponent Name}C in
@@ -125,5 +127,25 @@ define
       F1 = {New Open.file init(name:"test.fbp" flags:[read])}
       F2 = {F1 read(list:$)}
       {Rec state(ic:nil ip:nil op:nil oc:nil)#graph()#F2}
+   end
+   proc {Start Graph}
+      {Record.forAll Graph
+       proc {$ Comp} State in
+	  {Comp getState(State)}
+	  if {Record.width State.inPorts} == 0 then
+	     {Comp start}
+	  end
+       end
+      }
+   end
+   proc {Stop Graph}
+      {Record.forAll Graph
+       proc {$ Comp} State in
+	  {Comp getState(State)}
+	  if {Record.width State.inPorts} == 0 then
+	     {Comp stop}
+	  end
+       end
+      }
    end
 end

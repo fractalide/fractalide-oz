@@ -236,15 +236,15 @@ define
    fun {NewStateComponent ARecord}
       {NewComponent {NewState ARecord}}
    end
-   %%Function to modify a state
-   % General function
+   %Function to modify a state
+   %General function
    fun {ChangeState List Val State}
       fun {ChangeStateRec Xs S}
-	 case Xs
-	 of nil then Val
-	 [] X|Xr then
-	    {AdjoinAt S X {ChangeStateRec Xr S.X}}
-	 end
+   	 case Xs
+   	 of nil then Val
+   	 [] X|Xr then
+   	    {AdjoinAt S X {ChangeStateRec Xr S.X}}
+   	 end
       end
    in
       {ChangeStateRec List State}
@@ -260,36 +260,36 @@ define
       NState = {ChangeState [inPorts Name] State.inPorts.Port State}
       {Record.adjoinAt NState inPorts {Record.subtract NState.inPorts Port}}
    end
-   fun {AddInPort State Port}
-      case Port
-      of port(name:N procedure:P) then
-	 {ChangeState [inPorts N] port(q:{NewQueue} p:P s:nil) State}
-      [] arrayPort(name:N procedure:P) then
-	 {ChangeState [inPorts N] port(qs:queues() p:P s:[nil]) State}
-      end
-   end
-   fun {RemoveInPort State Port}
-      {Record.adjoinAt State inPorts {Record.subtract State.inPorts Port}}
-   end
-   fun {AddOutPort State Port}
-      {ChangeState  [outPorts Port] nil State}
-   end
-   fun {RemoveOutPort State Port}
-      {Record.adjoinAt State outPorts {Record.subtract State.outPorts Port}}
-   end
-   %% Have to name Procedure to do it correctly
-   fun {AddProc State Proc}
-      {ChangeState [procedures] Proc State}
-   end
-   fun {RemoveProc State Proc}
-      %TODO
-      State
-   end
-   fun {AddVar State Var}
-      {ChangeState [var Var] _ State}
-   end
-   fun {RemoveVar State Var}
-      {Record.adjoinAt State var {Record.subtract State.var Var}}
-   end
+   % fun {AddInPort State Port}
+   %    case Port
+   %    of port(name:N procedure:P) then
+   % 	 {ChangeState [inPorts N] port(q:{NewQueue} p:P s:nil) State}
+   %    [] arrayPort(name:N procedure:P) then
+   % 	 {ChangeState [inPorts N] port(qs:queues() p:P s:[nil]) State}
+   %    end
+   % end
+   % fun {RemoveInPort State Port}
+   %    {Record.adjoinAt State inPorts {Record.subtract State.inPorts Port}}
+   % end
+   % fun {AddOutPort State Port}
+   %    {ChangeState  [outPorts Port] nil State}
+   % end
+   % fun {RemoveOutPort State Port}
+   %    {Record.adjoinAt State outPorts {Record.subtract State.outPorts Port}}
+   % end
+   % %% Have to name Procedure to do it correctly
+   % fun {AddProc State Proc}
+   %    {ChangeState [procedures] Proc State}
+   % end
+   % fun {RemoveProc State Proc}
+   %    %TODO
+   %    State
+   % end
+   % fun {AddVar State Var}
+   %    {ChangeState [var Var] _ State}
+   % end
+   % fun {RemoveVar State Var}
+   %    {Record.adjoinAt State var {Record.subtract State.var Var}}
+   % end
 end
 	 
