@@ -124,7 +124,7 @@ define
       end
       F1 F2
    in 
-      F1 = {New Open.file init(name:"test.fbp" flags:[read])}
+      F1 = {New Open.file init(name:File flags:[read])}
       F2 = {F1 read(list:$)}
       {Rec state(ic:nil ip:nil op:nil oc:nil)#graph()#F2}
    end
