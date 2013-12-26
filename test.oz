@@ -12,7 +12,7 @@ define
    {Browser.browse 'Graph started for 20 seconds'}
    {G start}
    {Delay 10000}
-   {D send(options r(pre:'the number is' post:'.'))}
+   {D send(options r(pre:'the number is' post:'.') _)}
    {Delay 10000}
    {G stop}
    {Browser.browse 'Graph stoped'}

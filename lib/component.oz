@@ -1,14 +1,39 @@
 functor
+import
+   System
 export
    new: NewStateComponent
    setProcedureInPort: SetProcedureInPort
    resetInPort: ResetInPort
    setNameInPort: SetNameInPort
 define
+   local
+      proc {ZeroExit N Is}
+	 case Is of I|Ir then
+	    if N+I \= 0 then {ZeroExit N+I Ir} end
+	 end
+      end
+   in
+      proc {NewThread P ?SubThread}
+	 Is Pt = {NewPort Is}
+      in
+	 proc {SubThread P}
+	    {Send Pt 1}
+	    thread
+	       {P} {Send Pt ~1}
+	    end
+	 end
+	 {SubThread P}
+	 {ZeroExit 0 Is}
+      end
+   end
    % NewQueue : return a bounded buffer, as presented in CTM book
    fun {NewQueue}
       Given GivePort = {NewPort Given}
       Taken TakePort = {NewPort Taken}
+      Size = {NewCell 0}
+      Buffer = {NewCell nil}
+      Max = 10
       proc {Match Xs Ys}
 	 case Xs # Ys
 	 of (X|Xr) # (Y|Yr) then
@@ -19,8 +44,26 @@ define
       end
    in
       thread {Match Given Taken} end
-      queue(put: proc{$ X} {Send GivePort X} end
-	    get: proc{$ X} {Send TakePort X} end)
+      queue(put: proc{$ X Ack}
+		    if @Size > Max then
+		       Buffer := {Reverse X#Ack | {Reverse @Buffer}}
+		    else
+		       Size := @Size + 1
+		       {Send GivePort X}
+		       Ack = ack
+		    end
+		 end
+	    get: proc{$ X}
+		    Size := @Size - 1
+		    {Send TakePort X}
+		    if @Size =< Max andthen @Buffer \= nil then Msg Ack in
+		       Msg#Ack = (@Buffer).1
+		       Buffer := (@Buffer).2
+		       Size := @Size + 1
+		       {Send GivePort Msg}
+		       Ack = ack
+		    end
+		 end)
    end
    % Return a new component. Several messages can be send to it.
    %% Example of component state
@@ -48,7 +91,7 @@ define
 	     % Return true if all inPorts are synchronized. That means every inPorts have received one IP.
 	     % A port that is synchronized is a port that is ready to receive the next IP.
 	     % We see that a port is synchronized when the 's' selection on the port record is determine.
-	     fun {CheckSync InPorts}
+	     fun {CheckSync State}
 		fun {CheckSyncRec Xs}
 		   case Xs
 		   of nil then true
@@ -65,17 +108,36 @@ define
 		      else false end
 		   end
 		end
+		fun {CheckThread Threads}
+		   fun {Rec Threads}
+		      case Threads
+		      of nil then true
+		      [] T|Ts then
+			 if {Thread.state T} == terminated then
+			    {CheckThread Ts}
+			 else
+			    false
+			 end
+		      end
+		   end
+		in
+		   if Threads == threads then true
+		   else {Rec Threads} end
+		end
+		P T
 	     in
-		{CheckSyncRec {Record.toList InPorts}}
+		P = {CheckSyncRec {Record.toList State.inPorts}}
+		T = {CheckThread State.threads}
+		P andthen T
 	     end
 	     % Lauch every procedures for the componenet : inPorts procedures (to deal with single IP) and independant procedures.
 	     % That appends only if all the state are synchronized.
 	     fun {Exec State} Sync in
 	        % Look for sync
-		Sync = {CheckSync State.inPorts}
+		Sync = {CheckSync State}
 		if {Not Sync} then
 		   State 
-		else NVar NInPorts Out Th1 Th2 in %All port can receive the next IP
+		else NVar NInPorts Out Th1 Th2 SubThread in %All port can receive the next IP
 		   % Restart the sync, the 's' selection is now undefined
 		   NInPorts = {Record.map State.inPorts fun {$ Port} {Record.adjoinAt Port s _} end}
 		   % Put at undefined the variables that are common to all procedures
@@ -84,42 +146,51 @@ define
 		   Out = {Record.map State.outPorts
 			  fun {$ Out}
 			     proc {$ Msg} 
-				for AOut in Out do C N in 
+				for AOut in Out do C N Ack in 
 				   C#N = AOut
-				   {C send(N Msg)}
+				   {C send(N Msg Ack)}
+				   {Wait Ack}
 				end
 			     end
 			  end
 			 }
-		   % Launch every ports procedures, keeping the thread.
-		   Th1 = {Record.foldL NInPorts
-			  fun {$ Acc Port} IPs T in
-			     case Port
-			     of port(q:Queue p:_ s:_) then
-				IPs = {Queue.get}
-			     [] arrayPort(qs:Qs p:_ s:_) then
-				IPs = {Record.foldR Qs fun{$ E Acc} {E.get}|Acc end nil}
-			     end
-			     thread
-				T = {Thread.this}
-				{Port.p IPs Out NVar State.state State.options}
-			     end
-			     Port.s = IPs
-			     T|Acc
-			  end
-			  nil
-			 }
+		   thread
+		      {NewThread proc {$} 
+		                 % Launch every ports procedures, keeping the thread.
+				    Th1 = {Record.foldL NInPorts
+					   fun {$ Acc Port} IPs T in
+					      case Port
+					      of port(q:Queue p:_ s:_) then
+						 IPs = {Queue.get}
+					      [] arrayPort(qs:Qs p:_ s:_) then
+						 IPs = {Record.foldR Qs fun{$ E Acc} {E.get}|Acc end nil}
+					      end
+					      {SubThread proc{$}
+							    T = {Thread.this}
+							    {Port.p IPs Out NVar State.state State.options}
+							 end
+					      }
+					      Port.s = IPs
+					      T|Acc
+					   end
+					   nil
+					  }
 		   % Launch every independant procedures, keeping the thread.
-		   Th2 = {FoldL {Arity State.procs}
-			  fun {$ Acc Proc} T in
-			     thread
-				T = {Thread.this}
-				{State.procs.Proc Out NVar State.state State.options}
-			     end
-			     T|Acc
-			  end
-			  Th1
-			 }
+				    Th2 = {FoldL {Arity State.procs}
+					   fun {$ Acc Proc} T in
+					      {SubThread proc{$}
+							    T = {Thread.this}
+							    {State.procs.Proc Out NVar State.state State.options}
+							 end
+					      }
+					      T|Acc
+					   end
+					   Th1
+					  }
+				 end
+		       SubThread }
+		      {Send Point start}
+		   end
 		   % Return the new state, with the new var record and the new inPorts record.
 		   {Record.adjoinList State [var#NVar inPorts#NInPorts threads#Th2]}
 		end
@@ -151,14 +222,15 @@ define
 		NInPorts = {Record.adjoinAt State.inPorts Port NPort}
 		{Record.adjoinAt State inPorts NInPorts}
 	     % Interact with the component
-	     [] send(InPort#N Msg) then
-		{State.inPorts.InPort.qs.N.put Msg}
+	     [] send(InPort#N Msg Ack) then
+		{State.inPorts.InPort.qs.N.put Msg Ack}
 		{Exec State}
-	     [] send(options Msg) then NOptions in 
+	     [] send(options Msg Ack) then NOptions in 
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
+		Ack = ack
 		{Record.adjoinAt State options NOptions}
-	     [] send(InPort Msg) then
-		{State.inPorts.InPort.q.put Msg}
+	     [] send(InPort Msg Ack) then
+		{State.inPorts.InPort.q.put Msg Ack}
 		{Exec State}
 	     [] bind(OutPort Comp Name) then NPort NOutPorts in
 		NPort = Comp#Name | State.outPorts.OutPort
@@ -240,11 +312,11 @@ define
    %General function
    fun {ChangeState List Val State}
       fun {ChangeStateRec Xs S}
-   	 case Xs
-   	 of nil then Val
-   	 [] X|Xr then
-   	    {AdjoinAt S X {ChangeStateRec Xr S.X}}
-   	 end
+	 case Xs
+	 of nil then Val
+	 [] X|Xr then
+	    {AdjoinAt S X {ChangeStateRec Xr S.X}}
+	 end
       end
    in
       {ChangeStateRec List State}

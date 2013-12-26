@@ -6,7 +6,7 @@ export
 define
    proc {Proc Out NVar State Options}
       proc {Rec}
-	 {Delay 3000}
+	 %{Delay 1000}
 	 {Out.output State.cpt}
 	 State.cpt := State.cpt + 1
 	 {Rec}

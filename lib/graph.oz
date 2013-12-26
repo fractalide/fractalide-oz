@@ -99,7 +99,7 @@ define
 	 [] state(ic:IC ip:IP op:OP oc:OC) then
 	 %Make the link
 	    if IC == string then
-	       {OC send(options IP)}
+	       {OC send(options IP _)}
 	    else
 	       case OP
 	       of P#_ then
