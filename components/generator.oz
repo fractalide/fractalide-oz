@@ -1,6 +1,5 @@
 functor
 import
-   Browser
    Comp at '../lib/component.ozf'
 export
    new: New
@@ -13,7 +12,6 @@ define
 	 {Rec}
       end
    in
-      {Browser.browse starting}
       {Rec}
    end
    fun {New} Generator in
