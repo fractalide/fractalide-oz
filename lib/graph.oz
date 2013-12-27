@@ -7,6 +7,7 @@ export
    loadGraph: LoadGraph
    start: Start
    stop: Stop
+   getUnBoundPorts: GetUnBoundPorts
 define
    fun {LoadGraph File}
       fun {LoadComponent Name}C in
@@ -57,16 +58,16 @@ define
 	 NamePortS#F = {ReadNextWord File}
 	 {Compiler.virtualStringToValue NamePortS}#F
       end
-      fun {GetComp NameComp TypeComp Graph}
-	 TheComp NGraph in
-	 try
-	    TheComp = Graph.NameComp
+      fun {InitComp NameComp TypeComp Graph}
+	 NGraph in
+	 if TypeComp == nil then
 	    NGraph = Graph
-	 catch _ then
+	 else TheComp Node in
 	    TheComp = {LoadComponent TypeComp}
-	    NGraph = {Record.adjoinAt Graph NameComp TheComp}
+	    Node = node(comp:TheComp inPortBinded:nil)
+	    NGraph = {Record.adjoinAt Graph NameComp Node}
 	 end
-	 TheComp#NGraph
+	 NGraph
       end
       fun {Begin State Graph File}
 	 case File.1
@@ -75,19 +76,19 @@ define
 	    S2 = {Compiler.virtualStringToValue S}
 	    {Record.adjoinList State [ic#string ip#S2]}#Graph#F.2
 	 else
-	    TheComp NameComp TypeComp NamePort NGraph F F2 in
+	    NameComp TypeComp NamePort NGraph F F2 in
 	    NameComp#TypeComp#F = {ReadComp File}
 	    NamePort#F2 = {ReadPort F}
-	    TheComp#NGraph = {GetComp NameComp TypeComp Graph}
-	    {Record.adjoinList State [ic#TheComp ip#NamePort]}#NGraph#F2
+	    NGraph = {InitComp NameComp TypeComp Graph}
+	    {Record.adjoinList State [ic#NameComp ip#NamePort]}#NGraph#F2
 	 end
       end
       fun {ReadOut State Graph File}
-	 NameComp TypeComp NamePort TheComp NGraph NFile F2 in
+	 NameComp TypeComp NamePort NGraph NFile F2 in
 	 NamePort#F2 = {ReadPort File}
 	 NameComp#TypeComp#NFile = {ReadComp F2}
-	 TheComp#NGraph = {GetComp NameComp TypeComp Graph}
-	 {Record.adjoinList State [op#NamePort oc#TheComp]}#NGraph#NFile
+	 NGraph = {InitComp NameComp TypeComp Graph}
+	 {Record.adjoinList State [op#NamePort oc#NameComp]}#NGraph#NFile
       end
       fun {Rec State#Graph#File}
 	 case State
@@ -96,29 +97,32 @@ define
 	 [] state(ic:_ ip:_ op:nil oc:nil) then F in
 	    _#F = {ReadUntil File " "} %Remove arrow
 	    {Rec {ReadOut State Graph F}}
-	 [] state(ic:IC ip:IP op:OP oc:OC) then
+	 [] state(ic:IC ip:IP op:OP oc:OC) then NGraph NNode in
 	 %Make the link
 	    if IC == string then
-	       {OC send(options IP _)}
+	       {Graph.OC.comp send(options IP _)}
+	       NGraph = Graph
 	    else
 	       case OP
 	       of P#_ then
-		  {OC addinArrayPort(P)}
+		  {Graph.OC.comp addinArrayPort(P)}
 	       else
 		  skip
 	       end
-	       {IC bind(IP OC OP)}
+	       NNode = {Record.adjoinAt Graph.OC inPortBinded OP|Graph.OC.inPortBinded}
+	       NGraph = {Record.adjoinAt Graph OC NNode}% Add the information in the graph that the port is binded
+	       {Graph.IC.comp bind(IP Graph.OC.comp OP)} %At component level
 	    end
 	    if File == nil then
-	       Graph
+	       NGraph
 	 %If , \n then {Rec(ic:nil ip:nil op:nil oc:nil)}#NGraph#NFile)}
 	    elseif File.1 == ",".1 orelse File.1 == "\n".1 then
-	       {Rec state(ic:nil ip:nil op:nil oc:nil)#Graph#File.2}
+	       {Rec state(ic:nil ip:nil op:nil oc:nil)#NGraph#File.2}
 	 %Elseif EOF Graph
 	 %Else : {ReadOPort state(ic:OC ip:{ReadComp} op:nil oc:nil)
 	    else NamePort NFile in
 	       NamePort#NFile = {ReadPort File}
-	       {Rec state(ic:State.oc ip:NamePort op:nil oc:nil)#Graph#NFile}
+	       {Rec state(ic:State.oc ip:NamePort op:nil oc:nil)#NGraph#NFile}
 	    end
 	 end
       end
@@ -131,9 +135,9 @@ define
    proc {Start Graph}
       {Record.forAll Graph
        proc {$ Comp} State in
-	  {Comp getState(State)}
-	  if {Record.width State.inPorts} == 0 then
-	     {Comp start}
+	  {Comp.comp getState(State)}
+	  if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
+	     {Comp.comp start}
 	  end
        end
       }
@@ -141,11 +145,37 @@ define
    proc {Stop Graph}
       {Record.forAll Graph
        proc {$ Comp} State in
-	  {Comp getState(State)}
-	  if {Record.width State.inPorts} == 0 then
-	     {Comp stop}
+	  {Comp.comp getState(State)}
+	  if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
+	     {Comp.comp stop}
 	  end
        end
       }
+   end
+   fun {GetUnBoundPorts Graph}
+      Out = {NewCell nil}
+      In = {NewCell nil}
+   in
+      {Record.forAllInd Graph
+       proc {$ Name node(comp:Comp inPortBinded:Binded)} State in
+	  {Comp getState(State)}
+	  {Record.forAllInd State.outPorts
+	   proc {$ OName Attatch}
+	      if Attatch == nil then Out := Comp#Name#OName | @Out end
+	   end}
+	  {Record.forAllInd State.inPorts
+	   proc {$ IName Port}
+	      case Port
+	      of port(p:_ q:_ s:_) then
+		 if {Not {List.member IName Binded}} then In := Comp#Name#IName | @In end
+	      [] arrayPort(p:_ qs:Qs s:_) then NArity in
+		 NArity = {Map {Arity Qs} fun {$ X} IName#X end}
+		 for X in NArity do
+		    if {Not {List.member X Binded}} then In := Comp#Name#X | @In end
+		 end
+	      end
+	   end}
+       end}
+      @In#@Out
    end
 end

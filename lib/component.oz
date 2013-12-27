@@ -1,6 +1,4 @@
 functor
-import
-   System
 export
    new: NewStateComponent
    setProcedureInPort: SetProcedureInPort
