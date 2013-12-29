@@ -153,6 +153,14 @@ define
       }
    end
    fun {GetUnBoundPorts Graph}
+      fun {OutPorts Name State} Value in
+	 Value = State.outPorts.Name
+	 if {Label State} == component then Value
+	 else NState in
+	    {(Value.1) getState(NState)}
+	    {OutPorts Value.2 NState}
+	 end
+      end
       Out = {NewCell nil}
       In = {NewCell nil}
    in
@@ -160,7 +168,8 @@ define
        proc {$ Name node(comp:Comp inPortBinded:Binded)} State in
 	  {Comp getState(State)}
 	  {Record.forAllInd State.outPorts
-	   proc {$ OName Attatch}
+	   proc {$ OName _} Attatch in
+	      Attatch = {OutPorts OName State}
 	      if Attatch == nil then Out := Comp#Name#OName | @Out end
 	   end}
 	  {Record.forAllInd State.inPorts
@@ -173,6 +182,8 @@ define
 		 for X in NArity do
 		    if {Not {List.member X Binded}} then In := Comp#Name#X | @In end
 		 end
+	      [] _#_ then
+		 if {Not {List.member IName Binded}} then In := Comp#Name#IName | @In end
 	      end
 	   end}
        end}

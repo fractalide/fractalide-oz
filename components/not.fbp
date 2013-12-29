@@ -1,0 +1,2 @@
+sep(separator) out -> x nand(nand)
+sep() out -> y nand()

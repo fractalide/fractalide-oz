@@ -1,0 +1,2 @@
+not1(not) out -> x nand(nand)
+not2(not) out -> y nand()

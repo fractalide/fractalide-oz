@@ -26,6 +26,11 @@ define
 	     [] stop then
 		{GraphModule.stop State.graph}
 		State
+	     %% Help methods
+	     [] renameInPort(OName NName) then 
+		{Record.adjoinAt State inPorts {Rename State.inPorts OName NName}}
+	     [] renameOutPort(OName NName) then
+		{Record.adjoinAt State outPorts {Rename State.outPorts OName NName}}
 	     end
 	  end
 	  {Init Graph}
@@ -58,6 +63,10 @@ define
 		 }
    in
       subcomponent(inPorts:InPorts outPorts:OutPorts graph:G)
+   end
+   fun {Rename Rec OName NName} Temp in
+      Temp = {Record.adjoinAt Rec NName Rec.OName}
+      {Record.subtract Temp OName}
    end
 end
       
