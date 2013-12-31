@@ -1,0 +1,5 @@
+nand(nand) out -> input disp(display)
+not(not) out -> input disp()
+and(and) out -> input disp()
+or(or) out -> input disp()
+nor(nor) out -> input disp()
