@@ -1,0 +1,2 @@
+x => input adder(add) output -> input disp(display) output => out
+"opt(pre:'the sum is ')" -> options disp()

@@ -160,6 +160,9 @@ define
 		  IC#NGraph = {GetComp Graph Xr.2.1}
 		  IP = {Compiler.virtualStringToValue Xr.1}
 		  NName = {VirtualString.toAtom Stack.1}
+		  if {Label IP} == '#' then %It's bind to a specific arrayport
+		     {NGraph.IC.comp addinArrayPort(IP.1)}
+		  end
 		  FGraph = {Record.adjoinAt NGraph inLinks NName#IC#IP|NGraph.inLinks}
 		  {Rec Stack.1|nil Xr.2 FGraph}
 	       end

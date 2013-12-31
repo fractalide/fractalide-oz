@@ -14,6 +14,11 @@ define
 	     of getState(?Resp) then
 		Resp = State
 		State
+	     [] send(InPort#N Msg Ack) then
+		for X in State.inPorts.InPort do
+		   {X.1 send(X.2#N Msg Ack)}
+		end
+		State
 	     [] send(InPort Msg Ack) then
 		for X in State.inPorts.InPort do
 		   {X.1 send(X.2 Msg Ack)}
@@ -27,6 +32,11 @@ define
 	     [] unbound(OutPort N) then
 		for X in State.outPorts.OutPort do
 		   {X.1 unbound(X.2 N)}
+		end
+		State
+	     [] addinArrayPort(Port) then
+		for X in State.inPorts.Port do
+		   {X.1 addinArrayPort(X.2)}
 		end
 		State
 	     [] start then
