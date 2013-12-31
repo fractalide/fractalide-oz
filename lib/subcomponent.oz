@@ -5,8 +5,6 @@ export
    new: NewSubComponent
 define
    fun {NewSubComponent FileName}
-      %File = {New Open.file init(name:"/home/denis/ucl/flowVM/components/not.fbp" flags:[read])}
-      %List = {File read(list:$)}
       Graph = {GraphModule.loadGraph FileName}
       Stream Point = {NewPort Stream}
       thread

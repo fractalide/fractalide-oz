@@ -136,7 +136,7 @@ define
 	    [C] = {Module.link ["./components/"#Type#".ozf"]}
 	    TheComp = {C.new}
 	 catch _ then
-	    TheComp = {SubComponent.new "/home/denis/ucl/flowVM/components/"#Type#".fbp"}
+	    TheComp = {SubComponent.new "./components/"#Type#".fbp"}
 	 end
 	 Name#{Record.adjoinAt Graph Name node(comp:TheComp inPortBinded:nil)}
       end
