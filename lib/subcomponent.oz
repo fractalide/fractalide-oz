@@ -4,21 +4,32 @@ import
 export
    new: NewSubComponent
 define
-   fun {NewSubComponent Graph}
+   fun {NewSubComponent FileName}
+      %File = {New Open.file init(name:"/home/denis/ucl/flowVM/components/not.fbp" flags:[read])}
+      %List = {File read(list:$)}
+      Graph = {GraphModule.loadGraph FileName}
       Stream Point = {NewPort Stream}
       thread
 	 {FoldL Stream
 	  fun {$ State Msg}
 	     case Msg
-	     of getState(?Resp) then Resp = State State
+	     of getState(?Resp) then
+		Resp = State
+		State
 	     [] send(InPort Msg Ack) then
-		{State.inPorts.InPort.1 send(State.inPorts.InPort.2 Msg Ack)}
+		for X in State.inPorts.InPort do
+		   {X.1 send(X.2 Msg Ack)}
+		end
 		State
 	     [] bind(OutPort Comp Name) then
-		{State.outPorts.OutPort.1 bind(State.outPorts.OutPort.2 Comp Name)}
+		for X in State.outPorts.OutPort do
+		   {X.1 bind(X.2 Comp Name)}
+		end
 		State
 	     [] unbound(OutPort N) then
-		{State.outPorts.OutPort.1 unbound(State.outPorts.OutPort.2 N)}
+		for X in State.outPorts.OutPort do
+		   {X.1 unbound(X.2 N)}
+		end
 		State
 	     [] start then
 		{GraphModule.start State.graph}
@@ -41,26 +52,26 @@ define
       proc {$ Msg} {Send Point Msg} end
    end
    fun {Init G}
-      In#Out = {GraphModule.getUnBoundPorts G}
-      InPorts = {FoldL In
-		 fun {$ Acc Point#CompName#PortName} NName in
-		    case PortName
-		    of RealName#Number then
-		       NName = {VirtualString.toAtom {Atom.toString CompName}#"_"#{Atom.toString RealName}#"_"#{Int.toString Number}}
+      InPorts = {FoldL G.inLinks
+		 fun {$ Acc Name#CompName#PortName}
+		    if {List.member Name {Arity Acc}} then
+		       {Record.adjoinAt Acc Name G.CompName.comp#PortName|Acc.Name}
 		    else
-		       NName = {VirtualString.toAtom {Atom.toString CompName}#"_"#{Atom.toString PortName}}
+		       {Record.adjoinAt Acc Name G.CompName.comp#PortName|nil}
 		    end
-		    {AdjoinAt Acc NName Point#PortName}
 		 end
 		 inPorts
 		}
-      OutPorts = {FoldL Out
-		  fun {$ Acc Point#CompName#PortName} NName in
-		     NName = {VirtualString.toAtom {Atom.toString CompName}#"_"#{Atom.toString PortName}}
-		     {AdjoinAt Acc NName Point#PortName}
+      OutPorts = {FoldL G.outLinks
+		  fun {$ Acc Name#CompName#PortName}
+		     if {List.member Name {Arity Acc}} then
+			{Record.adjoinAt Acc Name G.CompName.com#PortName|Acc.Name}
+		     else
+			{Record.adjoinAt Acc Name G.CompName.comp#PortName|nil}
+		     end
 		  end
 		  outPorts
-		 }
+		  }
    in
       subcomponent(inPorts:InPorts outPorts:OutPorts graph:G)
    end

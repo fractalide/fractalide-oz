@@ -3,6 +3,8 @@ import
    Compiler
    Open
    Module
+   SubComponent at './subcomponent.ozf'
+   GenOpt at '../components/genopt.ozf'
 export
    loadGraph: LoadGraph
    start: Start
@@ -10,144 +12,212 @@ export
    getUnBoundPorts: GetUnBoundPorts
 define
    fun {LoadGraph File}
-      fun {LoadComponent Name}C in
-	 [C] = {Module.link ["./components/"#Name#".ozf"]}
-	 {C.new}
-      end
-      fun {ReadNextWord File}
-	 fun {Rec File Acc}
-	    case File
-	    of nil then {Reverse Acc}#nil
-	    [] Char|Fs then
-	       if Char == " ".1 then
-		  {Reverse Acc}#Fs
-	       elseif Char == ",".1 orelse Char == "\n".1 then
-		  {Reverse Acc}#File
-	       else
-		  {Rec Fs Char|Acc}
-	       end
-	    end
-	 end
-      in
-	 {Rec File nil}
-      end
-      fun {ReadUntil File Del}
-	 fun {Rec File Acc}
-	    case File
-	    of nil then Acc
-	    [] Char|Fs then
-	       if Char == Del.1 then
-		  {Reverse Acc}#Fs
-	       else
-		  {Rec Fs Char|Acc}
-	       end
-	    end
-	 end
-      in
-	 {Rec File nil}
-      end
-      fun {ReadComp File}
-	 NameComp TypeComp Tot Tot2 F in
-	 Tot#F = {ReadNextWord File}
-	 NameComp#Tot2 = {ReadUntil Tot "("}
-	 TypeComp#_ = {ReadUntil Tot2 ")"}
-	 {String.toAtom NameComp}#TypeComp#F
-      end
-      fun {ReadPort File}
-	 NamePortS F in
-	 NamePortS#F = {ReadNextWord File}
-	 {Compiler.virtualStringToValue NamePortS}#F
-      end
-      fun {InitComp NameComp TypeComp Graph}
-	 NGraph in
-	 if TypeComp == nil then
-	    NGraph = Graph
-	 else TheComp Node in
-	    TheComp = {LoadComponent TypeComp}
-	    Node = node(comp:TheComp inPortBinded:nil)
-	    NGraph = {Record.adjoinAt Graph NameComp Node}
-	 end
-	 NGraph
-      end
-      fun {Begin State Graph File}
-	 case File.1
-	 of 34 then S S2 F in
-	    S#F = {ReadUntil File.2 "\""}
-	    S2 = {Compiler.virtualStringToValue S}
-	    {Record.adjoinList State [ic#string ip#S2]}#Graph#F.2
-	 else
-	    NameComp TypeComp NamePort NGraph F F2 in
-	    NameComp#TypeComp#F = {ReadComp File}
-	    NamePort#F2 = {ReadPort F}
-	    NGraph = {InitComp NameComp TypeComp Graph}
-	    {Record.adjoinList State [ic#NameComp ip#NamePort]}#NGraph#F2
-	 end
-      end
-      fun {ReadOut State Graph File}
-	 NameComp TypeComp NamePort NGraph NFile F2 in
-	 NamePort#F2 = {ReadPort File}
-	 NameComp#TypeComp#NFile = {ReadComp F2}
-	 NGraph = {InitComp NameComp TypeComp Graph}
-	 {Record.adjoinList State [op#NamePort oc#NameComp]}#NGraph#NFile
-      end
-      fun {Rec State#Graph#File}
-	 case State
-	 of state(ic:nil ip:nil op:nil oc:nil) then
-	    {Rec {Begin State Graph File}}
-	 [] state(ic:_ ip:_ op:nil oc:nil) then F in
-	    _#F = {ReadUntil File " "} %Remove arrow
-	    {Rec {ReadOut State Graph F}}
-	 [] state(ic:IC ip:IP op:OP oc:OC) then NGraph NNode in
-	 %Make the link
-	    if IC == string then
-	       {Graph.OC.comp send(options IP _)}
-	       NGraph = Graph
-	    else
-	       case OP
-	       of P#_ then
-		  {Graph.OC.comp addinArrayPort(P)}
-	       else
-		  skip
-	       end
-	       NNode = {Record.adjoinAt Graph.OC inPortBinded OP|Graph.OC.inPortBinded}
-	       NGraph = {Record.adjoinAt Graph OC NNode}% Add the information in the graph that the port is binded
-	       {Graph.IC.comp bind(IP Graph.OC.comp OP)} %At component level
-	    end
-	    if File == nil then
-	       NGraph
-	 %If , \n then {Rec(ic:nil ip:nil op:nil oc:nil)}#NGraph#NFile)}
-	    elseif File.1 == ",".1 orelse File.1 == "\n".1 then
-	       {Rec state(ic:nil ip:nil op:nil oc:nil)#NGraph#File.2}
-	 %Elseif EOF Graph
-	 %Else : {ReadOPort state(ic:OC ip:{ReadComp} op:nil oc:nil)
-	    else NamePort NFile in
-	       NamePort#NFile = {ReadPort File}
-	       {Rec state(ic:State.oc ip:NamePort op:nil oc:nil)#NGraph#NFile}
-	    end
-	 end
-      end
-      F1 F2
-   in 
       F1 = {New Open.file init(name:File flags:[read])}
       F2 = {F1 read(list:$)}
-      {Rec state(ic:nil ip:nil op:nil oc:nil)#graph()#F2}
+      Tokens = {ToToken F2}
+      Grouped = {RegroupWords Tokens}
+   in
+      {BuildGraph Grouped}
+   end
+   fun {ToToken Characters}
+      fun {PutAtom At Acc}
+	 if Acc.1 == sep then
+	    At|Acc.2
+	 else
+	    At|Acc
+	 end
+      end
+      fun {Rec Cs Acc}
+	 case Cs
+	 of nil then Acc
+	 [] C|Cr then
+	    case C
+	       %% new_line
+	    of 10 then % 10 is "\n"
+	       if Acc \= nil andthen Acc.1 \= new_line then
+		  {Rec Cr {PutAtom new_line Acc}}
+	       else
+		  {Rec Cr Acc}
+	       end
+	    [] 44 then % 44 is ","
+	       if Acc \= nil andthen Acc.1 \= new_line then
+		  {Rec Cr {PutAtom new_line Acc}}
+	       else
+		  {Rec Cr Acc}
+	       end
+	       %% Bind and assign
+	    [] 62 then % 62 is ">"    45 is "-"
+	       if Acc \= nil andthen Acc.1 == "-".1 then % It's a bind 
+		  {Rec Cr {PutAtom bind Acc.2}}
+	       elseif Acc \= nil andthen Acc.1 == "=".1 then  % It's an assign
+		  {Rec Cr {PutAtom assign Acc.2}}
+	       else %It's nothing
+		  {Rec Cr C|Acc}
+	       end
+	       %%parents
+	    [] 40 then {Rec Cr '('|Acc}
+	    [] 41 then {Rec Cr ')'|Acc}
+	       %% New word and space
+	    [] 32 then % 32 is for " "
+	       if (Acc == nil orelse (Acc.1 \= '(' andthen Acc.1 \= ')' andthen {Atom.is Acc.1})) then
+		  {Rec Cr Acc}
+	       else
+		  {Rec Cr sep|Acc}
+	       end
+	    else
+	    %It's a simple character
+	       {Rec Cr C|Acc}
+	    end
+	 end
+      end
+   in 
+      {Reverse {Rec Characters nil}}
+   end
+   fun {RegroupWords Xs}
+      fun {Rec Word Acc Xs}
+	 case Xs
+	 of nil then
+	    if Word \= nil then {Reverse Word}|Acc
+	    else Acc end
+	 [] X|Xr then
+	    if X \= '(' andthen X \=')' andthen {Atom.is X} then
+	       if X \= sep then %Remove the sep 
+		  {Rec nil X|{Reverse Word}|Acc Xr}
+	       else
+		  {Rec nil {Reverse Word}|Acc Xr}
+	       end
+	    elseif X == "\"".1 orelse X == "\'".1 then W R in
+	       W#R = {GetUntil bind Xs}
+	       {Rec nil bind|W|Acc R}
+	    else
+	       {Rec X|Word Acc Xr}
+	    end
+	 end
+      end
+   in
+      {Reverse {Rec nil nil Xs}}
+   end
+   fun {GetUntil Token Xs}
+      fun {Rec Xs Acc}
+	 if Xs ==  nil then raise not_found(Token) end
+	 else
+	    X|Xr = Xs
+	 in
+	    if X == Token then {Reverse Acc}#Xr
+	    else NAcc in
+	       if {Atom.is X} then
+		  case X
+		  of '(' then NAcc = "(".1 | Acc
+		  [] ')' then NAcc = ")".1 | Acc
+		  [] sep then NAcc = " ".1 | Acc
+		  [] new_line then NAcc = "\n".1 | Acc
+		  [] bind then NAcc = ">".1 | "-".1 | Acc
+		  [] assign then NAcc = ">".1 | "=".1 | Acc
+		  end
+	       else
+		  NAcc = X | Acc
+	       end
+	       {Rec Xr NAcc}
+	    end
+	 end
+      end
+   in
+      {Rec Xs nil}
+   end
+   fun {GetComp Graph Xs}
+      TName#G = {GetUntil '(' Xs}
+      Name = {VirtualString.toAtom TName}
+      Type#_ = {GetUntil ')' G}
+   in
+      if {List.member Name {Arity Graph}} then
+	 Name#Graph
+      else C TheComp in
+	 try
+	    [C] = {Module.link ["./components/"#Type#".ozf"]}
+	    TheComp = {C.new}
+	 catch _ then
+	    TheComp = {SubComponent.new "/home/denis/ucl/flowVM/components/"#Type#".fbp"}
+	 end
+	 Name#{Record.adjoinAt Graph Name node(comp:TheComp inPortBinded:nil)}
+      end
+   end
+   fun {BuildGraph Xs}
+      fun {Rec Stack Xs Graph}
+	 case Xs
+	 of nil then Graph
+	 [] X|Xr then
+	    case X
+	    of assign then
+	       if Xr.2 == nil orelse {Atom.is Xr.2.1} then %It's an output rename
+		  OC OP NName NGraph FGraph
+	       in 
+		  OC#NGraph = {GetComp Graph Stack.2.1}
+		  OP = {Compiler.virtualStringToValue Stack.1}
+		  NName = {VirtualString.toAtom Xr.1}
+		  FGraph = {Record.adjoinAt NGraph outLinks NName#OC#OP|NGraph.outLinks}
+		  {Rec Stack.2.1|nil Xr FGraph}
+	       else IP IC NName NGraph FGraph in% It's an input rename
+		  IC#NGraph = {GetComp Graph Xr.2.1}
+		  IP = {Compiler.virtualStringToValue Xr.1}
+		  NName = {VirtualString.toAtom Stack.1}
+		  FGraph = {Record.adjoinAt NGraph inLinks NName#IC#IP|NGraph.inLinks}
+		  {Rec Stack.1|nil Xr.2 FGraph}
+	       end
+	    [] bind then OC OP IP IC NGraph FGraph NNode GraphWithNode in
+	       OC#NGraph = {GetComp Graph Stack.2.1}
+	       OP = {Compiler.virtualStringToValue Stack.1}
+	       IP = {Compiler.virtualStringToValue Xr.1}
+	       IC#FGraph = {GetComp NGraph Xr.2.1}
+	       if {Label IP} == '#' then {FGraph.IC.comp addinArrayPort(IP.1)} end
+	       %Bind on the component
+	       {FGraph.OC.comp bind(OP FGraph.IC.comp IP)}
+	       %Bind on the graph
+	       NNode = {Record.adjoinAt FGraph.IC inPortBinded IP|FGraph.IC.inPortBinded}
+	       GraphWithNode = {Record.adjoinAt FGraph IC NNode}
+	       {Rec nil Xr.2 GraphWithNode}
+	    [] new_line then
+	       {Rec nil Xr Graph}
+	    [] sep then
+	       {Rec Stack Xr Graph}
+	    else
+	       % It's a word inside " or ', then build an optgen component and put it on stack
+	       if X.1 == "\"".1 orelse X.1 == '\"' then Arg Comp Name NGraph in
+		  Arg = {Reverse {Reverse X.2}.2} %remove the brackets
+		  Comp = {GenOpt.newArgs opt(arg:{Compiler.virtualStringToValue Arg})}
+		  Name = {Int.toString {Length Xr}}.1|"GenOPT"
+		  NGraph = {Record.adjoinAt Graph
+			    {VirtualString.toAtom Name}
+			    node(comp:Comp inPortBinded:nil)} %The name must be unique
+		  {Rec output|{Reverse ')'|'('|{Reverse Name}}|nil Xr NGraph}
+	       else
+		  {Rec X|Stack Xr Graph}
+	       end
+	    end
+	 end
+      end
+   in
+      {Rec nil Xs graph(inLinks:nil outLinks:nil)}
    end
    proc {Start Graph}
-      {Record.forAll Graph
-       proc {$ Comp} State in
-	  {Comp.comp getState(State)}
-	  if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
-	     {Comp.comp start}
+      {Record.forAllInd Graph
+       proc {$ Ind Comp} State in
+	  if Ind \= inLinks andthen Ind \= outLinks then % Due to inLinks and outLinks
+	     {Comp.comp getState(State)}
+	     if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
+		{Comp.comp start}
+	     end
 	  end
        end
       }
    end
    proc {Stop Graph}
-      {Record.forAll Graph
-       proc {$ Comp} State in
-	  {Comp.comp getState(State)}
-	  if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
+      {Record.forAllInd Graph
+       proc {$ Ind Comp} State in
+	  if Ind \= inLinks andthen Ind \= outLinks then
+	     {Comp.comp getState(State)}
+	     if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
 	     {Comp.comp stop}
+	     end
 	  end
        end
       }

@@ -187,7 +187,9 @@ define
 					  }
 				 end
 		       SubThread }
-		      {Send Point start}
+		      if {Record.width State.inPorts} > 0 then
+			 {Send Point start}
+		      end
 		   end
 		   % Return the new state, with the new var record and the new inPorts record.
 		   {Record.adjoinList State [var#NVar inPorts#NInPorts threads#Th2]}
@@ -201,7 +203,11 @@ define
 	     [] changeState(NState) then NState
 	     [] start then {Exec State}
 	     [] stop then
-		for T in State.threads do {Thread.terminate T} end
+		for T in State.threads do
+		   if {Thread.state T} \= terminated then
+		      {Thread.terminate T}
+		   end
+		end
 		State
 	     [] getInPort(Port ?R) then
 		R=State.inPorts.Port

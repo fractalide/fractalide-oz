@@ -1,1 +1,2 @@
-or(or) out -> x not(not)
+x => x or(or) out -> x not(not) out => out
+y => y or()

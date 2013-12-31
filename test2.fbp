@@ -1,4 +1,2 @@
-gen(generator) output -> input disp(display) output -> input#1 adder(add)
-dispIn(display) output -> input#2 adder()
-"opt(pre:'entry is: ')" -> options dispIn()
-"opt(pre:'gen : ')" -> options disp()
+test(xor) out -> input disp(display)
+"r(pre:'xor says' post:'.')" -> options disp()

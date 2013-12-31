@@ -1,2 +1,2 @@
-sep(separator) out -> x nand(nand)
-sep() out -> y nand()
+x => x nand(nand)
+x => y nand(nand) out => out
