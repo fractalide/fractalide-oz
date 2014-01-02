@@ -135,7 +135,7 @@ define
 	 try
 	    [C] = {Module.link ["./components/"#Type#".ozf"]}
 	    TheComp = {C.new}
-	 catch _ then
+	 catch system(module(notFound load _)) then
 	    TheComp = {SubComponent.new "./components/"#Type#".fbp"}
 	 end
 	 Name#{Record.adjoinAt Graph Name node(comp:TheComp inPortBinded:nil)}
