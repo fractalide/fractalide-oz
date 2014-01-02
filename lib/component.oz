@@ -73,8 +73,10 @@ define
    %                                        procedure:Proc
    %                                        s:[_])
    %                       )
-   % outPorts:out(name:nil
-   %              name2:...)
+   % outPorts:out(name:port(nil)
+   %              name2:arrayPort(1:nil
+   %                              2:[comp#port comp2#port2])
+   %              ...)
    % procs:procs(Proc1 Proc2)
    % var:var(x:_ y:_ z:_)
    % state:{NewDictionary}
@@ -143,12 +145,29 @@ define
 		   % Build a procedure to send IP to the output ports.
 		   Out = {Record.map State.outPorts
 			  fun {$ Out}
-			     proc {$ Msg} 
-				for AOut in Out do C N Ack in 
-				   C#N = AOut
-				   {C send(N Msg Ack)}
-				   {Wait Ack}
+			     if {Label Out} \= arrayPort then
+				proc {$ Msg}				
+				   for AOut in Out do C N Ack in 
+				      C#N = AOut
+				      {C send(N Msg Ack)}
+				      {Wait Ack}
+				   end
 				end
+			     else
+				{Record.foldLInd Out
+				 fun {$ Ind Acc List}
+				    proc {P Msg}
+				       for AOut in List do C N Ack in
+					  C#N = AOut
+					  {C send(N Msg Ack)}
+					  {Wait Ack}
+				       end
+				    end
+				 in
+				    {Record.adjoinAt Acc Ind P}
+				 end
+				 outs
+				}
 			     end
 			  end
 			 }
@@ -236,8 +255,22 @@ define
 	     [] send(InPort Msg Ack) then
 		{State.inPorts.InPort.q.put Msg Ack}
 		{Exec State}
+	     [] bind(OutPort#N Comp Name) then NAPort NPort NOutPorts in
+		try
+		   NAPort = Comp#Name | State.outPorts.OutPort.N
+		catch _ then
+		   NAPort = Comp#Name | nil
+		end
+		NPort = {Record.adjoinAt State.outPorts.OutPort N NAPort}
+		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
+		{Record.adjoinAt State outPorts NOutPorts}
 	     [] bind(OutPort Comp Name) then NPort NOutPorts in
 		NPort = Comp#Name | State.outPorts.OutPort
+		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
+		{Record.adjoinAt State outPorts NOutPorts}
+	     [] unBound(OutPort#Sub N) then NAPort NPort NOutPorts in
+		NAPort = {Record.subtract State.outPorts.OutPort.Sub N}
+		NPort = {Record.adjoinAt State.outPorts.OutPort Sub NAPort}
 		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
 		{Record.adjoinAt State outPorts NOutPorts}
 	     [] unBound(OutPort N) then NPort NOutPorts in
@@ -270,9 +303,14 @@ define
       }
    end
    fun {OutPorts Out}
-      {Record.foldL Out
-       fun {$ Acc E}
-	  {Record.adjoinAt Acc E nil}
+      {Record.foldLInd Out
+       fun {$ Ind Acc E}
+	  case E
+	  of port then 
+	     {Record.adjoinAt Acc Ind nil}
+	  [] arrayPort then
+	     {Record.adjoinAt Acc Ind arrayPort}
+	  end
        end
        out()
       }

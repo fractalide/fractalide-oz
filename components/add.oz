@@ -10,7 +10,7 @@ define
 				     procedure: proc{$ IP Out NVar State Options}
 						   {Out.output {FoldL IP fun{$ Acc X} Acc+X end 0}}
 						end))
-		   outPorts(output)
+		   outPorts(output:port)
 		   )}
    end
 end

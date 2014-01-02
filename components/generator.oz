@@ -16,7 +16,7 @@ define
    end
    fun {New} Generator in
       Generator = {Comp.new component(
-			       outPorts(output)
+			       outPorts(output:port)
 			       procedures(Proc)
 			       state(cpt:1)
 			       )

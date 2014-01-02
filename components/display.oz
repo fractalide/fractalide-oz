@@ -18,7 +18,7 @@ define
                  port(name:input
                          procedure: FunPort1)
                  )
-                 outPorts(output)
+                 outPorts(output:port)
                  Options
                  )
       }

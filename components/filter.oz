@@ -12,7 +12,7 @@ define
 						 {Out.output IP}
 					      end
 					   end))
-		   outPorts(output)
+		   outPorts(output:port)
 		   )}
    end
 end

@@ -17,7 +17,7 @@ define
 					end
 			    )
 			)
-		     outPorts(out)
+		     outPorts(out:port)
 		     procedures(proc {$ Out NVar State Options}
 				   case NVar.x#NVar.y
 				   of 1#1 then {Out.out 0}

@@ -1,3 +1,2 @@
-gen(generator) output -> input filter(filter) output-> x#1 adder(adderdisp)
-gen2(generator) output -> x#2 adder()
+gen(generator) output -> input filter(filter) output-> x adder(adderdisp)
 "opt(p:fun{$ IP} IP mod 2 == 0 end)" -> options filter()

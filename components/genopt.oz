@@ -8,7 +8,7 @@ define
     fun {CompNewArgs Args} Options in
        Options = {Record.adjoinList options(arg:'') {Record.toListInd Args}}
       {Comp.new comp(
-		   outPorts(output)
+		   outPorts(output:port)
 		   procedures(proc{$ Out NVar State Options}
 				 {Out.output Options.arg}
 			      end)
