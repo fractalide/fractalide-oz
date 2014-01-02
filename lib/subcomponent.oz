@@ -24,6 +24,11 @@ define
 		   {X.1 send(X.2 Msg Ack)}
 		end
 		State
+	     [] bind(OutPort#N Comp Name) then
+		for X in State.outPorts.OutPort do
+		   {X.1 bind(X.2#N Comp Name)}
+		end
+		State
 	     [] bind(OutPort Comp Name) then
 		for X in State.outPorts.OutPort do
 		   {X.1 bind(X.2 Comp Name)}
