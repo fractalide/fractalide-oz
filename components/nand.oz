@@ -6,27 +6,26 @@ export
 define
    fun {NewNand}
       {Comp.new comp(inPorts(
-			port(name: x
+			port(name: a
 			     procedure: proc{$ IP Out NVar State Options}
-					   NVar.x = IP
+					   NVar.a = IP
 					end
 			    )
-			port(name: y
+			port(name: b
 			     procedure: proc{$ IP Out NVar State Options}
-					   NVar.y = IP
+					   NVar.b = IP
 					end
 			    )
 			)
 		     outPorts(out:port)
 		     procedures(proc {$ Out NVar State Options}
-				   case NVar.x#NVar.y
+				   case NVar.a#NVar.b
 				   of 1#1 then {Out.out 0}
 				   else {Out.out 1}
 				   end
 				end)
-		     var(x y)
+		     var(a b)
 		    )
-       
       }
    end
 end

@@ -1,2 +1,2 @@
-x => x nand(nand)
-x => y nand(nand) out => out
+input => a nand(nand)
+input => b nand(nand) out => out

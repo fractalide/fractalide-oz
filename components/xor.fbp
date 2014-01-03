@@ -1,0 +1,4 @@
+a => a nand1(nand) out -> b nand2(nand)
+b => b nand1() out -> a nand3(nand)
+a => a nand2() out -> a nand4(nand)
+b => b nand3() out -> b nand4() out => out
