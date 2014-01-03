@@ -125,20 +125,42 @@ define
       {Rec Xs nil}
    end
    fun {GetComp Graph Xs}
-      TName#G = {GetUntil '(' Xs}
-      Name = {VirtualString.toAtom TName}
-      Type#_ = {GetUntil ')' G}
+      TName G Name Type
    in
+      try
+	 TName#G = {GetUntil '(' Xs}
+	 Name = {VirtualString.toAtom TName}
+	 Type#_ = {GetUntil ')' G}
+      catch not_found(_) then
+	 raise bad_component_declaration({VirtualString.toAtom Xs}) end
+      end
       if {List.member Name {Arity Graph}} then
 	 Name#Graph
       else C TheComp in
+	 if Type == "" then raise type_expected(name:Name) end end
 	 try
-	    [C] = {Module.link ["./components/"#Type#".ozf"]}
-	    TheComp = {C.new}
-	 catch system(module(notFound load _)) then
-	    TheComp = {SubComponent.new "./components/"#Type#".fbp"}
+	    try
+	       [C] = {Module.link ["./components/"#Type#".ozf"]}
+	       TheComp = {C.new}
+	    catch system(module(notFound load _)) then
+	       try
+		  TheComp = {SubComponent.new "./components/"#Type#".fbp"}
+	       catch system(module(notFound load _)) then
+		  raise type_not_found(name:Name type:Type) end
+	       end
+	    end
+	 catch Error then
+	    raise component_not_found(Name Type error:Error) end
 	 end
 	 Name#{Record.adjoinAt Graph Name node(comp:TheComp inPortBinded:nil)}
+      end
+   end
+   fun {GetPort Xs}
+      try
+	 if Xs == bind then raise virtualString_expected_at(Xs) end end
+	 {Compiler.virtualStringToValue Xs}
+      catch Error then
+	 raise unvalid_port(Xs error:Error) end
       end
    end
    fun {BuildGraph Xs}
@@ -150,15 +172,24 @@ define
 	    of assign then
 	       if Xr.2 == nil orelse {Atom.is Xr.2.1} then %It's an output rename
 		  OC OP NName NGraph FGraph
-	       in 
+	       in
 		  OC#NGraph = {GetComp Graph Stack.2.1}
-		  OP = {Compiler.virtualStringToValue Stack.1}
+		  try
+		     OP = {GetPort Stack.1}
+		  catch Error then
+		     raise at_component(OC error:Error) end
+		  end
 		  NName = {VirtualString.toAtom Xr.1}
 		  FGraph = {Record.adjoinAt NGraph outLinks NName#OC#OP|NGraph.outLinks}
 		  {Rec Stack.2.1|nil Xr FGraph}
 	       else IP IC NName NGraph FGraph in% It's an input rename
+		  if Xr.2 == nil then raise missing_element_for_assign(Xs) end end
 		  IC#NGraph = {GetComp Graph Xr.2.1}
-		  IP = {Compiler.virtualStringToValue Xr.1}
+		  try
+		     IP = {GetPort Xr.1}
+		  catch Error then
+		     raise at_component(IC error:Error) end
+		  end
 		  NName = {VirtualString.toAtom Stack.1}
 		  if {Label IP} == '#' then %It's bind to a specific arrayport
 		     {NGraph.IC.comp addinArrayPort(IP.1)}
@@ -167,10 +198,21 @@ define
 		  {Rec Stack.1|nil Xr.2 FGraph}
 	       end
 	    [] bind then OC OP IP IC NGraph FGraph NNode GraphWithNode in
+	       if Stack.1 == nil then raise missing_element_for_bind(output_component_and_output_port) end end
+	       if Stack.2 == nil then raise missing_element_for_bind(output_component_or_output_port Stack.1) end end
 	       OC#NGraph = {GetComp Graph Stack.2.1}
-	       OP = {Compiler.virtualStringToValue Stack.1}
-	       IP = {Compiler.virtualStringToValue Xr.1}
+	       try
+		  OP = {GetPort Stack.1}
+	       catch Error then
+		  raise at_component(OC error:Error) end
+	       end
+	       if Xr.2 == nil then raise missing_element_for_bind(OC OP '->' Xs) end end
 	       IC#FGraph = {GetComp NGraph Xr.2.1}
+	       try
+		  IP = {GetPort Xr.1}
+	       catch X then
+		  raise at_component(IC error:X) end
+	       end
 	       if {Label IP} == '#' then {FGraph.IC.comp addinArrayPort(IP.1)} end
 	       %Bind on the component
 	       {FGraph.OC.comp bind(OP FGraph.IC.comp IP)}
@@ -186,7 +228,11 @@ define
 	       % It's a word inside " or ', then build an optgen component and put it on stack
 	       if X.1 == "\"".1 orelse X.1 == '\"' then Arg Comp Name NGraph in
 		  Arg = {Reverse {Reverse X.2}.2} %remove the brackets
-		  Comp = {GenOpt.newArgs opt(arg:{Compiler.virtualStringToValue Arg})}
+		  try
+		     Comp = {GenOpt.newArgs opt(arg:{Compiler.virtualStringToValue Arg})}
+		  catch _ then
+		     raise unvalid_options(Arg) end
+		  end
 		  Name = {Int.toString {Length Xr}}.1|"GenOPT"
 		  NGraph = {Record.adjoinAt Graph
 			    {VirtualString.toAtom Name}
