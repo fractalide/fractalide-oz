@@ -13,7 +13,7 @@ export
 define
    fun {LoadGraph File}
       F1 = {New Open.file init(name:File flags:[read])}
-      F2 = {F1 read(list:$)}
+      F2 = {F1 read(list:$ size:all)}
       Tokens = {ToToken F2}
       Grouped = {RegroupWords Tokens}
    in

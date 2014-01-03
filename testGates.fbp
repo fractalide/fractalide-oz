@@ -1,1 +1,2 @@
-"[1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 1]" -> input not16(not16) out -> input disp(display)
+"[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]" -> a and16(and16) out -> input disp(display)
+"[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]" -> b and16()
