@@ -150,7 +150,7 @@ define
 	       end
 	    end
 	 catch Error then
-	    raise component_not_found(Name Type error:Error) end
+	    raise component_loading_error(Name Type error:Error) end
 	 end
 	 Name#{Record.adjoinAt Graph Name node(comp:TheComp inPortBinded:nil)}
       end
