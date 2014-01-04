@@ -21,7 +21,7 @@ define
    end
    fun {ToToken Characters}
       fun {PutAtom At Acc}
-	 if Acc.1 == sep then
+	 if Acc \= nil andthen Acc.1 == sep then
 	    At|Acc.2
 	 else
 	    At|Acc
@@ -64,6 +64,8 @@ define
 	       else
 		  {Rec Cr sep|Acc}
 	       end
+	    [] 37 then %  is for "%", a comment
+	       {Rec Cr {PutAtom comment Acc}}
 	    else
 	    %It's a simple character
 	       {Rec Cr C|Acc}
@@ -80,7 +82,18 @@ define
 	    if Word \= nil then {Reverse Word}|Acc
 	    else Acc end
 	 [] X|Xr then
-	    if X \= '(' andthen X \=')' andthen {Atom.is X} then
+	    if X == comment then R in
+	       try
+		  _#R = {GetUntil new_line Xr}
+	       catch not_found(new_line) then
+		  R = nil
+	       end
+	       if Word \= nil then
+		  {Rec nil {Reverse Word}|Acc R}
+	       else
+		  {Rec nil Acc R}
+	       end
+	    elseif X \= '(' andthen X \=')' andthen {Atom.is X} then
 	       if X \= sep then %Remove the sep 
 		  {Rec nil X|{Reverse Word}|Acc Xr}
 	       else
