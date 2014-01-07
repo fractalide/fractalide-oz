@@ -1,2 +1,5 @@
-"[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]" -> a and16(and16) out -> input disp(display)
-"[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]" -> b and16()
+"[1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]" -> a mux4way16(mux16) out -> input disp(display)
+"[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]" -> b mux4way16()
+"[0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0]" -> c mux4way16()
+"[0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1]" -> d mux4way16()
+"[0 0]" -> sel mux4way16()

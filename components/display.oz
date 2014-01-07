@@ -27,5 +27,3 @@ define
       {CompNewArgs r()}
    end
 end
-      
-   
