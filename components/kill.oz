@@ -1,17 +1,10 @@
 functor
 import
-   Comp at '../lib/component.ozf'
-   OS
-export
-   new: CompNewArgs
-define
-   fun {CompNewArgs}
-      {Comp.new comp(
-		   inPorts(arrayPort(name:input
-				     procedure: proc{$ IP Out NVar State Options}
-				     		   {Delay 1000}
-				     		   {OS.kill {OS.getPID} 'SIGINT'}
-						end))
-		   )}
-   end
+    OS
+    Browser
+define A
+    {Browser.browse {OS.getPID}}
+    {OS.kill {OS.getPID} 'SIGTERM' A}
+    {Browser.browse A}
+    {Browser.browse {OS.getPID}}
 end
