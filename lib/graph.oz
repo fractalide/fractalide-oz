@@ -11,12 +11,21 @@ export
    stop: Stop
    getUnBoundPorts: GetUnBoundPorts
 define
-   fun {LoadGraph File}
-      F1 = {New Open.file init(name:File flags:[read])}
-      F2 = {F1 read(list:$ size:all)}
-      Tokens = {ToToken F2}
-      Grouped = {RegroupWords Tokens}
-   in
+   ComponentCache = {NewDictionary}
+   SubComponentCache = {NewDictionary}
+   fun {LoadGraph File} FileAtom Grouped in 
+      FileAtom = {VirtualString.toAtom File}
+      if {Dictionary.member SubComponentCache FileAtom} then
+	 Grouped= SubComponentCache.FileAtom
+      else F1 F2 Tokens in
+	 F1 = {New Open.file init(name:File flags:[read])}
+	 {Wait F1}
+	 F2 = {F1 read(list:$ size:all)}
+	 Tokens = {ToToken F2}
+	 Grouped = {RegroupWords Tokens}
+	 SubComponentCache.FileAtom := Grouped
+      end
+
       {BuildGraph Grouped}
    end
    fun {ToToken Characters}
@@ -138,12 +147,13 @@ define
       {Rec Xs nil}
    end
    fun {GetComp Graph Xs}
-      TName G Name Type
+      TName G Name Type TypeAtom
    in
       try
 	 TName#G = {GetUntil '(' Xs}
 	 Name = {VirtualString.toAtom TName}
 	 Type#_ = {GetUntil ')' G}
+	 TypeAtom = {VirtualString.toAtom Type}
       catch not_found(_) then
 	 raise bad_component_declaration({VirtualString.toAtom Xs}) end
       end
@@ -152,10 +162,19 @@ define
       else C TheComp in
 	 if Type == "" then raise type_expected(name:Name) end end
 	 try
-	    try
-	       [C] = {Module.link ["./components/"#Type#".ozf"]}
-	       TheComp = {C.new}
-	    catch system(module(notFound load _)) then
+	    if {Dictionary.member ComponentCache TypeAtom} then
+	       TheComp = {(ComponentCache.TypeAtom).new}
+	    else
+	       try
+		  [C] = {Module.link ["./components/"#Type#".ozf"]}
+		  {Wait C}
+		  ComponentCache.TypeAtom := C
+		  TheComp = {C.new}
+	       catch system(module(notFound load _)) then
+		  skip
+	       end
+	    end
+	    if {Not {IsDet TheComp}} then
 	       try
 		  TheComp = {SubComponent.new "./components/"#Type#".fbp"}
 	       catch system(module(notFound load _)) then
