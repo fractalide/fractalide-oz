@@ -5,6 +5,10 @@ export
    resetInPort: ResetInPort
    setNameInPort: SetNameInPort
 define
+   /*
+   * NewThread - CTM p382
+   * Thread abstraction with termination detection
+    */
    local
       proc {ZeroExit N Is}
 	 case Is of I|Ir then
@@ -25,13 +29,16 @@ define
 	 {ZeroExit 0 Is}
       end
    end
-   % NewQueue : return a bounded buffer, as presented in CTM book
+   /*
+   * NewQueue : return a bounded buffer, as presented in CTM book
+   * There is a max size, which represent the size of the buffer.
+   */ 
    fun {NewQueue}
       Given GivePort = {NewPort Given}
       Taken TakePort = {NewPort Taken}
       Size = {NewCell 0}
       Buffer = {NewCell nil}
-      Max = 10
+      Max = 20
       proc {Match Xs Ys}
 	 case Xs # Ys
 	 of (X|Xr) # (Y|Yr) then
@@ -63,35 +70,49 @@ define
 		    end
 		 end)
    end
-   % Return a new component. Several messages can be send to it.
-   %% Example of component state
-   % component(inPorts:'in'(
-   %                        name:port(q:AQueue
-   %                                  procedure:AProc
-   %                                  s:_)
-   %                        name2:arrayPort(q:queues(AQueue AnOtherQueue)
-   %                                        procedure:Proc
-   %                                        s:[_])
-   %                       )
-   % outPorts:out(name:port(nil)
-   %              name2:arrayPort(1:nil
-   %                              2:[comp#port comp2#port2])
-   %              ...)
-   % procs:procs(Proc1 Proc2)
-   % var:var(x:_ y:_ z:_)
-   % state:{NewDictionary}
-   % threads:[Thread1 Thread2 Thread3]
-   % options:opt(pre:'x' post:'y'))
+   /*
+   Return a new component. Several messages can be send to it.
+   Example of component state : 
+     component(inPorts:'in'(
+			  name:port(q:AQueue
+				    procedure:AProc
+				    s:_)
+			  name2:arrayPort(q:queues(AQueue AnOtherQueue)
+					  procedure:Proc
+					  s:[_])
+			  )
+	       outPorts:out(name:port(nil)
+			    name2:arrayPort(1:nil
+					    2:[comp#port comp2#port2])
+			    ...)
+	       procs:procs(Proc1 Proc2)
+	       var:var(x:_ y:_ z:_)
+	       state:{NewDictionary}
+	       threads:[Thread1 Thread2 Thread3]
+	       options:opt(pre:'x' post:'y'))
+   
+   */
    fun {NewComponent NewState}
       Stream Point = {NewPort Stream} 
       thread
-	 %Every emssage is deal in this FoldL
+	 %Every messages send to the component is deal in this FoldL
 	 {FoldL Stream
 	  fun {$ State Msg}
-	     % Return true if all inPorts are synchronized. That means every inPorts have received one IP.
-	     % A port that is synchronized is a port that is ready to receive the next IP.
-	     % We see that a port is synchronized when the 's' selection on the port record is determine.
+	     /*
+	     CheckSync - 
+	     Return true if all inPorts are synchronized.
+	     A port that is synchronized if a it's ready to receive the next IP (last execution is terminated).
+             At least one port must have an IP in its buffer.
+			    PRE : State is a record that represent a component
+			    POST : True if the component has terminate the last execution and there is at least one IP in a port buffer,
+			           False otherwise.
+			    
+	     */
 	     fun {CheckSync State}
+		/*
+		PRE : Xs is a list corresponding to the inPorts field of a component record in a list form.
+		POST : return true if all s field is determined, else otherwise
+		*/
 		fun {CheckSyncRec Xs}
 		   case Xs
 		   of nil then true
@@ -108,6 +129,10 @@ define
 		      else false end
 		   end
 		end
+		/*
+		PRE : Threads is a list corresponding to the threads field of a component record
+	        POST : Return true if all the thread are terminated, else otherwise
+		*/						       
 		fun {CheckThread Threads}
 		   fun {Rec Threads}
 		      case Threads
@@ -130,8 +155,14 @@ define
 		T = {CheckThread State.threads}
 		P andthen T
 	     end
-	     % Lauch every procedures for the componenet : inPorts procedures (to deal with single IP) and independant procedures.
-	     % That appends only if all the state are synchronized.
+	     /*
+	     Exec -
+             Launch every procedures for the components : port procedures and independant procedures.
+             PRE : State is record representing a component
+             POST : Return a new state representing the same component, with the new value for the execution.
+		    If the ports are synchronized, The fields that change are the 's' field in inPorts field, the var field, the threads field.
+		    Else, the record is unchanged.
+	     */			      
 	     fun {Exec State} Sync in
 	        % Look for sync
 		Sync = {CheckSync State}
@@ -142,7 +173,7 @@ define
 		   NInPorts = {Record.map State.inPorts fun {$ Port} {Record.adjoinAt Port s _} end}
 		   % Put at undefined the variables that are common to all procedures
 		   NVar = {Record.map State.var fun{$ _} _ end}
-		   % Build a procedure to send IP to the output ports.
+		   % Build a procedure to send IP to the output ports. 
 		   Out = {Record.map State.outPorts
 			  fun {$ Out}
 			     if {Label Out} \= arrayPort then
@@ -183,8 +214,18 @@ define
 						 IPs = {Record.foldR Qs fun{$ E Acc} {E.get}|Acc end nil}
 					      end
 					      {SubThread proc{$}
+							    proc {Rec Stream} S in
+							       {Port.p IPs Out NVar State.state State.options}
+							       case {Label IPs}
+							       of begin then S = Stream+1
+							       [] 'end' then S =  Stream-1
+							       else S = Stream
+							       end
+							       if S \= 0 then {Rec S} end
+							    end
+							 in
 							    T = {Thread.this}
-							    {Port.p IPs Out NVar State.state State.options}
+							    {Rec 0}
 							 end
 					      }
 					      Port.s = IPs
