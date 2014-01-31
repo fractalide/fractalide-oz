@@ -7,13 +7,13 @@ define
    fun {NewNand}
       {Comp.new comp(inPorts(
 			port(name: a
-			     procedure: proc{$ IP Out NVar State Options}
-					   NVar.a = IP
+			     procedure: proc{$ Buffer Out NVar State Options}
+					   NVar.a = {Buffer.get}
 					end
 			    )
 			port(name: b
-			     procedure: proc{$ IP Out NVar State Options}
-					   NVar.b = IP
+			     procedure: proc{$ Buffer Out NVar State Options}
+					   NVar.b = {Buffer.get}
 					end
 			    )
 			)

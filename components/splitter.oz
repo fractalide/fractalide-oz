@@ -6,8 +6,8 @@ export
 define
    fun {NewSplitter}
       {Comp.new comp(inPorts(port(name: input
-				  procedure:   proc {$ IP Out NVar State Options}
-						  {FoldL IP fun {$ Acc IP} {Out.out.Acc IP} Acc+1 end 1 _}
+				  procedure:   proc {$ Buffer Out NVar State Options}
+						  {FoldL {Buffer.get} fun {$ Acc IP} {Out.out.Acc IP} Acc+1 end 1 _}
 					       end
 				 )
 			    )

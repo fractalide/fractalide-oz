@@ -6,9 +6,11 @@ export
 define
    fun {NewConcat}
       {Comp.new comp(inPorts(arrayPort(name: input
-				  procedure:   proc {$ IP Out Nvar State Options}
+				  procedure:   proc {$ Buffers Out Nvar State Options}
 						   %{Out.out {FoldL IP fun{$ Acc X} Acc+X end 0}}
-						   {Out.out IP}
+						  Tab = {Map Buffers fun {$ El} {El.get} end}
+					       in
+						  {Out.out Tab}
 					       end
 				 )
 			    )

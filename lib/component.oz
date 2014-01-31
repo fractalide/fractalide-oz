@@ -32,6 +32,7 @@ define
    /*
    * NewQueue : return a bounded buffer, as presented in CTM book
    * There is a max size, which represent the size of the buffer.
+   * The get operation block the operation if the queue is empty
    */ 
    fun {NewQueue}
       Given GivePort = {NewPort Given}
@@ -43,6 +44,7 @@ define
 	 case Xs # Ys
 	 of (X|Xr) # (Y|Yr) then
 	    X=Y
+	    
 	    {Match Xr Yr}
 	 [] nil # nil then skip
 	 end
@@ -61,6 +63,7 @@ define
 	    get: proc{$ X}
 		    Size := @Size - 1
 		    {Send TakePort X}
+		    {Wait X}
 		    if @Size =< Max andthen @Buffer \= nil then Msg Ack in
 		       Msg#Ack = (@Buffer).1
 		       Buffer := (@Buffer).2
@@ -76,10 +79,10 @@ define
      component(inPorts:'in'(
 			  name:port(q:AQueue
 				    procedure:AProc
-				    s:_)
+				    )
 			  name2:arrayPort(q:queues(AQueue AnOtherQueue)
 					  procedure:Proc
-					  s:[_])
+					  )
 			  )
 	       outPorts:out(name:port(nil)
 			    name2:arrayPort(1:nil
@@ -104,31 +107,11 @@ define
 	     A port that is synchronized if a it's ready to receive the next IP (last execution is terminated).
              At least one port must have an IP in its buffer.
 			    PRE : State is a record that represent a component
-			    POST : True if the component has terminate the last execution and there is at least one IP in a port buffer,
+			    POST : True if the component has terminate the last execution
 			           False otherwise.
 			    
 	     */
 	     fun {CheckSync State}
-		/*
-		PRE : Xs is a list corresponding to the inPorts field of a component record in a list form.
-		POST : return true if all s field is determined, else otherwise
-		*/
-		fun {CheckSyncRec Xs}
-		   case Xs
-		   of nil then true
-		   [] port(q:_ p:_ s:S)|Xr then
-		      if {IsDet S} then {CheckSyncRec Xr}
-		      else false
-		      end
-		   [] arrayPort(qs:_ p:_ s:S)|Xr then OK in
-		      OK = {FoldR S fun{$ X Acc}
-				       if {IsDet X} then Acc
-				       else false end end
-			    true}
-		      if OK then {CheckSyncRec Xr}
-		      else false end
-		   end
-		end
 		/*
 		PRE : Threads is a list corresponding to the threads field of a component record
 	        POST : Return true if all the thread are terminated, else otherwise
@@ -149,11 +132,43 @@ define
 		   if Threads == threads then true
 		   else {Rec Threads} end
 		end
-		P T
 	     in
-		P = {CheckSyncRec {Record.toList State.inPorts}}
-		T = {CheckThread State.threads}
-		P andthen T
+		{CheckThread State.threads}
+	     end
+	     /*
+             PrepareOut -
+             PRE : OutPorts is a record representing the field outPorts of a component record
+             POST : Return a record of procedure. There is a procedure for each outPort which the signature proc {$ Msg}. The Msg is send to each connected component. If the buffer of a receiving component is full, the operation is blocked.
+             */
+	     fun {PrepareOut OutPorts}
+		{Record.map OutPorts
+		 fun {$ Out}
+		    if {Label Out} \= arrayPort then
+		       proc {$ Msg}				
+			  for AOut in Out do C N Ack in 
+			     C#N = AOut
+			     {C send(N Msg Ack)}
+			     {Wait Ack}
+			  end
+		       end
+		    else
+		       {Record.foldLInd Out
+			fun {$ Ind Acc List}
+			   proc {P Msg}
+			      for AOut in List do C N Ack in
+				 C#N = AOut
+				 {C send(N Msg Ack)}
+				 {Wait Ack}
+			      end
+			   end
+			in
+			   {Record.adjoinAt Acc Ind P}
+			end
+			outs
+		       }
+		    end
+		 end
+		}
 	     end
 	     /*
 	     Exec -
@@ -168,67 +183,27 @@ define
 		Sync = {CheckSync State}
 		if {Not Sync} then
 		   State 
-		else NVar NInPorts Out Th1 Th2 SubThread in %All port can receive the next IP
-		   % Restart the sync, the 's' selection is now undefined
-		   NInPorts = {Record.map State.inPorts fun {$ Port} {Record.adjoinAt Port s _} end}
+		else NVar Out Th1 Th2 SubThread in %All port can receive the next IP
 		   % Put at undefined the variables that are common to all procedures
 		   NVar = {Record.map State.var fun{$ _} _ end}
 		   % Build a procedure to send IP to the output ports. 
-		   Out = {Record.map State.outPorts
-			  fun {$ Out}
-			     if {Label Out} \= arrayPort then
-				proc {$ Msg}				
-				   for AOut in Out do C N Ack in 
-				      C#N = AOut
-				      {C send(N Msg Ack)}
-				      {Wait Ack}
-				   end
-				end
-			     else
-				{Record.foldLInd Out
-				 fun {$ Ind Acc List}
-				    proc {P Msg}
-				       for AOut in List do C N Ack in
-					  C#N = AOut
-					  {C send(N Msg Ack)}
-					  {Wait Ack}
-				       end
-				    end
-				 in
-				    {Record.adjoinAt Acc Ind P}
-				 end
-				 outs
-				}
-			     end
-			  end
-			 }
+		   Out = {PrepareOut State.outPorts}
 		   thread
 		      {NewThread proc {$} 
 		                 % Launch every ports procedures, keeping the thread.
-				    Th1 = {Record.foldL NInPorts
+				    Th1 = {Record.foldL State.inPorts
 					   fun {$ Acc Port} IPs T in
 					      case Port
-					      of port(q:Queue p:_ s:_) then
-						 IPs = {Queue.get}
-					      [] arrayPort(qs:Qs p:_ s:_) then
-						 IPs = {Record.foldR Qs fun{$ E Acc} {E.get}|Acc end nil}
+					      of port(q:Queue p:_) then
+						 IPs = Queue
+					      [] arrayPort(qs:Qs p:_) then
+						 IPs = {Record.foldR Qs fun{$ E Acc} E|Acc end nil}
 					      end
 					      {SubThread proc{$}
-							    proc {Rec Stream} S in
-							       {Port.p IPs Out NVar State.state State.options}
-							       case {Label IPs}
-							       of begin then S = Stream+1
-							       [] 'end' then S =  Stream-1
-							       else S = Stream
-							       end
-							       if S \= 0 then {Rec S} end
-							    end
-							 in
 							    T = {Thread.this}
-							    {Rec 0}
+							    {Port.p IPs Out NVar State.state State.options}
 							 end
 					      }
-					      Port.s = IPs
 					      T|Acc
 					   end
 					   nil
@@ -252,7 +227,7 @@ define
 		      end
 		   end
 		   % Return the new state, with the new var record and the new inPorts record.
-		   {Record.adjoinList State [var#NVar inPorts#NInPorts threads#Th2]}
+		   {Record.adjoinList State [var#NVar threads#Th2]}
 		end
 	     end
 	  in
@@ -335,9 +310,9 @@ define
        fun {$ Acc E}
 	  case E
 	  of port(name:N procedure:P) then
-	     {Record.adjoinAt Acc N port(q:{NewQueue} p:P s:nil)}
+	     {Record.adjoinAt Acc N port(q:{NewQueue} p:P)}
 	  [] arrayPort(name:N procedure:P) then
-	     {Record.adjoinAt Acc N arrayPort(qs:queues() p:P s:[nil])}
+	     {Record.adjoinAt Acc N arrayPort(qs:queues() p:P)}
 	  end
        end
        'in'()

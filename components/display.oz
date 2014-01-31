@@ -6,8 +6,9 @@ export
    new: CompNew
    newArgs: CompNewArgs
 define
-   proc {FunPort1 IP Out NVar State Options}
-      {Wait IP}
+   proc {FunPort1 Buffer Out NVar State Options}
+      IP = {Buffer.get}
+   in
       {Browser.browse Options.pre#IP#Options.post}
       {Out.output IP}
    end
