@@ -11,6 +11,7 @@ export
    stop: Stop
    getUnBoundPorts: GetUnBoundPorts
 define
+   Unique = {NewCell 0}
    ComponentCache = {NewDictionary}
    SubComponentCache = {NewDictionary}
    fun {LoadGraph File} FileAtom Grouped in 
@@ -265,7 +266,8 @@ define
 		  catch _ then
 		     raise unvalid_options(Arg) end
 		  end
-		  Name = {Int.toString {Length Xr}}.1|"GenOPT"
+		  Name = {Int.toString @Unique}.1|"GenOPT"
+		  Unique := @Unique+1
 		  NGraph = {Record.adjoinAt Graph
 			    {VirtualString.toAtom Name}
 			    node(comp:Comp inPortBinded:nil)} %The name must be unique

@@ -4,6 +4,21 @@ import
 export
    new: NewSubComponent
 define
+   /*
+   A subcomponent is represented with a record like :.
+   subcomponent(
+      graph:(graph(inLinks:[name#destComp#destPortName name2#destComp2#destPortName2]
+		   destComp:node(comp:<P/1> inPortBinded:[...])
+		   destComp2:node(comp:<P/1> inPortBinded:[...])
+		   outLinks:[name#destComp#destPortName ...]
+		  ))
+      inPorts:inPorts(
+		 a:[<P/1>#a <P/1>#b]
+		 b:[ ... ]
+		 )
+      outPorts:outPorts(
+		  o:[<P/1>#out ...]))
+   */
    fun {NewSubComponent FileName}
       Graph = {GraphModule.loadGraph FileName}
       Stream Point = {NewPort Stream}
@@ -14,15 +29,17 @@ define
 	     of getState(?Resp) then
 		Resp = State
 		State
-	     [] send(InPort#N Msg Ack) then
+	     /*[] send(InPort#N Msg Ack) then
 		for X in State.inPorts.InPort do
 		   {X.1 send(X.2#N Msg Ack)}
 		end
-		State
+		State*/
 	     [] send(InPort Msg Ack) then
-		for X in State.inPorts.InPort do
-		   {X.1 send(X.2 Msg Ack)}
+		for X in State.inPorts.InPort do A=_ in
+		   {X.1 send(X.2 Msg A)}
+		   {Wait A}
 		end
+		Ack = ack
 		State
 	     [] bind(OutPort#N Comp Name) then
 		for X in State.outPorts.OutPort do
