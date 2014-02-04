@@ -132,8 +132,25 @@ define
 		   if Threads == threads then true
 		   else {Rec Threads} end
 		end
+		/*
+		PRE : Opt is a record that represent the options fild of a component record.
+		POST : Return true if all the elements of Opt are binded, else otherwise.
+		*/
+                fun {CheckOpt Opt}
+		   fun {Rec Opts}
+		      case Opts
+		      of nil then true
+		      [] X|Xr then
+			 if {IsDet X} then {Rec Xr}
+			 else false
+			 end
+		      end
+		   end
+		in
+		   {Rec {Record.toList Opt}}
+		end
 	     in
-		{CheckThread State.threads}
+		{CheckThread State.threads} andthen {CheckOpt State.options}
 	     end
 	     /*
              PrepareOut -
@@ -264,10 +281,11 @@ define
 	     [] send(InPort#N Msg Ack) then
 		{State.inPorts.InPort.qs.N.put Msg Ack}
 		{Exec State}
-	     [] send(options Msg Ack) then NOptions in 
+	     [] send(options Msg Ack) then NOptions NState in 
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
 		Ack = ack
-		{Record.adjoinAt State options NOptions}
+		NState = {Record.adjoinAt State options NOptions}
+		{Exec NState}
 	     [] send(InPort Msg Ack) then
 		{State.inPorts.InPort.q.put Msg Ack}
 		{Exec State}

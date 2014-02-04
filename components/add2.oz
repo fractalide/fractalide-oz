@@ -33,10 +33,15 @@ define
 					      NVar.add = {FoldL Buffers fun{$ Acc Buffer} Acc+{AddStream Buffer} end 0}
 					   end))
 		   procedures(proc {$ Out NVar State Options}
-				 {Out.output NVar.mul*NVar.add}
+				 if Options.operation == 'mul' then
+				    {Out.output NVar.mul*NVar.add}
+				 else
+				    {Out.output NVar.mul+NVar.add}
+				 end
 			      end)
 		   outPorts(output:port)
 		   var(mul add)
+		   options(operation:_)
 		   )}
    end
 end
