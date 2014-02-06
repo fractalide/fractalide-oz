@@ -14,6 +14,14 @@ define
    Unique = {NewCell 0}
    ComponentCache = {NewDictionary}
    SubComponentCache = {NewDictionary}
+   /*
+   Return a graph from the specific FBP file.
+   PRE : File is a String representing a path to a FBP file.
+   POST : Return a record containing the nodes, the external links (for the subcomponent).
+          graph(nodes(name1:node(comp:<P/1> inPortBinded:[...]) name2:node(comp:<P/1> inPortBinded:[...]))
+		inLinks:[name#destComp#destPortName name2#destComp2#destPortName2]
+		outLinks:[name#destComp#destPortName ...])
+   */
    fun {LoadGraph File} FileAtom Grouped in 
       FileAtom = {VirtualString.toAtom File}
       if {Dictionary.member SubComponentCache FileAtom} then
@@ -29,6 +37,23 @@ define
 
       {BuildGraph Grouped}
    end
+   /*
+   Pre : Characters is a list of charactersrepresented in their string value ("a", "3", ...).
+   Post : Some character or group of characters are replaced by a atom. This is a loosing operation because some atom are not repeated twice.
+	  Return a list of character and atoms.
+	  |-----------+----------|
+          | character | atom     |
+          |-----------+----------|
+          | "\n"      | new_line |
+          | ","       | new_line |
+          | "->"      | bind     |
+          | "=>"      | assign   |
+          | "("       | (        |
+          | ")"       | )        |
+          | " "       | sep      |
+          | "%"       | comment  |
+          |-----------+----------|
+   */
    fun {ToToken Characters}
       fun {PutAtom At Acc}
 	 if Acc \= nil andthen Acc.1 == sep then
@@ -85,6 +110,12 @@ define
    in 
       {Reverse {Rec Characters nil}}
    end
+   /*
+   Pre : Xs is a list of characters and words.
+   Post :  Return a list where some groups of characters are regrouped in list.
+           The words are regrouped using the atom as delimiter, except for the '(' and ')' tokens.
+           All the characters between " or ' to -> are considered one word.
+   */
    fun {RegroupWords Xs}
       fun {Rec Word Acc Xs}
 	 case Xs
@@ -120,6 +151,11 @@ define
    in
       {Reverse {Rec nil nil Xs}}
    end
+   /*
+   Pre : Xs is a list of characters or groups of characters, Token is an atom that is use as delimiter.
+   Post : A tuple is return. The first value is all the character or groups of characters found until the token (exclude). 
+          The second value is the rest of the list (the first value and the token are removed)
+   */
    fun {GetUntil Token Xs}
       fun {Rec Xs Acc}
 	 if Xs ==  nil then raise not_found(Token) end
@@ -147,6 +183,13 @@ define
    in
       {Rec Xs nil}
    end
+   /*
+   Pre: Graph is a record like the one in the first comment (the record we want to return at final)
+        Xs is a list of characters representing a component : Name(Type), where Type is optional.
+   Post : Return a tuple. The first value is a atom representing a name.
+          The second value is the graph where in the field node then in the field name, we have the component.
+	  The Graph is perhaps changed (a component is added).
+   */
    fun {GetComp Graph Xs}
       TName G Name Type TypeAtom
    in
@@ -188,6 +231,10 @@ define
 	 Name#{Record.adjoinAt Graph Name node(comp:TheComp inPortBinded:nil)}
       end
    end
+   /*
+   pre : Xs is a list of characters
+   post : return a value corresponding to the list of characters
+   */
    fun {GetPort Xs}
       try
 	 if Xs == bind then raise virtualString_expected_at(Xs) end end
@@ -196,6 +243,10 @@ define
 	 raise unvalid_port(Xs error:Error) end
       end
    end
+   /*
+   pre: Xs is a list of characters, group of characters (list) and atoms
+   post : return a record representing a FBP graph as describe in the first comment
+   */
    fun {BuildGraph Xs}
       fun {Rec Stack Xs Graph}
 	 case Xs

@@ -133,7 +133,7 @@ define
 		   else {Rec Threads} end
 		end
 		/*
-		PRE : Opt is a record that represent the options fild of a component record.
+		PRE : Opt is a record that represent the options field of a component record.
 		POST : Return true if all the elements of Opt are binded, else otherwise.
 		*/
                 fun {CheckOpt Opt}
