@@ -18,7 +18,7 @@ define
    Return a graph from the specific FBP file.
    PRE : File is a String representing a path to a FBP file.
    POST : Return a record containing the nodes, the external links (for the subcomponent).
-          graph(nodes(name1:node(comp:<P/1> inPortBinded:[...]) name2:node(comp:<P/1> inPortBinded:[...]))
+          graph(nodes:nodes(name1:node(comp:<P/1> inPortBinded:[...]) name2:node(comp:<P/1> inPortBinded:[...]))
 		inLinks:[name#destComp#destPortName name2#destComp2#destPortName2]
 		outLinks:[name#destComp#destPortName ...])
    */
@@ -201,9 +201,9 @@ define
       catch not_found(_) then
 	 raise bad_component_declaration({VirtualString.toAtom Xs}) end
       end
-      if {List.member Name {Arity Graph}} then
+      if {List.member Name {Arity Graph.nodes}} then
 	 Name#Graph
-      else C TheComp in
+      else C TheComp NNodes in
 	 if Type == "" then raise type_expected(name:Name) end end
 	 try
 	    if {Dictionary.member ComponentCache TypeAtom} then
@@ -228,7 +228,8 @@ define
 	 catch Error then
 	    raise component_loading_error(Name Type error:Error) end
 	 end
-	 Name#{Record.adjoinAt Graph Name node(comp:TheComp inPortBinded:nil)}
+	 NNodes = {Record.adjoinAt Graph.nodes Name node(comp:TheComp inPortBinded:nil)}
+	 Name#{Record.adjoinAt Graph nodes NNodes}
       end
    end
    /*
@@ -276,12 +277,12 @@ define
 		  end
 		  NName = {VirtualString.toAtom Stack.1}
 		  if {Label IP} == '#' then %It's bind to a specific arrayport
-		     {NGraph.IC.comp addinArrayPort(IP.1)}
+		     {NGraph.nodes.IC.comp addinArrayPort(IP.1)}
 		  end
 		  FGraph = {Record.adjoinAt NGraph inLinks NName#IC#IP|NGraph.inLinks}
 		  {Rec Stack.1|nil Xr.2 FGraph}
 	       end
-	    [] bind then OC OP IP IC NGraph FGraph NNode GraphWithNode in
+	    [] bind then OC OP IP IC NGraph FGraph NNode NNodes GraphWithNode in
 	       if Stack.1 == nil then raise missing_element_for_bind(output_component_and_output_port) end end
 	       if Stack.2 == nil then raise missing_element_for_bind(output_component_or_output_port Stack.1) end end
 	       OC#NGraph = {GetComp Graph Stack.2.1}
@@ -297,12 +298,13 @@ define
 	       catch X then
 		  raise at_component(IC error:X) end
 	       end
-	       if {Label IP} == '#' then {FGraph.IC.comp addinArrayPort(IP.1)} end
+	       if {Label IP} == '#' then {FGraph.nodes.IC.comp addinArrayPort(IP.1)} end
 	       %Bind on the component
-	       {FGraph.OC.comp bind(OP FGraph.IC.comp IP)}
+	       {FGraph.nodes.OC.comp bind(OP FGraph.nodes.IC.comp IP)}
 	       %Bind on the graph
-	       NNode = {Record.adjoinAt FGraph.IC inPortBinded IP|FGraph.IC.inPortBinded}
-	       GraphWithNode = {Record.adjoinAt FGraph IC NNode}
+	       NNode = {Record.adjoinAt FGraph.nodes.IC inPortBinded IP|FGraph.nodes.IC.inPortBinded}
+	       NNodes = {Record.adjoinAt FGraph.nodes IC NNode}
+	       GraphWithNode = {Record.adjoinAt FGraph nodes NNodes}
 	       {Rec nil Xr.2 GraphWithNode}
 	    [] new_line then
 	       {Rec nil Xr Graph}
@@ -310,7 +312,7 @@ define
 	       {Rec Stack Xr Graph}
 	    else
 	       % It's a word inside " or ', then build an optgen component and put it on stack
-	       if X.1 == "\"".1 orelse X.1 == '\"' then Arg Comp Name NGraph in
+	       if X.1 == "\"".1 orelse X.1 == '\"' then Arg Comp Name NNodes NGraph in
 		  Arg = {Reverse {Reverse X.2}.2} %remove the brackets
 		  try
 		     Comp = {GenOpt.newArgs opt(arg:{Compiler.virtualStringToValue Arg})}
@@ -319,9 +321,10 @@ define
 		  end
 		  Name = {Int.toString @Unique}.1|"GenOPT"
 		  Unique := @Unique+1
-		  NGraph = {Record.adjoinAt Graph
+		  NNodes = {Record.adjoinAt Graph.nodes
 			    {VirtualString.toAtom Name}
 			    node(comp:Comp inPortBinded:nil)} %The name must be unique
+		  NGraph = {Record.adjoinAt Graph nodes NNodes}
 		  {Rec output|{Reverse ')'|'('|{Reverse Name}}|nil Xr NGraph}
 	       else
 		  {Rec X|Stack Xr Graph}
@@ -330,10 +333,10 @@ define
 	 end
       end
    in
-      {Rec nil Xs graph(inLinks:nil outLinks:nil)}
+      {Rec nil Xs graph(inLinks:nil outLinks:nil nodes:nodes())}
    end
    proc {Start Graph}
-      {Record.forAllInd Graph
+      {Record.forAllInd Graph.nodes
        proc {$ Ind Comp} State in
 	  if Ind \= inLinks andthen Ind \= outLinks then % Due to inLinks and outLinks
 	     {Comp.comp getState(State)}
@@ -345,7 +348,7 @@ define
       }
    end
    proc {Stop Graph}
-      {Record.forAllInd Graph
+      {Record.forAllInd Graph.nodes
        proc {$ Ind Comp} State in
 	  if Ind \= inLinks andthen Ind \= outLinks then
 	     {Comp.comp getState(State)}
@@ -368,7 +371,7 @@ define
       Out = {NewCell nil}
       In = {NewCell nil}
    in
-      {Record.forAllInd Graph
+      {Record.forAllInd Graph.nodes
        proc {$ Name node(comp:Comp inPortBinded:Binded)} State in
 	  {Comp getState(State)}
 	  {Record.forAllInd State.outPorts

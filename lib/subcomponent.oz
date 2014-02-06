@@ -85,9 +85,9 @@ define
       InPorts = {FoldL G.inLinks
 		 fun {$ Acc Name#CompName#PortName}
 		    if {List.member Name {Arity Acc}} then
-		       {Record.adjoinAt Acc Name G.CompName.comp#PortName|Acc.Name}
+		       {Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|Acc.Name}
 		    else
-		       {Record.adjoinAt Acc Name G.CompName.comp#PortName|nil}
+		       {Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|nil}
 		    end
 		 end
 		 inPorts
@@ -95,9 +95,9 @@ define
       OutPorts = {FoldL G.outLinks
 		  fun {$ Acc Name#CompName#PortName}
 		     if {List.member Name {Arity Acc}} then
-			{Record.adjoinAt Acc Name G.CompName.com#PortName|Acc.Name}
+			{Record.adjoinAt Acc Name G.nodes.CompName.com#PortName|Acc.Name}
 		     else
-			{Record.adjoinAt Acc Name G.CompName.comp#PortName|nil}
+			{Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|nil}
 		     end
 		  end
 		  outPorts
