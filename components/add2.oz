@@ -10,28 +10,26 @@ define
    fun {CompNewArgs}
       {Comp.new comp(
 		   inPorts(
-		      port(name:mul
-			   procedure: proc{$ Buf Out NVar State Options}
-					 NVar.mul = {Buf.get}
-				      end)
-		      arrayPort(name:add
-				procedure: proc{$ Buffers Out NVar State Options}
-					      fun {AddStream Buffer}
-						 fun {AddStreamRec Acc} IP in
-						    IP = {Buffer.get}
-						    case IP
-						    of begin then {AddStreamRec 0}
-						    [] 'end' then Acc
-						    else
-						       thread {AddStreamRec IP+Acc} end
-						    end
-						 end
-					      in
-						 thread {AddStreamRec 0} end
-					      end
-					   in
-					      NVar.add = {FoldL Buffers fun{$ Acc Buffer} Acc+{AddStream Buffer} end 0}
-					   end))
+		      mul: proc{$ Buf Out NVar State Options}
+			      NVar.mul = {Buf.get}
+			   end)
+		   inArrayPorts(add: proc{$ Buffers Out NVar State Options}
+				     fun {AddStream Buffer}
+					fun {AddStreamRec Acc} IP in
+					   IP = {Buffer.get}
+					   case IP
+					   of begin then {AddStreamRec 0}
+					   [] 'end' then Acc
+					   else
+					      thread {AddStreamRec IP+Acc} end
+					   end
+					end
+				     in
+					thread {AddStreamRec 0} end
+				     end
+				  in
+				     NVar.add = {FoldL Buffers fun{$ Acc Buffer} Acc+{AddStream Buffer} end 0}
+				  end)
 		   procedures(proc {$ Out NVar State Options}
 				 if Options.operation == 'mul' then
 				    {Out.output NVar.mul*NVar.add}
@@ -39,7 +37,7 @@ define
 				    {Out.output NVar.mul+NVar.add}
 				 end
 			      end)
-		   outPorts(output:port)
+		   outPorts(output)
 		   var(mul add)
 		   options(operation:_)
 		   )}

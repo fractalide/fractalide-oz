@@ -6,18 +6,14 @@ export
 define
    fun {NewNand}
       {Comp.new comp(inPorts(
-			port(name: a
-			     procedure: proc{$ Buffer Out NVar State Options}
-					   NVar.a = {Buffer.get}
-					end
-			    )
-			port(name: b
-			     procedure: proc{$ Buffer Out NVar State Options}
-					   NVar.b = {Buffer.get}
-					end
-			    )
+			a: proc{$ Buffer Out NVar State Options}
+			      NVar.a = {Buffer.get}
+			   end
+			b: proc{$ Buffer Out NVar State Options}
+			      NVar.b = {Buffer.get}
+			   end
 			)
-		     outPorts(out:port)
+		     outPorts(out)
 		     procedures(proc {$ Out NVar State Options}
 				   case NVar.a#NVar.b
 				   of 1#1 then {Out.out 0}

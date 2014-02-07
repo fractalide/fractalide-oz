@@ -15,13 +15,10 @@ define
    fun {CompNewArgs Args} Options in
       Options = {Record.adjoinList options(pre:'' post:'') {Record.toListInd Args}}
       {Comp.new comp(
-                 inPorts(
-                 port(name:input
-                         procedure: FunPort1)
-                 )
-                 outPorts(output:port)
-                 Options
-                 )
+		   inPorts(input: FunPort1)
+		   outPorts(output)
+		   Options
+		   )
       }
    end
    fun {CompNew}

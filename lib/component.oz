@@ -84,7 +84,7 @@ define
 					  procedure:Proc
 					  )
 			  )
-	       outPorts:out(name:port(nil)
+	       outPorts:out(name:nil
 			    name2:arrayPort(1:nil
 					    2:[comp#port comp2#port2])
 			    ...)
@@ -324,29 +324,35 @@ define
    end
    %% Functions to build a new component
    fun {InPorts In}
-      {Record.foldL In
-       fun {$ Acc E}
-	  case E
-	  of port(name:N procedure:P) then
-	     {Record.adjoinAt Acc N port(q:{NewQueue} p:P)}
-	  [] arrayPort(name:N procedure:P) then
-	     {Record.adjoinAt Acc N arrayPort(qs:queues() p:P)}
-	  end
+      {Record.foldLInd In
+       fun {$ Name Acc Proc}
+	  {Record.adjoinAt Acc Name port(q:{NewQueue} p:Proc)}
        end
        'in'()
       }
    end
+   fun {InArrayPorts In}
+      {Record.foldLInd In
+       fun {$ Name Acc Proc}
+	  {Record.adjoinAt Acc Name arrayPort(qs:queues() p:Proc)}
+       end
+       'arrayIn'()
+      }
+   end
    fun {OutPorts Out}
-      {Record.foldLInd Out
-       fun {$ Ind Acc E}
-	  case E
-	  of port then 
-	     {Record.adjoinAt Acc Ind nil}
-	  [] arrayPort then
-	     {Record.adjoinAt Acc Ind arrayPort}
-	  end
+      {Record.foldL Out
+       fun {$ Acc E}
+	  {Record.adjoinAt Acc E nil}
        end
        out()
+      }
+   end
+   fun {OutArrayPorts Out}
+      {Record.foldL Out
+       fun {$ Acc E}
+	  {Record.adjoinAt Acc E arrayPort()}
+       end
+       arrayOut()
       }
    end
    fun {Var Vars}
@@ -370,8 +376,10 @@ define
       {Record.foldL GivenRecord
        fun {$ S Rec}
 	  case {Record.label Rec}
-	  of inPorts then {Record.adjoinAt S inPorts {InPorts Rec}}
-	  [] outPorts then {Record.adjoinAt S outPorts {OutPorts Rec}}
+	  of inPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InPorts Rec}}}
+	  [] inArrayPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InArrayPorts Rec}}}
+	  [] outPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutPorts Rec}}}
+	  [] outArrayPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutArrayPorts Rec}}}
 	  [] procedures then {Record.adjoinAt S procs Rec}
 	  [] var then {Record.adjoinAt S var {Var Rec}}
 	  [] state then {Record.adjoinAt S state {NState Rec}}
