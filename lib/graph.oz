@@ -14,7 +14,7 @@ define
    Unique = {NewCell 0}
    ComponentCache = {NewDictionary}
    SubComponentCache = {NewDictionary}
-   /*
+   /*Comments
    Return a graph from the specific FBP file.
    PRE : File is a String representing a path to a FBP file.
    POST : Return a record containing the nodes, the external links (for the subcomponent).
@@ -233,13 +233,32 @@ define
       end
    end
    /*
+   pre : Xs is a list of character representing a name port
+   post : return a list of character, where the name is surround by "'". The name is from the first character to the optional "#" or the end of the list.
+   */
+   fun {SurroundNamePort Xs}
+      fun {Rec Xs Acc}
+	 case Xs
+	 of nil then "'".1|Acc
+	 [] X|Xr then 
+	    if X == "#".1 then
+	       {List.append {Reverse Xr} X|"'".1|Acc}
+	    else
+	       {Rec Xr X|Acc}
+	    end
+	 end
+      end
+   in
+      {Reverse {Rec Xs "'".1|nil}}
+   end
+   /*
    pre : Xs is a list of characters
    post : return a value corresponding to the list of characters
    */
    fun {GetPort Xs}
       try
 	 if Xs == bind then raise virtualString_expected_at(Xs) end end
-	 {Compiler.virtualStringToValue Xs}
+	 {Compiler.virtualStringToValue {SurroundNamePort Xs}}
       catch Error then
 	 raise unvalid_port(Xs error:Error) end
       end
@@ -325,7 +344,7 @@ define
 			    {VirtualString.toAtom Name}
 			    node(comp:Comp inPortBinded:nil)} %The name must be unique
 		  NGraph = {Record.adjoinAt Graph nodes NNodes}
-		  {Rec output|{Reverse ')'|'('|{Reverse Name}}|nil Xr NGraph}
+		  {Rec "output"|{Reverse ')'|'('|{Reverse Name}}|nil Xr NGraph}
 	       else
 		  {Rec X|Stack Xr Graph}
 	       end
