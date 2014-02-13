@@ -76,7 +76,10 @@ define
    /*
    Return a new component. Several messages can be send to it.
    Example of component state : 
-     component(inPorts:'in'(
+     component(name: aName
+	       type: aType
+	       description: "the description and documentation of the component"
+	       inPorts:'in'(
 			  name:port(q:AQueue
 				    procedure:AProc
 				    )
@@ -371,23 +374,31 @@ define
       D
    end
    fun {NewState GivenRecord}
-      DefaultState in
-      DefaultState = component(inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt())
-      {Record.foldL GivenRecord
-       fun {$ S Rec}
-	  case {Record.label Rec}
-	  of inPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InPorts Rec}}}
-	  [] inArrayPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InArrayPorts Rec}}}
-	  [] outPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutPorts Rec}}}
-	  [] outArrayPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutArrayPorts Rec}}}
-	  [] procedures then {Record.adjoinAt S procs Rec}
-	  [] var then {Record.adjoinAt S var {Var Rec}}
-	  [] state then {Record.adjoinAt S state {NState Rec}}
-	  [] options then {Record.adjoinAt S options Rec}
-	  end
-       end
-       DefaultState
-      }
+      DefaultState NState in
+      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt())
+      NState = {Record.foldLInd GivenRecord
+		fun {$ Ind S Rec}
+		   case {Record.label Rec}
+		   of inPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InPorts Rec}}}
+		   [] inArrayPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InArrayPorts Rec}}}
+		   [] outPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutPorts Rec}}}
+		   [] outArrayPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutArrayPorts Rec}}}
+		   [] procedures then {Record.adjoinAt S procs Rec}
+		   [] var then {Record.adjoinAt S var {Var Rec}}
+		   [] state then {Record.adjoinAt S state {NState Rec}}
+		   [] options then {Record.adjoinAt S options Rec}
+		   else
+		      if Ind == name then {Record.adjoinAt S name Rec}
+		      elseif Ind == type then {Record.adjoinAt S type Rec}
+		      elseif Ind == description then {Record.adjoinAt S description Rec}
+		      else raise unknown_arg(Ind Rec S) end end
+		   end
+		end
+		DefaultState
+	       }
+      if {Not {IsDet NState.name}} then raise component_name_not_defined(NState) end end
+      if {Not {IsDet NState.type}} then raise component_type_not_defined(NState) end end
+      NState
    end
    fun {NewStateComponent ARecord}
       {NewComponent {NewState ARecord}}

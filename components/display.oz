@@ -12,16 +12,17 @@ define
       {Browser.browse Options.pre#IP#Options.post}
       {Out.output IP}
    end
-   fun {CompNewArgs Args} Options in
+   fun {CompNewArgs Name Args} Options in
       Options = {Record.adjoinList options(pre:'' post:'') {Record.toListInd Args}}
-      {Comp.new comp(
+      {Comp.new comp(description:"Display Option.pre#IP#Option.post and send the IP on the output port"
+		   name:Name type:display
 		   inPorts(input: FunPort1)
 		   outPorts(output)
 		   Options
 		   )
       }
    end
-   fun {CompNew}
-      {CompNewArgs r()}
+   fun {CompNew Name}
+      {CompNewArgs Name r()}
    end
 end

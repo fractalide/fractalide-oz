@@ -19,7 +19,7 @@ define
       outPorts:outPorts(
 		  o:[<P/1>#out ...]))
    */
-   fun {NewSubComponent FileName}
+   fun {NewSubComponent Name Type FileName}
       Graph = {GraphModule.loadGraph FileName}
       Stream Point = {NewPort Stream}
       thread
@@ -74,14 +74,14 @@ define
 		{Record.adjoinAt State outPorts {Rename State.outPorts OName NName}}
 	     end
 	  end
-	  {Init Graph}
+	  {Init Name Type Graph}
 	  _
 	 }
       end
    in
       proc {$ Msg} {Send Point Msg} end
    end
-   fun {Init G}
+   fun {Init Name Type G}
       InPorts = {FoldL G.inLinks
 		 fun {$ Acc Name#CompName#PortName}
 		    if {List.member Name {Arity Acc}} then
@@ -103,7 +103,7 @@ define
 		  outPorts
 		  }
    in
-      subcomponent(inPorts:InPorts outPorts:OutPorts graph:G)
+      subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPorts graph:G)
    end
    fun {Rename Rec OName NName} Temp in
       Temp = {Record.adjoinAt Rec NName Rec.OName}

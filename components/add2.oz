@@ -7,8 +7,9 @@ import
 export
    new: CompNewArgs
 define
-   fun {CompNewArgs}
+   fun {CompNewArgs Name}
       {Comp.new comp(
+		   name:Name type:add2
 		   inPorts(
 		      mul: proc{$ Buf Out NVar State Options}
 			      NVar.mul = {Buf.get}

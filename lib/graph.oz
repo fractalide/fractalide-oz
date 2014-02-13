@@ -207,20 +207,20 @@ define
 	 if Type == "" then raise type_expected(name:Name) end end
 	 try
 	    if {Dictionary.member ComponentCache TypeAtom} then
-	       TheComp = {(ComponentCache.TypeAtom).new}
+	       TheComp = {(ComponentCache.TypeAtom).new Name}
 	    else
 	       try
 		  [C] = {Module.link ["./components/"#Type#".ozf"]}
 		  {Wait C}
 		  ComponentCache.TypeAtom := C
-		  TheComp = {C.new}
+		  TheComp = {C.new Name}
 	       catch system(module(notFound load _)) then
 		  skip
 	       end
 	    end
 	    if {Not {IsDet TheComp}} then
 	       try
-		  TheComp = {SubComponent.new "./components/"#Type#".fbp"}
+		  TheComp = {SubComponent.new Name TypeAtom "./components/"#Type#".fbp"}
 	       catch system(module(notFound load _)) then
 		  raise type_not_found(name:Name type:Type) end
 	       end
@@ -333,13 +333,13 @@ define
 	       % It's a word inside " or ', then build an optgen component and put it on stack
 	       if X.1 == "\"".1 orelse X.1 == '\"' then Arg Comp Name NNodes NGraph in
 		  Arg = {Reverse {Reverse X.2}.2} %remove the brackets
-		  try
-		     Comp = {GenOpt.newArgs opt(arg:{Compiler.virtualStringToValue Arg})}
-		  catch _ then
-		     raise unvalid_options(Arg) end
-		  end
 		  Name = {Int.toString @Unique}.1|"GenOPT"
 		  Unique := @Unique+1
+		  try
+		     Comp = {GenOpt.newArgs {VirtualString.toAtom Name} opt(arg:{Compiler.virtualStringToValue Arg})}
+		  catch Error then
+		     raise unvalid_options(Error Arg) end
+		  end
 		  NNodes = {Record.adjoinAt Graph.nodes
 			    {VirtualString.toAtom Name}
 			    node(comp:Comp inPortBinded:nil)} %The name must be unique

@@ -4,8 +4,9 @@ import
 export
    new: NewNand
 define
-   fun {NewNand}
-      {Comp.new comp(inPorts(
+   fun {NewNand Name}
+      {Comp.new comp(name:Name type:nand
+		     inPorts(
 			a: proc{$ Buffer Out NVar State Options}
 			      NVar.a = {Buffer.get}
 			   end
