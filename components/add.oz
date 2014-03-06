@@ -4,13 +4,12 @@ import
 export
    new: CompNewArgs
 define
-   fun {CompNewArgs}
-      {Comp.new comp(
-		   inPorts(arrayPort(name:input
-				     procedure: proc{$ IP Out NVar State Options}
-						   {Out.output {FoldL IP fun{$ Acc X} Acc+X end 0}}
-						end))
-		   outPorts(output:port)
+   fun {CompNewArgs Name}
+      {Comp.new comp(name:Name tpye:add
+		     inArrayPorts(input: proc{$ IP Out NVar State Options}
+					    {Out.output {FoldL IP fun{$ Acc X} Acc+X end 0}}
+					 end)
+		     outPorts(output)
 		   )}
    end
 end

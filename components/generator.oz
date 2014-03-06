@@ -14,9 +14,10 @@ define
    in
       {Rec}
    end
-   fun {New} Generator in
+   fun {New Name} Generator in
       Generator = {Comp.new component(
-			       outPorts(output:port)
+			       name: Name type:generator
+			       outPorts(output)
 			       procedures(Proc)
 			       state(cpt:1)
 			       )

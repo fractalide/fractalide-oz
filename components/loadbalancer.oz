@@ -11,13 +11,11 @@ define
       {Out.output.Num IP}
       State.cpt := Num
    end
-   fun {CompNew}
+   fun {CompNew Name}
       {Comp.new comp(
-		   inPorts(
-		      port(name:input
-			   procedure: FunPort1)
-		      )
-		   outPorts(output:arrayPort)
+		   name:Name type:loadbalancer
+		   inPorts(input: FunPort1)
+		   outPorts(output)
 		   state(cpt:0)
 		   )
       }
