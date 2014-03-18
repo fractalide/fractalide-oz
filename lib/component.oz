@@ -99,7 +99,42 @@ define
    
    */
    fun {NewComponent NewState}
-      Stream Point = {NewPort Stream} 
+      Stream Point = {NewPort Stream}
+      /*
+      PrepareOut -
+      PRE : OutPorts is a record representing the field outPorts of a component record
+      POST : Return a record of procedure. There is a procedure for each outPort which the signature proc {$ Msg}. The Msg is send to each connected component. If the buffer of a receiving component is full, the operation is blocked.
+      */
+      fun {PrepareOut OutPorts}
+	 {Record.map OutPorts
+	  fun {$ Out}
+	     if {Label Out} \= arrayPort then
+		proc {$ Msg}				
+		   for AOut in Out do C N Ack in 
+		      C#N = AOut
+		      {C send(N Msg Ack)}
+		      {Wait Ack}
+		   end
+		end
+	     else
+		{Record.foldLInd Out
+		 fun {$ Ind Acc List}
+		    proc {P Msg}
+		       for AOut in List do C N Ack in
+			  C#N = AOut
+			  {C send(N Msg Ack)}
+			  {Wait Ack}
+		       end
+		    end
+		 in
+		    {Record.adjoinAt Acc Ind P}
+		 end
+		 outs
+		}
+	     end
+	  end
+	 }
+      end
       thread
 	 %Every messages send to the component is deal in this FoldL
 	 {FoldL Stream
@@ -154,41 +189,6 @@ define
 		end
 	     in
 		{CheckThread State.threads} andthen {CheckOpt State.options}
-	     end
-	     /*
-             PrepareOut -
-             PRE : OutPorts is a record representing the field outPorts of a component record
-             POST : Return a record of procedure. There is a procedure for each outPort which the signature proc {$ Msg}. The Msg is send to each connected component. If the buffer of a receiving component is full, the operation is blocked.
-             */
-	     fun {PrepareOut OutPorts}
-		{Record.map OutPorts
-		 fun {$ Out}
-		    if {Label Out} \= arrayPort then
-		       proc {$ Msg}				
-			  for AOut in Out do C N Ack in 
-			     C#N = AOut
-			     {C send(N Msg Ack)}
-			     {Wait Ack}
-			  end
-		       end
-		    else
-		       {Record.foldLInd Out
-			fun {$ Ind Acc List}
-			   proc {P Msg}
-			      for AOut in List do C N Ack in
-				 C#N = AOut
-				 {C send(N Msg Ack)}
-				 {Wait Ack}
-			      end
-			   end
-			in
-			   {Record.adjoinAt Acc Ind P}
-			end
-			outs
-		       }
-		    end
-		 end
-		}
 	     end
 	     /*
 	     Exec -
@@ -256,7 +256,13 @@ define
 	     % Operation on the component
 	     of getState(?R) then R=State State
 	     [] changeState(NState) then NState
-	     [] start then {Exec State}
+	     [] start then
+		% Launch the ui procedure if it's an init element
+		if State.ui \= ui(none) andthen State.ui.init then POut in
+		   POut = {PrepareOut State.outPorts}
+		   thread {State.ui.procedure POut State.options} end
+		end
+		{Exec State}
 	     [] stop then
 		for T in State.threads do
 		   if {Thread.state T} \= terminated then
@@ -289,6 +295,11 @@ define
 		Ack = ack
 		NState = {Record.adjoinAt State options NOptions}
 		{Exec NState}
+	     [] send(ui_create_in Msg Ack) then POut in
+		POut = {PrepareOut State.outPorts}
+		{State.ui.procedure Msg POut State.options}
+		Ack = ack
+		State
 	     [] send(InPort Msg Ack) then
 		{State.inPorts.InPort.q.put Msg Ack}
 		{Exec State}
@@ -375,7 +386,7 @@ define
    end
    fun {NewState GivenRecord}
       DefaultState NState in
-      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt())
+      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt() ui:ui(none))
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
 		   case {Record.label Rec}
@@ -387,6 +398,7 @@ define
 		   [] var then {Record.adjoinAt S var {Var Rec}}
 		   [] state then {Record.adjoinAt S state {NState Rec}}
 		   [] options then {Record.adjoinAt S options Rec}
+		   [] ui then {Record.adjoinAt S ui {Record.adjoin ui(init:false) Rec}}
 		   else
 		      if Ind == name then {Record.adjoinAt S name Rec}
 		      elseif Ind == type then {Record.adjoinAt S type Rec}
