@@ -257,12 +257,18 @@ define
 	     of getState(?R) then R=State State
 	     [] changeState(NState) then NState
 	     [] start then
+		if {Width State.inPorts} == 0 then
+		   {Exec State}
+		else
+		   State
+		end
+	     [] startUI then
 		% Launch the ui procedure if it's an init element
 		if State.ui \= ui(none) andthen State.ui.init then POut in
 		   POut = {PrepareOut State.outPorts}
-		   thread {State.ui.procedure POut State.options} end
+		   thread {State.ui.procedure Point POut State.options State.state} end
 		end
-		{Exec State}
+		State
 	     [] stop then
 		for T in State.threads do
 		   if {Thread.state T} \= terminated then
@@ -276,10 +282,8 @@ define
 	     [] getOutPort(Port ?R) then
 		R=State.outPorts.Port
 		State
-	     [] addinArrayPort(Port) then NPort NInPorts NextId Ar in
-		Ar = {Arity State.inPorts.Port.qs}
-		NextId = if Ar == nil then 1 else {List.last Ar}+1 end
-		NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs NextId {NewQueue}}}
+	     [] addinArrayPort(Port Index) then NPort NInPorts in
+		NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue}}}
 		NInPorts = {Record.adjoinAt State.inPorts Port NPort}
 		{Record.adjoinAt State inPorts NInPorts}
 	     [] changeProcPort(Port Proc) then NPort NInPorts in

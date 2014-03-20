@@ -8,6 +8,7 @@ import
 export
    loadGraph: LoadGraph
    start: Start
+   startUI: StartUI
    stop: Stop
    getUnBoundPorts: GetUnBoundPorts
 define
@@ -296,7 +297,7 @@ define
 		  end
 		  NName = {VirtualString.toAtom Stack.1}
 		  if {Label IP} == '#' then %It's bind to a specific arrayport
-		     {NGraph.nodes.IC.comp addinArrayPort(IP.1)}
+		     {NGraph.nodes.IC.comp addinArrayPort(IP.1 IP.2)}
 		  end
 		  FGraph = {Record.adjoinAt NGraph inLinks NName#IC#IP|NGraph.inLinks}
 		  {Rec Stack.1|nil Xr.2 FGraph}
@@ -317,7 +318,7 @@ define
 	       catch X then
 		  raise at_component(IC error:X) end
 	       end
-	       if {Label IP} == '#' then {FGraph.nodes.IC.comp addinArrayPort(IP.1)} end
+	       if {Label IP} == '#' then {FGraph.nodes.IC.comp addinArrayPort(IP.1 IP.2)} end
 	       %Bind on the component
 	       {FGraph.nodes.OC.comp bind(OP FGraph.nodes.IC.comp IP)}
 	       %Bind on the graph
@@ -355,15 +356,15 @@ define
       {Rec nil Xs graph(inLinks:nil outLinks:nil nodes:nodes())}
    end
    proc {Start Graph}
-      {Record.forAllInd Graph.nodes
-       proc {$ Ind Comp} State in
-	  if Ind \= inLinks andthen Ind \= outLinks then % Due to inLinks and outLinks
-	     {Comp.comp getState(State)}
-	     if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
-		{Comp.comp start}
-	     end
-	  end
+      {Record.forAll Graph.nodes
+       proc {$ Comp}
+	     {Comp.comp start}
        end
+      }
+   end
+   proc {StartUI Graph}
+      {Record.forAll Graph.nodes
+       proc {$ Comp} {Comp.comp startUI} end
       }
    end
    proc {Stop Graph}

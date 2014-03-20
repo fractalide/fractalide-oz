@@ -41,6 +41,7 @@ define
 		   outPorts(output)
 		   var(mul add)
 		   options(operation:_)
+		   ui(procedure:fun {$} 1 end)
 		   )}
    end
 end

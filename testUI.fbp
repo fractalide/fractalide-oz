@@ -1,0 +1,25 @@
+% First two buttons
+testButton(button) ui_create_out -> ui_create_in#1 lr(lr) ui_create_out -> ui_create_in#1 td(td)
+t2Button(text) ui_create_out -> ui_create_in#2 lr()
+
+% Close button
+closeButton(button) ui_create_out -> ui_create_in#2 td() ui_create_out -> ui_create_in win(window)
+
+% Links for unhandled events
+testButton() events_out_default -> ui_event lr() 
+t2Button() events_out_default -> ui_event lr()
+lr() events_out_default -> ui_event td()
+closeButton() events_out_default -> ui_event td()
+td() events_out_default -> ui_event win()
+win() events_out_default -> input dispDefault(display)
+
+% Intercept envents
+testButton() events_out#button_clicked -> input get1(string) out -> ui_event t2Button() events_out#get1 -> input dispEvent(display)
+"opt(text:set([115 97 108 117 116]))" -> options get1()
+
+% Some options
+"opt(pre:'default ')" -> options dispDefault()
+"opt(pre:'specific ')" -> options dispEvent()
+"opt(text:'test 1')" -> options testButton()
+"opt(text:'test 2')" -> options t2Button()
+"opt(text:'close')" -> options closeButton()

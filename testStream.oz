@@ -6,8 +6,8 @@ import
 define
    A = {Adder.new adder}
    D = {Display.new display}
-   {A addinArrayPort(add)}
-   {A addinArrayPort(add)}
+   {A addinArrayPort(add 1)}
+   {A addinArrayPort(add 2)}
    {A bind(output D input)}
 
    

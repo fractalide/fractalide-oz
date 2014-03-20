@@ -1,4 +1,3 @@
-x => input#1 adder(add) output -> input disp(display) output => out
-x => input#2 adder()
-x => input#3 adder()
-"opt(pre:'the sum is ')" -> options disp()
+ui_create_in => input uitd(uitopdown) out -> ui_create_in simple(simpleui) ui_create_out => events_out_default
+ui_event => ui_event simple() events_out_default => event_out_default
+simple() events_out => events_out

@@ -29,11 +29,11 @@ define
 	     of getState(?Resp) then
 		Resp = State
 		State
-	     /*[] send(InPort#N Msg Ack) then
+	     [] send(InPort#N Msg Ack) then
 		for X in State.inPorts.InPort do
 		   {X.1 send(X.2#N Msg Ack)}
 		end
-		State*/
+		State
 	     [] send(InPort Msg Ack) then
 		for X in State.inPorts.InPort do A=_ in
 		   {X.1 send(X.2 Msg A)}
@@ -56,13 +56,16 @@ define
 		   {X.1 unbound(X.2 N)}
 		end
 		State
-	     [] addinArrayPort(Port) then
+	     [] addinArrayPort(Port Index) then
 		for X in State.inPorts.Port do
-		   {X.1 addinArrayPort(X.2)}
+		   {X.1 addinArrayPort(X.2 Index)}
 		end
 		State
 	     [] start then
 		{GraphModule.start State.graph}
+		State
+	     [] startUI then
+		{GraphModule.startUI State.graph}
 		State
 	     [] stop then
 		{GraphModule.stop State.graph}
