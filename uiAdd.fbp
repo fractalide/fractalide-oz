@@ -1,20 +1,20 @@
 % First step : two fields
 f1(text) ui_create_out -> ui_create_in#1 lr(lr)
-f1() events_out_default -> ui_event lr()
+f1() events_out_default -> events lr()
 f2(text) ui_create_out -> ui_create_in#2 lr()
-f2() events_out_default -> ui_event lr()
+f2() events_out_default -> events lr()
 
 % second step : lr, Button and result field
 lr() ui_create_out -> ui_create_in#1 td(td)
-lr() events_out_default -> ui_event td()
+lr() events_out_default -> events td()
 calcButton(button) ui_create_out -> ui_create_in#2 td()
-calcButton() events_out_default -> ui_event td()
+calcButton() events_out_default -> events td()
 fResult(text) ui_create_out -> ui_create_in#3 td()
-fResult() events_out_default -> ui_event td()
+fResult() events_out_default -> events td()
 
 % Third step td to widnow
 td() ui_create_out -> ui_create_in win(window)
-td() events_out_default -> ui_event win()
+td() events_out_default -> events win()
 win() events_out_default -> input dispDefault(display)
 
 % size of field
@@ -24,14 +24,15 @@ win() events_out_default -> input dispDefault(display)
 
 % Logic
 % Button to get
-calcButton() events_out#button_clicked -> input get1(string) out -> ui_event f1()
-get1() out -> ui_event f2()
+calcButton() events_out#button_clicked -> input get1(string) out -> events f1()
+get1() out -> events f2()
 "opt(text:get(getAdd))" -> options get1()
 % Field to logicAdd
-f1() events_out#getAdd -> input#1 add(add) output -> input setAdd(string) out -> ui_event fResult()
+f1() events_out#getAdd -> input#1 add(add) output -> input setAdd(string) out -> events fResult()
 f2() events_out#getAdd -> input#2 add() 
 "opt(text:set)" -> options setAdd()
 
 % Some options
 "opt(pre:'default ')" -> options dispDefault()
 "opt(text:'calc')" -> options calcButton()
+"opt(title:'Calculator')" -> options win()

@@ -18,7 +18,7 @@ define
       {Comp.new comp(
 		   name:Name type:button
 		   inPorts(
-		      ui_event: proc{$ Buf Out NVar State Options}
+		      events: proc{$ Buf Out NVar State Options}
 				   {SendOut Out {Buf.get}}
 				end
 		      )
@@ -29,7 +29,7 @@ define
 				   {Out.ui_create_out
 				    {Record.adjoin Options
 				     button(text:Options.text
-					    action: proc{$} {Send Point send(ui_event button_clicked(Options.text) _)} end
+					    action: proc{$} {Send Point send(events button_clicked(Options.text) _)} end
 					   )
 				    }}
 				end

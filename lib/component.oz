@@ -71,7 +71,8 @@ define
 		       {Send GivePort Msg}
 		       Ack = ack
 		    end
-		 end)
+		 end
+	   size : fun{$} @Size end)
    end
    /*
    Return a new component. Several messages can be send to it.
@@ -135,6 +136,59 @@ define
 	  end
 	 }
       end
+      /*
+      PRE : Opt is a record that represent the options field of a component record.
+      POST : Return true if all the elements of Opt are binded, else otherwise.
+      */
+      fun {CheckOpt Opt}
+	 fun {Rec Opts}
+	    case Opts
+	    of nil then true
+	    [] X|Xr then
+	       if {IsDet X} then {Rec Xr}
+	       else false
+	       end
+	    end
+	 end
+      in
+	 {Rec {Record.toList Opt}}
+      end
+      /*
+      PRE :
+      POST :
+      */
+      fun {CheckBuffers Bufs}
+	 fun {CheckListB Buffers}
+	    fun {Rec Ls}
+	       case Ls
+	       of nil then true
+	       [] L|Lr then
+		  if {L.size} > 0 then {Rec Lr}
+		  else false
+		  end
+	       end
+	    end
+	 in
+	    {Rec Buffers}
+	 end
+	 fun {RecCB Bs}
+	    case Bs
+	    of nil then true
+	    [] B|Br then
+	       if {Label B} == port then
+		  if {B.q.size} > 0 then {RecCB Br}
+		  else false
+		  end
+	       else
+		  if {CheckListB {Record.toList B.qs}} then {RecCB Br}
+		  else false
+		  end
+	       end
+	    end
+	 end
+      in
+	 {RecCB Bufs}
+      end
       thread
 	 %Every messages send to the component is deal in this FoldL
 	 {FoldL Stream
@@ -170,23 +224,6 @@ define
 		   if Threads == threads then true
 		   else {Rec Threads} end
 		end
-		/*
-		PRE : Opt is a record that represent the options field of a component record.
-		POST : Return true if all the elements of Opt are binded, else otherwise.
-		*/
-                fun {CheckOpt Opt}
-		   fun {Rec Opts}
-		      case Opts
-		      of nil then true
-		      [] X|Xr then
-			 if {IsDet X} then {Rec Xr}
-			 else false
-			 end
-		      end
-		   end
-		in
-		   {Rec {Record.toList Opt}}
-		end
 	     in
 		{CheckThread State.threads} andthen {CheckOpt State.options}
 	     end
@@ -202,7 +239,7 @@ define
 	        % Look for sync
 		Sync = {CheckSync State}
 		if {Not Sync} then
-		   State 
+		   {Record.adjoinAt State start true}
 		else NVar Out Th1 Th2 SubThread in %All port can receive the next IP
 		   % Put at undefined the variables that are common to all procedures
 		   NVar = {Record.map State.var fun{$ _} _ end}
@@ -243,11 +280,11 @@ define
 				 end
 		       SubThread }
 		      if {Record.width State.inPorts} > 0 then
-			 {Send Point start}
+			 {Send Point exec} %Restart
 		      end
 		   end
 		   % Return the new state, with the new var record and the new inPorts record.
-		   {Record.adjoinList State [var#NVar threads#Th2]}
+		   {Record.adjoinList State [var#NVar threads#Th2 start#false]}
 		end
 	     end
 	  in
@@ -262,13 +299,19 @@ define
 		else
 		   State
 		end
+	     [] exec then
+		if {CheckBuffers {Record.toList State.inPorts}} then {Exec State} else State end
 	     [] startUI then
-		% Launch the ui procedure if it's an init element
-		if State.ui \= ui(none) andthen State.ui.init then POut in
-		   POut = {PrepareOut State.outPorts}
-		   thread {State.ui.procedure Point POut State.options State.state} end
+		if {Not {CheckOpt State.options}} then
+		   {Record.adjoinAt State startUI true}
+		else
+                    % Launch the ui procedure if it's an init element and there is all options
+		    if State.ui \= ui(none) andthen State.ui.init then POut in
+		       POut = {PrepareOut State.outPorts}
+		       thread {State.ui.procedure Point POut State.options State.state} end
+		    end
+		    {Record.adjoinAt State startUI false}
 		end
-		State
 	     [] stop then
 		for T in State.threads do
 		   if {Thread.state T} \= terminated then
@@ -298,10 +341,15 @@ define
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
 		Ack = ack
 		NState = {Record.adjoinAt State options NOptions}
-		{Exec NState}
+		if {CheckOpt NOptions} then
+		   if State.startUI then {Send Point startUI} end
+		   if State.start then {Exec NState} else NState end
+		else
+		   NState
+		end
 	     [] send(ui_create_in Msg Ack) then POut in
 		POut = {PrepareOut State.outPorts}
-		{State.ui.procedure Msg POut State.options}
+		{State.ui.procedure Msg POut State.options State.state}
 		Ack = ack
 		State
 	     [] send(InPort Msg Ack) then
@@ -381,7 +429,7 @@ define
        var()
       }
    end
-   fun {NState St} D in
+   fun {BuildNState St} D in
       D = {NewDictionary}
       {Record.forAllInd St
        proc {$ N V} D.N := V end
@@ -390,7 +438,7 @@ define
    end
    fun {NewState GivenRecord}
       DefaultState NState in
-      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt() ui:ui(none))
+      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt() ui:ui(none) start:false startUI:false)
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
 		   case {Record.label Rec}
@@ -400,7 +448,7 @@ define
 		   [] outArrayPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutArrayPorts Rec}}}
 		   [] procedures then {Record.adjoinAt S procs Rec}
 		   [] var then {Record.adjoinAt S var {Var Rec}}
-		   [] state then {Record.adjoinAt S state {NState Rec}}
+		   [] state then {Record.adjoinAt S state {BuildNState Rec}}
 		   [] options then {Record.adjoinAt S options Rec}
 		   [] ui then {Record.adjoinAt S ui {Record.adjoin ui(init:false) Rec}}
 		   else

@@ -18,14 +18,14 @@ define
       {Comp.new comp(
 		   name:Name type:topdown
 		   inPorts(
-		      ui_event: proc{$ Buf Out NVar State Options}
+		      events: proc{$ Buf Out NVar State Options}
 				   {SendOut Out {Buf.get}}
 				end
 		      )
 		   outPorts(events_out_default ui_create_out)
 		   outArrayPorts(events_out)
 		   options()
-		   ui(procedure:proc {$ Msg Out Options}
+		   ui(procedure:proc {$ Msg Out Options State}
 				   {Out.ui_create_out {Record.adjoin Options Msg}}
 				end
 		      )

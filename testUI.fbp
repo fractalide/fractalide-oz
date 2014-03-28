@@ -6,15 +6,15 @@ t2Button(text) ui_create_out -> ui_create_in#2 lr()
 closeButton(button) ui_create_out -> ui_create_in#2 td() ui_create_out -> ui_create_in win(window)
 
 % Links for unhandled events
-testButton() events_out_default -> ui_event lr() 
-t2Button() events_out_default -> ui_event lr()
-lr() events_out_default -> ui_event td()
-closeButton() events_out_default -> ui_event td()
-td() events_out_default -> ui_event win()
+testButton() events_out_default -> events lr() 
+t2Button() events_out_default -> events lr()
+lr() events_out_default -> events td()
+closeButton() events_out_default -> events td()
+td() events_out_default -> events win()
 win() events_out_default -> input dispDefault(display)
 
 % Intercept envents
-testButton() events_out#button_clicked -> input get1(string) out -> ui_event t2Button() events_out#get1 -> input dispEvent(display)
+testButton() events_out#button_clicked -> input get1(string) out -> events t2Button() events_out#get1 -> input dispEvent(display)
 "opt(text:set([115 97 108 117 116]))" -> options get1()
 
 % Some options

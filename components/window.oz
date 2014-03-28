@@ -19,15 +19,23 @@ define
       {Comp.new comp(
 		   name:Name type:window
 		   inPorts(
-		      ui_event: proc{$ Buf Out NVar State Options}
-				   {SendOut Out {Buf.get}}
+		      events: proc{$ Buf Out NVar State Options} Msg in
+				   Msg = {Buf.get}
+				   case Msg
+				   of close then
+				      {State.topLevel close}
+				   else
+				      {SendOut Out {Buf.get}}
+				   end
 				end
 		      )
 		   outPorts(events_out_default ui_create_out)
 		   outArrayPorts(events_out)
 		   options()
-		   ui(procedure:proc {$ Msg Out Options}
-				   {{Qtk.build Msg} show}
+		   ui(procedure:proc {$ Msg Out Options State}
+				   State.topLevel := {Qtk.build Msg}
+				   {State.topLevel show}
+				   {State.topLevel {Record.adjoin Options set}}
 				end
 		      )
 		   )}

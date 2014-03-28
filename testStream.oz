@@ -9,7 +9,6 @@ define
    {A addinArrayPort(add 1)}
    {A addinArrayPort(add 2)}
    {A bind(output D input)}
-
    
    {A send(mul 1 _)}
    {A send(mul 2 _)}

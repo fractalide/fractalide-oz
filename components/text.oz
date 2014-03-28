@@ -8,7 +8,8 @@ export
    new: CompNewArgs
 define
    proc {SendOut OutPorts Event}
-      if {List.member {Label Event} {Arity OutPorts.events_out}} then
+      if
+	 {List.member {Label Event} {Arity OutPorts.events_out}} then
 	 {OutPorts.events_out.{Label Event} Event}
       else
 	 {OutPorts.events_out_default Event}
@@ -18,7 +19,7 @@ define
       {Comp.new comp(
 		   name:Name type:button
 		   inPorts(
-		      ui_event: proc{$ Buf Out NVar State Options} Event in
+		      events: proc{$ Buf Out NVar State Options} Event in
 				   Event = {Buf.get}
 				   case {Label Event}
 				   of set then
