@@ -1,0 +1,27 @@
+declare
+[GraphM] = {Module.link ["./lib/graph.ozf"]}
+G = {GraphM.loadGraph "uiAdd.fbp"}
+{GraphM.start G}
+{Delay 100}
+{GraphM.startUI G}
+
+{G.nodes.add.comp changeProcPort(input
+				 proc{$ IP Out NVar State Options}
+				    {Delay 5000}
+			       {Out.output {FoldL IP
+					    fun{$ Acc X} E I in
+					       E = {X.get}.1
+					       if {String.isInt E} then
+						  I = {String.toInt E}
+					       else
+						  I = 0
+					       end
+					       Acc*I
+					    end
+					    1}}
+			    end)}
+
+
+{Browse G}
+
+{G.nodes.win.comp send(events close _)}
