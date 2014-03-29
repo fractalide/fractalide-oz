@@ -1,6 +1,6 @@
 functor
 import
-   Comp at '../lib/component.ozf'
+   Comp at '../../lib/component.ozf'
 export
    new: NewConcat
 define
@@ -11,7 +11,7 @@ define
 						   fun {$ Acc El}
 						      {Record.adjoinAt Acc {Width Acc}+1 {El.get}}
 						   end
-						   lr()
+						   td()
 						  }
 					 in
 					    {Out.out Tab}

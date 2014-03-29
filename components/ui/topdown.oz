@@ -3,8 +3,7 @@ Add all the elements of streams received in the arrayPort, and multiply the resu
 */
 functor
 import
-   Comp at '../lib/component.ozf'
-   Qtk at 'x-oz://system/wp/QTk.ozf'
+   Comp at '../../lib/component.ozf'
 export
    new: CompNewArgs
 define
@@ -17,25 +16,17 @@ define
    end
    fun {CompNewArgs Name}
       {Comp.new comp(
-		   name:Name type:window
+		   name:Name type:topdown
 		   inPorts(
-		      events: proc{$ Buf Out NVar State Options} Msg in
-				   Msg = {Buf.get}
-				   case Msg
-				   of close then
-				      {State.topLevel close}
-				   else
-				      {SendOut Out {Buf.get}}
-				   end
+		      ui_event: proc{$ Buf Out NVar State Options}
+				   {SendOut Out {Buf.get}}
 				end
 		      )
 		   outPorts(events_out_default ui_create_out)
 		   outArrayPorts(events_out)
 		   options()
-		   ui(procedure:proc {$ Msg Out Options State}
-				   State.topLevel := {Qtk.build Msg}
-				   {State.topLevel show}
-				   {State.topLevel {Record.adjoin Options set}}
+		   ui(procedure:proc {$ Msg Out Options}
+				   {Out.ui_create_out Msg}
 				end
 		      )
 		   )}

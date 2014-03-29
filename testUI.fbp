@@ -1,9 +1,9 @@
 % First two buttons
-testButton(button) ui_create_out -> ui_create_in#1 lr(lr) ui_create_out -> ui_create_in#1 td(td)
-t2Button(text) ui_create_out -> ui_create_in#2 lr()
+testButton(ui/button) ui_create_out -> ui_create_in#1 lr(ui/lr) ui_create_out -> ui_create_in#1 td(ui/td)
+t2Button(ui/text) ui_create_out -> ui_create_in#2 lr()
 
 % Close button
-closeButton(button) ui_create_out -> ui_create_in#2 td() ui_create_out -> ui_create_in win(window)
+closeButton(ui/button) ui_create_out -> ui_create_in#2 td() ui_create_out -> ui_create_in win(ui/window)
 
 % Links for unhandled events
 testButton() events_out_default -> events lr() 

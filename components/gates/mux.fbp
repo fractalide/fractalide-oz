@@ -1,0 +1,4 @@
+a => a and1(gates/and) out -> a or(gates/or) out => out
+b => a and2(gates/and) out -> b or()
+sel => input not(gates/not) out -> b and1()
+sel => b and2()

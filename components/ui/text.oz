@@ -3,7 +3,7 @@ Add all the elements of streams received in the arrayPort, and multiply the resu
 */
 functor
 import
-   Comp at '../lib/component.ozf'
+   Comp at '../../lib/component.ozf'
 export
    new: CompNewArgs
 define

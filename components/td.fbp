@@ -1,3 +1,0 @@
-ui_create_in => input uitd(uitopdown) out -> ui_create_in simple(simpleui) ui_create_out => ui_create_out
-events => events simple() events_out_default => events_out_default
-simple() events_out => events_out

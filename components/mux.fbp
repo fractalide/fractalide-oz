@@ -1,4 +1,0 @@
-a => a and1(and) out -> a or(or) out => out
-b => a and2(and) out -> b or()
-sel => input not(not) out -> b and1()
-sel => b and2()

@@ -1,0 +1,2 @@
+input => a nand(gates/nand)
+input => b nand(gates/nand) out => out

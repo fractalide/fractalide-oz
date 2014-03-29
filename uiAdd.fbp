@@ -1,19 +1,19 @@
 % First step : two fields
-f1(text) ui_create_out -> ui_create_in#1 lr(lr)
+f1(ui/text) ui_create_out -> ui_create_in#1 lr(ui/lr)
 f1() events_out_default -> events lr()
-f2(text) ui_create_out -> ui_create_in#2 lr()
+f2(ui/text) ui_create_out -> ui_create_in#2 lr()
 f2() events_out_default -> events lr()
 
 % second step : lr, Button and result field
-lr() ui_create_out -> ui_create_in#1 td(td)
+lr() ui_create_out -> ui_create_in#1 td(ui/td)
 lr() events_out_default -> events td()
-calcButton(button) ui_create_out -> ui_create_in#2 td()
+calcButton(ui/button) ui_create_out -> ui_create_in#2 td()
 calcButton() events_out_default -> events td()
-fResult(text) ui_create_out -> ui_create_in#3 td()
+fResult(ui/text) ui_create_out -> ui_create_in#3 td()
 fResult() events_out_default -> events td()
 
 % Third step td to widnow
-td() ui_create_out -> ui_create_in win(window)
+td() ui_create_out -> ui_create_in win(ui/window)
 td() events_out_default -> events win()
 win() events_out_default -> input dispDefault(display)
 

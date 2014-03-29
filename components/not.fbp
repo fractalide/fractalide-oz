@@ -1,2 +1,0 @@
-input => a nand(nand)
-input => b nand(nand) out => out

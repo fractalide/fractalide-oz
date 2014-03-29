@@ -1,6 +1,6 @@
 functor
 import
-   Comp at '../lib/component.ozf'
+   Comp at '../../lib/component.ozf'
 export
    new: NewNand
 define

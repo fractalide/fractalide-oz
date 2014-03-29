@@ -1,0 +1,2 @@
+a => input not1(gates/not) out -> a nand(gates/nand)
+b => input not2(gates/not) out -> b nand() out => out

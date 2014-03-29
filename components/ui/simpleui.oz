@@ -3,7 +3,7 @@ Add all the elements of streams received in the arrayPort, and multiply the resu
 */
 functor
 import
-   Comp at '../lib/component.ozf'
+   Comp at '../../lib/component.ozf'
 export
    new: CompNewArgs
 define
@@ -16,7 +16,7 @@ define
    end
    fun {CompNewArgs Name}
       {Comp.new comp(
-		   name:Name type:button
+		   name:Name type:topdown
 		   inPorts(
 		      events: proc{$ Buf Out NVar State Options}
 				   {SendOut Out {Buf.get}}
@@ -24,16 +24,11 @@ define
 		      )
 		   outPorts(events_out_default ui_create_out)
 		   outArrayPorts(events_out)
-		   options(text:default)
-		   ui(procedure:proc {$ Point Out Options State}
-				   {Out.ui_create_out
-				    {Record.adjoin Options
-				     button(text:Options.text
-					    action: proc{$} {Send Point send(events button_clicked(Options.text) _)} end
-					   )
-				    }}
+		   options()
+		   ui(procedure:proc {$ Msg Out Options State}
+				   {Out.ui_create_out {Record.adjoin Options Msg}}
 				end
-		      init:true)
+		      )
 		   )}
    end
 end
