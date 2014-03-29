@@ -6,6 +6,8 @@ import
    Comp at '../../lib/component.ozf'
 export
    new: CompNewArgs
+   newSpec: CompNewGen
+   sendOut: SendOut
 define
    proc {SendOut OutPorts Event}
       if {List.member {Label Event} {Arity OutPorts.events_out}} then
@@ -14,21 +16,28 @@ define
 	 {OutPorts.events_out_default Event}
       end
    end
-   fun {CompNewArgs Name}
+   fun {CompNewGen Name Spec}
+      UI = ui(procedure:proc {$ Msg Out Options State}
+			   {Out.ui_create_out {Record.adjoin Options Msg}}
+			end
+	     )
+      Proc = proc{$ Buf Out NVar State Options}
+		{SendOut Out {Buf.get}}
+	     end
+      Rec = {Record.adjoin spec(ui:UI procedure:Proc) Spec}
+   in
       {Comp.new comp(
 		   name:Name type:topdown
 		   inPorts(
-		      events: proc{$ Buf Out NVar State Options}
-				   {SendOut Out {Buf.get}}
-				end
+		      events: Rec.procedure
 		      )
 		   outPorts(events_out_default ui_create_out)
 		   outArrayPorts(events_out)
 		   options()
-		   ui(procedure:proc {$ Msg Out Options State}
-				   {Out.ui_create_out {Record.adjoin Options Msg}}
-				end
-		      )
+		   Rec.ui
 		   )}
+   end
+   fun {CompNewArgs Name}
+      {CompNewGen Name spec}
    end
 end
