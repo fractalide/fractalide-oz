@@ -1,3 +1,7 @@
-ui_create_in => input uitd(ui/uileftright) out -> ui_create_in simple(ui/simpleui) ui_create_out => ui_create_out
-events => events simple() events_out_default => events_out_default
-simple() events_out => events_out
+ui => ui lc(ui/lrCreate) uo => uo
+lc() eo -> events sui(ui/simpleui)
+lc() opt -> options sui()
+sui() eo => eo
+sui() e => e
+events => events sui()
+options => options sui()

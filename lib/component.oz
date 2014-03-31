@@ -239,7 +239,7 @@ define
 	        % Look for sync
 		Sync = {CheckSync State}
 		if {Not Sync} then
-		   {Record.adjoinAt State start true}
+		   State
 		else NVar Out Th1 Th2 SubThread in %All port can receive the next IP
 		   % Put at undefined the variables that are common to all procedures
 		   NVar = {Record.map State.var fun{$ _} _ end}
@@ -284,7 +284,7 @@ define
 		      end
 		   end
 		   % Return the new state, with the new var record and the new inPorts record.
-		   {Record.adjoinList State [var#NVar threads#Th2 start#false]}
+		   {Record.adjoinList State [var#NVar threads#Th2]}
 		end
 	     end
 	  in
@@ -301,17 +301,6 @@ define
 		end
 	     [] exec then
 		if {CheckBuffers {Record.toList State.inPorts}} then {Exec State} else State end
-	     [] startUI then
-		if {Not {CheckOpt State.options}} then
-		   {Record.adjoinAt State startUI true}
-		else
-                    % Launch the ui procedure if it's an init element and there is all options
-		    if State.ui \= ui(none) andthen State.ui.init then POut in
-		       POut = {PrepareOut State.outPorts}
-		       thread {State.ui.procedure Point POut State.options State.state} end
-		    end
-		    {Record.adjoinAt State startUI false}
-		end
 	     [] stop then
 		for T in State.threads do
 		   if {Thread.state T} \= terminated then
@@ -341,17 +330,7 @@ define
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
 		Ack = ack
 		NState = {Record.adjoinAt State options NOptions}
-		if {CheckOpt NOptions} then
-		   if State.startUI then {Send Point startUI} end
-		   if State.start then {Exec NState} else NState end
-		else
-		   NState
-		end
-	     [] send(ui_create_in Msg Ack) then POut in
-		POut = {PrepareOut State.outPorts}
-		{State.ui.procedure Msg POut State.options State.state}
-		Ack = ack
-		State
+		if {CheckBuffers {Record.toList NState.inPorts}} then {Exec NState} else NState end
 	     [] send(InPort Msg Ack) then
 		{State.inPorts.InPort.q.put Msg Ack}
 		{Exec State}
@@ -438,7 +417,7 @@ define
    end
    fun {NewState GivenRecord}
       DefaultState NState in
-      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt() ui:ui(none) start:false startUI:false)
+      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt())
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
 		   case {Record.label Rec}
@@ -450,7 +429,6 @@ define
 		   [] var then {Record.adjoinAt S var {Var Rec}}
 		   [] state then {Record.adjoinAt S state {BuildNState Rec}}
 		   [] options then {Record.adjoinAt S options Rec}
-		   [] ui then {Record.adjoinAt S ui {Record.adjoin ui(init:false) Rec}}
 		   else
 		      if Ind == name then {Record.adjoinAt S name Rec}
 		      elseif Ind == type then {Record.adjoinAt S type Rec}

@@ -1,0 +1,38 @@
+% First step : two fields
+f1(ui/text) uo -> ui#1 lr(ui/lr)
+f1() eo -> events lr()
+f2(ui/text) uo -> ui#2 lr()
+f2() eo -> events lr()
+
+% Second step : lr, button and result field
+lr() uo -> ui#1 td(ui/td)
+lr() eo -> events td()
+calcButton(ui/button) uo -> ui#2 td()
+calcButton() eo -> events td()
+fResult(ui/text) uo -> ui#3 td()
+fResult() eo -> events td()
+
+% Third step : td to window
+td() uo -> ui win(ui/window)
+td() eo -> input dispDefault(display)
+
+% Logic
+% Button to get
+calcButton() e#button_clicked -> input get1(string) out -> events f1()
+get1() out -> events f2()
+"opt(text:get(getAdd))" -> options get1()
+% Field to logicAdd
+f1() e#getAdd -> input#1 add(add) output -> input setAdd(string) out -> events fResult()
+f2() e#getAdd -> input#2 add() 
+"opt(text:set)" -> options setAdd()
+
+
+% size of field
+"set(height:1 width:15)" -> events fResult()
+"set(height:1 width:15)" -> events f1()
+"set(height:1 width:15)" -> events f2()
+
+% Some options
+"opt(pre:'default ')" -> options dispDefault()
+"set(text:calc)" -> events calcButton()
+"set(title:'Calculator')" -> events td()

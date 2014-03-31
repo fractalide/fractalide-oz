@@ -8,7 +8,6 @@ import
 export
    loadGraph: LoadGraph
    start: Start
-   startUI: StartUI
    stop: Stop
    getUnBoundPorts: GetUnBoundPorts
 define
@@ -360,11 +359,6 @@ define
        proc {$ Comp}
 	     {Comp.comp start}
        end
-      }
-   end
-   proc {StartUI Graph}
-      {Record.forAll Graph.nodes
-       proc {$ Comp} {Comp.comp startUI} end
       }
    end
    proc {Stop Graph}

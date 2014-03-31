@@ -1,6 +1,3 @@
-/*
-Add all the elements of streams received in the arrayPort, and multiply the result by the IP received in mul.
-*/
 functor
 import
    Comp at '../../lib/component.ozf'
@@ -10,34 +7,38 @@ export
    sendOut: SendOut
 define
    proc {SendOut OutPorts Event}
-      if {List.member {Label Event} {Arity OutPorts.events_out}} then
-	 {OutPorts.events_out.{Label Event} Event}
+      if {List.member {Label Event} {Arity OutPorts.e}} then
+	 {OutPorts.e.{Label Event} Event}
       else
-	 {OutPorts.events_out_default Event}
+	 {OutPorts.eo Event}
       end
    end
-   fun {CompNewGen Name Spec}
-      UI = ui(procedure:proc {$ Msg Out Options State}
-			   {Out.ui_create_out {Record.adjoin Options Msg}}
-			end
-	     )
-      Proc = proc{$ Buf Out NVar State Options}
-		{SendOut Out {Buf.get}}
-	     end
-      Rec = {Record.adjoin spec(ui:UI procedure:Proc) Spec}
-   in
+   fun {CompNewGen Name Catch}
       {Comp.new comp(
-		   name:Name type:topdown
+		   name:Name type:simpleui
 		   inPorts(
-		      events: Rec.procedure
-		      )
-		   outPorts(events_out_default ui_create_out)
-		   outArrayPorts(events_out)
-		   options()
-		   Rec.ui
-		   )}
+		      events: proc{$ Buf Out NVar State Options} IP Res in
+				 IP = {Buf.get}
+				 Res = {Catch IP Buf.put Out NVar State Options}
+				 if  {Label Res} == some then
+				    try {Options.handle Res.1}
+				    catch _ then 
+				       {SendOut Out Res.1}
+				    end
+				 end
+			      end
+			  )
+		   outArrayPorts(e)
+		   outPorts(eo)
+		   options(handle:_) 
+		   )
+      }
    end
    fun {CompNewArgs Name}
-      {CompNewGen Name spec}
+      Catch = fun {$ IP BufPut Out NVar State Options}
+		 some(IP)
+	      end
+   in
+      {CompNewGen Name Catch}
    end
 end
