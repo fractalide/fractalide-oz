@@ -1,7 +1,7 @@
 tc(ui/textCreate) uo => uo
-tc() eo -> events tw(ui/textWidget)
+tc() eo -> ei tw(ui/textWidget)
 tc() opt -> options tw()
 tw() eo => eo
-tw() e => e
-events => events tw()
+tw() es => es
+ei => ei tw()
 options => options tw()

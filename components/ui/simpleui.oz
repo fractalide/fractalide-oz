@@ -7,8 +7,8 @@ export
    sendOut: SendOut
 define
    proc {SendOut OutPorts Event}
-      if {List.member {Label Event} {Arity OutPorts.e}} then
-	 {OutPorts.e.{Label Event} Event}
+      if {List.member {Label Event} {Arity OutPorts.es}} then
+	 {OutPorts.es.{Label Event} Event}
       else
 	 {OutPorts.eo Event}
       end
@@ -17,7 +17,7 @@ define
       {Comp.new comp(
 		   name:Name type:simpleui
 		   inPorts(
-		      events: proc{$ Buf Out NVar State Options} IP Res in
+		      ei: proc{$ Buf Out NVar State Options} IP Res in
 				 IP = {Buf.get}
 				 Res = {Catch IP Buf.put Out NVar State Options}
 				 if  {Label Res} == some then
@@ -28,7 +28,7 @@ define
 				 end
 			      end
 			  )
-		   outArrayPorts(e)
+		   outArrayPorts(es)
 		   outPorts(eo)
 		   options(handle:_) 
 		   )
