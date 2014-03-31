@@ -4,12 +4,11 @@ import
    Display at 'components/display.ozf'
    Browser
 define
-   A = {Adder.new}
-   D = {Display.new}
-   {A addinArrayPort(add)}
-   {A addinArrayPort(add)}
+   A = {Adder.new adder}
+   D = {Display.new display}
+   {A addinArrayPort(add 1)}
+   {A addinArrayPort(add 2)}
    {A bind(output D input)}
-
    
    {A send(mul 1 _)}
    {A send(mul 2 _)}
@@ -40,6 +39,5 @@ define
    {A send(add#2 12 _)}
    {A send(add#2 13 _)}
    {A send(add#2 'end' _)}
-
 
 end

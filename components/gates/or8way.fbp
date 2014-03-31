@@ -1,0 +1,8 @@
+a => input split(splitter) out#1 -> a or1(gates/or) out -> a or5(gates/or) out -> a or7(gates/or) out => out
+split() out#2 -> b or1()
+split() out#3 -> a or2(gates/or) out -> b or5()
+split() out#4 -> b or2()
+split() out#5 -> a or3(gates/or) out -> a or6(gates/or) out -> b or7()
+split() out#6 -> b or3()
+split() out#7 -> a or4(gates/or) out -> b or6()
+split() out#8 -> b or4()

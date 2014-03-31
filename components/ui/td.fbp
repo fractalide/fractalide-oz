@@ -1,0 +1,7 @@
+ui => ui tc(ui/tdCreate) uo => uo
+tc() eo -> events sui(ui/simpleui)
+tc() opt -> options sui()
+sui() eo => eo
+sui() e => e
+events => events sui()
+options => options sui()

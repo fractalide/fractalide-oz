@@ -207,20 +207,20 @@ define
 	 if Type == "" then raise type_expected(name:Name) end end
 	 try
 	    if {Dictionary.member ComponentCache TypeAtom} then
-	       TheComp = {(ComponentCache.TypeAtom).new}
+	       TheComp = {(ComponentCache.TypeAtom).new Name}
 	    else
 	       try
 		  [C] = {Module.link ["./components/"#Type#".ozf"]}
 		  {Wait C}
 		  ComponentCache.TypeAtom := C
-		  TheComp = {C.new}
+		  TheComp = {C.new Name}
 	       catch system(module(notFound load _)) then
 		  skip
 	       end
 	    end
 	    if {Not {IsDet TheComp}} then
 	       try
-		  TheComp = {SubComponent.new "./components/"#Type#".fbp"}
+		  TheComp = {SubComponent.new Name TypeAtom "./components/"#Type#".fbp"}
 	       catch system(module(notFound load _)) then
 		  raise type_not_found(name:Name type:Type) end
 	       end
@@ -296,7 +296,7 @@ define
 		  end
 		  NName = {VirtualString.toAtom Stack.1}
 		  if {Label IP} == '#' then %It's bind to a specific arrayport
-		     {NGraph.nodes.IC.comp addinArrayPort(IP.1)}
+		     {NGraph.nodes.IC.comp addinArrayPort(IP.1 IP.2)}
 		  end
 		  FGraph = {Record.adjoinAt NGraph inLinks NName#IC#IP|NGraph.inLinks}
 		  {Rec Stack.1|nil Xr.2 FGraph}
@@ -317,7 +317,7 @@ define
 	       catch X then
 		  raise at_component(IC error:X) end
 	       end
-	       if {Label IP} == '#' then {FGraph.nodes.IC.comp addinArrayPort(IP.1)} end
+	       if {Label IP} == '#' then {FGraph.nodes.IC.comp addinArrayPort(IP.1 IP.2)} end
 	       %Bind on the component
 	       {FGraph.nodes.OC.comp bind(OP FGraph.nodes.IC.comp IP)}
 	       %Bind on the graph
@@ -333,13 +333,13 @@ define
 	       % It's a word inside " or ', then build an optgen component and put it on stack
 	       if X.1 == "\"".1 orelse X.1 == '\"' then Arg Comp Name NNodes NGraph in
 		  Arg = {Reverse {Reverse X.2}.2} %remove the brackets
-		  try
-		     Comp = {GenOpt.newArgs opt(arg:{Compiler.virtualStringToValue Arg})}
-		  catch _ then
-		     raise unvalid_options(Arg) end
-		  end
 		  Name = {Int.toString @Unique}.1|"GenOPT"
 		  Unique := @Unique+1
+		  try
+		     Comp = {GenOpt.newArgs {VirtualString.toAtom Name} opt(arg:{Compiler.virtualStringToValue Arg})}
+		  catch Error then
+		     raise unvalid_options(Error Arg) end
+		  end
 		  NNodes = {Record.adjoinAt Graph.nodes
 			    {VirtualString.toAtom Name}
 			    node(comp:Comp inPortBinded:nil)} %The name must be unique
@@ -355,14 +355,9 @@ define
       {Rec nil Xs graph(inLinks:nil outLinks:nil nodes:nodes())}
    end
    proc {Start Graph}
-      {Record.forAllInd Graph.nodes
-       proc {$ Ind Comp} State in
-	  if Ind \= inLinks andthen Ind \= outLinks then % Due to inLinks and outLinks
-	     {Comp.comp getState(State)}
-	     if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
-		{Comp.comp start}
-	     end
-	  end
+      {Record.forAll Graph.nodes
+       proc {$ Comp}
+	     {Comp.comp start}
        end
       }
    end

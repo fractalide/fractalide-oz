@@ -1,6 +1,0 @@
-lb(genload) out#1 -> input d1(display)
-lb() out#2 -> input d2(display)
-lb() out#3 -> input d3(display)
-"opt(pre:'d1 says ')" -> options d1()
-"opt(pre:'d2 says ')" -> options d2()
-"opt(pre:'d3 says ')" -> options d3()

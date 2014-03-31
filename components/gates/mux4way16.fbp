@@ -1,6 +1,6 @@
-a => a mux161(mux16) out -> a mux163(mux16) out => out
+a => a mux161(gates/mux16) out -> a mux163(gates/mux16) out => out
 b => b mux161()
-c => a mux162(mux16) out -> b mux163()
+c => a mux162(gates/mux16) out -> b mux163()
 d => b mux162()
 sel => input split(splitter) out#2 -> sel mux163()
 split() out#1 -> sel mux161()

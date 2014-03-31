@@ -71,12 +71,16 @@ define
 		       {Send GivePort Msg}
 		       Ack = ack
 		    end
-		 end)
+		 end
+	   size : fun{$} @Size end)
    end
    /*
    Return a new component. Several messages can be send to it.
    Example of component state : 
-     component(inPorts:'in'(
+     component(name: aName
+	       type: aType
+	       description: "the description and documentation of the component"
+	       inPorts:'in'(
 			  name:port(q:AQueue
 				    procedure:AProc
 				    )
@@ -84,7 +88,7 @@ define
 					  procedure:Proc
 					  )
 			  )
-	       outPorts:out(name:port(nil)
+	       outPorts:out(name:nil
 			    name2:arrayPort(1:nil
 					    2:[comp#port comp2#port2])
 			    ...)
@@ -96,7 +100,95 @@ define
    
    */
    fun {NewComponent NewState}
-      Stream Point = {NewPort Stream} 
+      Stream Point = {NewPort Stream}
+      /*
+      PrepareOut -
+      PRE : OutPorts is a record representing the field outPorts of a component record
+      POST : Return a record of procedure. There is a procedure for each outPort which the signature proc {$ Msg}. The Msg is send to each connected component. If the buffer of a receiving component is full, the operation is blocked.
+      */
+      fun {PrepareOut OutPorts}
+	 {Record.map OutPorts
+	  fun {$ Out}
+	     if {Label Out} \= arrayPort then
+		proc {$ Msg}				
+		   for AOut in Out do C N Ack in 
+		      C#N = AOut
+		      {C send(N Msg Ack)}
+		      {Wait Ack}
+		   end
+		end
+	     else
+		{Record.foldLInd Out
+		 fun {$ Ind Acc List}
+		    proc {P Msg}
+		       for AOut in List do C N Ack in
+			  C#N = AOut
+			  {C send(N Msg Ack)}
+			  {Wait Ack}
+		       end
+		    end
+		 in
+		    {Record.adjoinAt Acc Ind P}
+		 end
+		 outs
+		}
+	     end
+	  end
+	 }
+      end
+      /*
+      PRE : Opt is a record that represent the options field of a component record.
+      POST : Return true if all the elements of Opt are binded, else otherwise.
+      */
+      fun {CheckOpt Opt}
+	 fun {Rec Opts}
+	    case Opts
+	    of nil then true
+	    [] X|Xr then
+	       if {IsDet X} then {Rec Xr}
+	       else false
+	       end
+	    end
+	 end
+      in
+	 {Rec {Record.toList Opt}}
+      end
+      /*
+      PRE :
+      POST :
+      */
+      fun {CheckBuffers Bufs}
+	 fun {CheckListB Buffers}
+	    fun {Rec Ls}
+	       case Ls
+	       of nil then true
+	       [] L|Lr then
+		  if {L.size} > 0 then {Rec Lr}
+		  else false
+		  end
+	       end
+	    end
+	 in
+	    {Rec Buffers}
+	 end
+	 fun {RecCB Bs}
+	    case Bs
+	    of nil then true
+	    [] B|Br then
+	       if {Label B} == port then
+		  if {B.q.size} > 0 then {RecCB Br}
+		  else false
+		  end
+	       else
+		  if {CheckListB {Record.toList B.qs}} then {RecCB Br}
+		  else false
+		  end
+	       end
+	    end
+	 end
+      in
+	 {RecCB Bufs}
+      end
       thread
 	 %Every messages send to the component is deal in this FoldL
 	 {FoldL Stream
@@ -132,60 +224,8 @@ define
 		   if Threads == threads then true
 		   else {Rec Threads} end
 		end
-		/*
-		PRE : Opt is a record that represent the options field of a component record.
-		POST : Return true if all the elements of Opt are binded, else otherwise.
-		*/
-                fun {CheckOpt Opt}
-		   fun {Rec Opts}
-		      case Opts
-		      of nil then true
-		      [] X|Xr then
-			 if {IsDet X} then {Rec Xr}
-			 else false
-			 end
-		      end
-		   end
-		in
-		   {Rec {Record.toList Opt}}
-		end
 	     in
 		{CheckThread State.threads} andthen {CheckOpt State.options}
-	     end
-	     /*
-             PrepareOut -
-             PRE : OutPorts is a record representing the field outPorts of a component record
-             POST : Return a record of procedure. There is a procedure for each outPort which the signature proc {$ Msg}. The Msg is send to each connected component. If the buffer of a receiving component is full, the operation is blocked.
-             */
-	     fun {PrepareOut OutPorts}
-		{Record.map OutPorts
-		 fun {$ Out}
-		    if {Label Out} \= arrayPort then
-		       proc {$ Msg}				
-			  for AOut in Out do C N Ack in 
-			     C#N = AOut
-			     {C send(N Msg Ack)}
-			     {Wait Ack}
-			  end
-		       end
-		    else
-		       {Record.foldLInd Out
-			fun {$ Ind Acc List}
-			   proc {P Msg}
-			      for AOut in List do C N Ack in
-				 C#N = AOut
-				 {C send(N Msg Ack)}
-				 {Wait Ack}
-			      end
-			   end
-			in
-			   {Record.adjoinAt Acc Ind P}
-			end
-			outs
-		       }
-		    end
-		 end
-		}
 	     end
 	     /*
 	     Exec -
@@ -199,7 +239,7 @@ define
 	        % Look for sync
 		Sync = {CheckSync State}
 		if {Not Sync} then
-		   State 
+		   State
 		else NVar Out Th1 Th2 SubThread in %All port can receive the next IP
 		   % Put at undefined the variables that are common to all procedures
 		   NVar = {Record.map State.var fun{$ _} _ end}
@@ -240,7 +280,7 @@ define
 				 end
 		       SubThread }
 		      if {Record.width State.inPorts} > 0 then
-			 {Send Point start}
+			 {Send Point exec} %Restart
 		      end
 		   end
 		   % Return the new state, with the new var record and the new inPorts record.
@@ -253,7 +293,14 @@ define
 	     % Operation on the component
 	     of getState(?R) then R=State State
 	     [] changeState(NState) then NState
-	     [] start then {Exec State}
+	     [] start then
+		if {Width State.inPorts} == 0 then
+		   {Exec State}
+		else
+		   State
+		end
+	     [] exec then
+		if {CheckBuffers {Record.toList State.inPorts}} then {Exec State} else State end
 	     [] stop then
 		for T in State.threads do
 		   if {Thread.state T} \= terminated then
@@ -267,10 +314,8 @@ define
 	     [] getOutPort(Port ?R) then
 		R=State.outPorts.Port
 		State
-	     [] addinArrayPort(Port) then NPort NInPorts NextId Ar in
-		Ar = {Arity State.inPorts.Port.qs}
-		NextId = if Ar == nil then 1 else {List.last Ar}+1 end
-		NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs NextId {NewQueue}}}
+	     [] addinArrayPort(Port Index) then NPort NInPorts in
+		NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue}}}
 		NInPorts = {Record.adjoinAt State.inPorts Port NPort}
 		{Record.adjoinAt State inPorts NInPorts}
 	     [] changeProcPort(Port Proc) then NPort NInPorts in
@@ -285,7 +330,7 @@ define
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
 		Ack = ack
 		NState = {Record.adjoinAt State options NOptions}
-		{Exec NState}
+		if {CheckBuffers {Record.toList NState.inPorts}} then {Exec NState} else NState end
 	     [] send(InPort Msg Ack) then
 		{State.inPorts.InPort.q.put Msg Ack}
 		{Exec State}
@@ -324,29 +369,35 @@ define
    end
    %% Functions to build a new component
    fun {InPorts In}
-      {Record.foldL In
-       fun {$ Acc E}
-	  case E
-	  of port(name:N procedure:P) then
-	     {Record.adjoinAt Acc N port(q:{NewQueue} p:P)}
-	  [] arrayPort(name:N procedure:P) then
-	     {Record.adjoinAt Acc N arrayPort(qs:queues() p:P)}
-	  end
+      {Record.foldLInd In
+       fun {$ Name Acc Proc}
+	  {Record.adjoinAt Acc Name port(q:{NewQueue} p:Proc)}
        end
        'in'()
       }
    end
+   fun {InArrayPorts In}
+      {Record.foldLInd In
+       fun {$ Name Acc Proc}
+	  {Record.adjoinAt Acc Name arrayPort(qs:queues() p:Proc)}
+       end
+       'arrayIn'()
+      }
+   end
    fun {OutPorts Out}
-      {Record.foldLInd Out
-       fun {$ Ind Acc E}
-	  case E
-	  of port then 
-	     {Record.adjoinAt Acc Ind nil}
-	  [] arrayPort then
-	     {Record.adjoinAt Acc Ind arrayPort}
-	  end
+      {Record.foldL Out
+       fun {$ Acc E}
+	  {Record.adjoinAt Acc E nil}
        end
        out()
+      }
+   end
+   fun {OutArrayPorts Out}
+      {Record.foldL Out
+       fun {$ Acc E}
+	  {Record.adjoinAt Acc E arrayPort()}
+       end
+       arrayOut()
       }
    end
    fun {Var Vars}
@@ -357,7 +408,7 @@ define
        var()
       }
    end
-   fun {NState St} D in
+   fun {BuildNState St} D in
       D = {NewDictionary}
       {Record.forAllInd St
        proc {$ N V} D.N := V end
@@ -365,21 +416,31 @@ define
       D
    end
    fun {NewState GivenRecord}
-      DefaultState in
-      DefaultState = component(inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt())
-      {Record.foldL GivenRecord
-       fun {$ S Rec}
-	  case {Record.label Rec}
-	  of inPorts then {Record.adjoinAt S inPorts {InPorts Rec}}
-	  [] outPorts then {Record.adjoinAt S outPorts {OutPorts Rec}}
-	  [] procedures then {Record.adjoinAt S procs Rec}
-	  [] var then {Record.adjoinAt S var {Var Rec}}
-	  [] state then {Record.adjoinAt S state {NState Rec}}
-	  [] options then {Record.adjoinAt S options Rec}
-	  end
-       end
-       DefaultState
-      }
+      DefaultState NState in
+      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt())
+      NState = {Record.foldLInd GivenRecord
+		fun {$ Ind S Rec}
+		   case {Record.label Rec}
+		   of inPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InPorts Rec}}}
+		   [] inArrayPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InArrayPorts Rec}}}
+		   [] outPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutPorts Rec}}}
+		   [] outArrayPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutArrayPorts Rec}}}
+		   [] procedures then {Record.adjoinAt S procs Rec}
+		   [] var then {Record.adjoinAt S var {Var Rec}}
+		   [] state then {Record.adjoinAt S state {BuildNState Rec}}
+		   [] options then {Record.adjoinAt S options Rec}
+		   else
+		      if Ind == name then {Record.adjoinAt S name Rec}
+		      elseif Ind == type then {Record.adjoinAt S type Rec}
+		      elseif Ind == description then {Record.adjoinAt S description Rec}
+		      else raise unknown_arg(Ind Rec S) end end
+		   end
+		end
+		DefaultState
+	       }
+      if {Not {IsDet NState.name}} then raise component_name_not_defined(NState) end end
+      if {Not {IsDet NState.type}} then raise component_type_not_defined(NState) end end
+      NState
    end
    fun {NewStateComponent ARecord}
       {NewComponent {NewState ARecord}}

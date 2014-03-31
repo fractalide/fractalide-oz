@@ -1,5 +1,5 @@
 
-"[1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]" -> a mux4way16(mux4way16) out -> input disp(display)
+"[1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]" -> a mux4way16(gates/mux4way16) out -> input disp(display)
 
 "[0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1]" -> b mux4way16()
 "[0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0]" -> c mux4way16()

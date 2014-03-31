@@ -19,7 +19,7 @@ define
       outPorts:outPorts(
 		  o:[<P/1>#out ...]))
    */
-   fun {NewSubComponent FileName}
+   fun {NewSubComponent Name Type FileName}
       Graph = {GraphModule.loadGraph FileName}
       Stream Point = {NewPort Stream}
       thread
@@ -29,11 +29,11 @@ define
 	     of getState(?Resp) then
 		Resp = State
 		State
-	     /*[] send(InPort#N Msg Ack) then
+	     [] send(InPort#N Msg Ack) then
 		for X in State.inPorts.InPort do
 		   {X.1 send(X.2#N Msg Ack)}
 		end
-		State*/
+		State
 	     [] send(InPort Msg Ack) then
 		for X in State.inPorts.InPort do A=_ in
 		   {X.1 send(X.2 Msg A)}
@@ -56,13 +56,16 @@ define
 		   {X.1 unbound(X.2 N)}
 		end
 		State
-	     [] addinArrayPort(Port) then
+	     [] addinArrayPort(Port Index) then
 		for X in State.inPorts.Port do
-		   {X.1 addinArrayPort(X.2)}
+		   {X.1 addinArrayPort(X.2 Index)}
 		end
 		State
 	     [] start then
 		{GraphModule.start State.graph}
+		State
+	     [] startUI then
+		{GraphModule.startUI State.graph}
 		State
 	     [] stop then
 		{GraphModule.stop State.graph}
@@ -74,14 +77,14 @@ define
 		{Record.adjoinAt State outPorts {Rename State.outPorts OName NName}}
 	     end
 	  end
-	  {Init Graph}
+	  {Init Name Type Graph}
 	  _
 	 }
       end
    in
       proc {$ Msg} {Send Point Msg} end
    end
-   fun {Init G}
+   fun {Init Name Type G}
       InPorts = {FoldL G.inLinks
 		 fun {$ Acc Name#CompName#PortName}
 		    if {List.member Name {Arity Acc}} then
@@ -103,7 +106,7 @@ define
 		  outPorts
 		  }
    in
-      subcomponent(inPorts:InPorts outPorts:OutPorts graph:G)
+      subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPorts graph:G)
    end
    fun {Rename Rec OName NName} Temp in
       Temp = {Record.adjoinAt Rec NName Rec.OName}

@@ -1,0 +1,2 @@
+a => a or(gates/or) out -> input not(gates/not) out => out
+b => b or()

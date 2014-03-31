@@ -4,14 +4,13 @@ import
 export
    new: NewSplitter
 define
-   fun {NewSplitter}
-      {Comp.new comp(inPorts(port(name: input
-				  procedure:   proc {$ Buffer Out NVar State Options}
-						  {FoldL {Buffer.get} fun {$ Acc IP} {Out.out.Acc IP} Acc+1 end 1 _}
-					       end
-				 )
+   fun {NewSplitter Name}
+      {Comp.new comp(name:Name type:splitter
+		   inPorts(input:proc {$ Buffer Out NVar State Options}
+				      {FoldL {Buffer.get} fun {$ Acc IP} {Out.out.Acc IP} Acc+1 end 1 _}
+				   end
 			    )
-		     outPorts(out:arrayPort)
+		     outArrayPorts(out)
 		    )
       }
    end

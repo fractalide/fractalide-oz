@@ -1,2 +1,0 @@
-gen(generator) output -> input filter(filter) output-> x adder(adderdisp)
-"opt(p:fun{$ IP} IP mod 2 == 0 end)" -> options filter()

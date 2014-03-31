@@ -1,4 +1,0 @@
-x => input#1 adder(add) output -> input disp(display) output => out
-x => input#2 adder()
-x => input#3 adder()
-"opt(pre:'the sum is ')" -> options disp()

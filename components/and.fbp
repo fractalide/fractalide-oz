@@ -1,2 +1,0 @@
-a => a nand(nand) out -> input not(not) out => out
-b => b nand()
