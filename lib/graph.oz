@@ -242,7 +242,7 @@ define
 	 of nil then "'".1|Acc
 	 [] X|Xr then 
 	    if X == "#".1 then
-	       {List.append {Reverse Xr} X|"'".1|Acc}
+	       {Rec Xr "'".1|X|"'".1|Acc}
 	    else
 	       {Rec Xr X|Acc}
 	    end
@@ -252,7 +252,7 @@ define
       {Reverse {Rec Xs "'".1|nil}}
    end
    /*
-   pre : Xs is a list of characters
+   pre : Xs is a list of characters representing an InPort 
    post : return a value corresponding to the list of characters
    */
    fun {GetPort Xs}

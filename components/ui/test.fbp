@@ -26,6 +26,9 @@ f1() es#getAdd -> input#1 add(add) output -> input setAdd(string) out -> ei fRes
 f2() es#getAdd -> input#2 add() 
 "opt(text:set)" -> options setAdd()
 
+% Specific
+f1() es#Enter -> input dispSpecific(display)
+"opt(pre:'specific ')" -> options dispSpecific()
 
 % size of field
 "set(height:1 width:15)" -> ei fResult()

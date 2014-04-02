@@ -1,7 +1,6 @@
 functor
 import
    Comp at '../../lib/component.ozf'
-   System
 export
    new: New
 define
@@ -15,7 +14,6 @@ define
 						  )
 					 end
 				 }
-				 {System.show haha}
 			      end)
 		   )
       }
