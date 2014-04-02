@@ -1,7 +1,7 @@
 % First step : two fields
-f1(ui/text) uo -> ui#1 lr(ui/lr)
+f1(ui/entry) uo -> ui#1 lr(ui/lr)
 f1() eo -> ei lr()
-f2(ui/text) uo -> ui#2 lr()
+f2(ui/entry) uo -> ui#2 lr()
 f2() eo -> ei lr()
 
 % Second step : lr, button and result field
@@ -9,7 +9,7 @@ lr() uo -> ui#1 td(ui/td)
 lr() eo -> ei td()
 calcButton(ui/button) uo -> ui#2 td()
 calcButton() eo -> ei td()
-fResult(ui/text) uo -> ui#3 td()
+fResult(ui/entry) uo -> ui#3 td()
 fResult() eo -> ei td()
 
 % Third step : td to window

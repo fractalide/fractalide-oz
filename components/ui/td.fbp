@@ -1,6 +1,6 @@
-ui => ui tc(ui/tdCreate) uo => uo
-tc() eo -> ei sui(ui/simpleui)
-tc() opt -> options sui()
+ui => input tc(ui/tdCreate) out -> ui sc(ui/simpleCreate) uo => uo
+sc() eo -> ei sui(ui/simpleui)
+sc() opt -> options sui()
 sui() eo => eo
 sui() es => es
 ei => ei sui()

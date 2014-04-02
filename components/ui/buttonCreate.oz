@@ -7,15 +7,14 @@ define
    fun {New Name} 
       {Comp.new component(
 		   name: Name type:buttonCreate
-		   outPorts(eo opt uo)
-		   procedures(proc {$ Out NVar State Options} H in
-				 {Out.uo button(action: proc{$} {Out.eo button_clicked} end
-						text:default
-						handle:H
-					       )
+		   outPorts(uo)
+		   procedures(proc {$ Out NVar State Options}
+				 {Out.uo fun{$ Out}
+					    button(action: proc{$} {Out button_clicked} end
+						   text:default
+						  )
+					 end
 				 }
-				 {Wait H}
-				 {Out.opt opt(handle:H)}
 			      end)
 		   )
       }
