@@ -1,0 +1,6 @@
+ec(ui/entryCreate) uo -> ui sc(ui/simpleCreate) uo => uo
+sc() eo -> ei ew(ui/entryWidget)
+sc() opt -> options ew()
+ew() eo => eo
+ew() es => es
+ei => ei ew()
