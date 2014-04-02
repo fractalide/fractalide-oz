@@ -1,0 +1,6 @@
+lc(ui/labelCreate) uo -> ui sc(ui/simpleCreate) uo => uo
+sc() eo -> ei lw(ui/labelWidget)
+sc() opt -> options lw()
+lw() eo => eo
+lw() es => es
+ei => ei lw()

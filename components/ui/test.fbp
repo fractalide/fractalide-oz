@@ -1,8 +1,13 @@
 % First step : two fields
-f1(ui/entry) uo -> ui#1 lr(ui/lr)
+l1(ui/label) uo -> ui#1 lr(ui/lr)
+l1() eo -> ei lr()
+"set("x: ")" -> ei l1()
+f1(ui/entry) uo -> ui#2 lr()
 f1() eo -> ei lr()
-f2(ui/entry) uo -> ui#2 lr()
+f2(ui/entry) uo -> ui#3 lr()
 f2() eo -> ei lr()
+"set([48 32 48])" -> ei f1()
+
 
 % Second step : lr, button and result field
 lr() uo -> ui#1 td(ui/td)
