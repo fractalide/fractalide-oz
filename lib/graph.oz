@@ -14,7 +14,6 @@ define
    Unique = {NewCell 0}
    ComponentCache = {NewDictionary}
    SubComponentCache = {NewDictionary}
-
    /*Comments
    Return a graph from the specific FBP file.
    PRE : File is a String representing a path to a FBP file.
