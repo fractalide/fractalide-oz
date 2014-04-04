@@ -35,10 +35,10 @@ f2() es#getAdd -> input#2 add()
 buttonLogic() color -> ei calcButton()
 
 % From TD
-td() es#KeyPress -> input keyLogic(calculator/keyLogic) default -> input dispDefault(display)
-td() es#KeyRelease -> input keyLogic()
-keyLogic() option -> options buttonLogic()
-
+td() es#KeyPress -> input buttonLogic()
+td() es#KeyRelease -> input buttonLogic()
+td() es#KeyPress -> input dispDefault()
+td() es#keyRelease -> input dispDefault()
 % Specific
 f1() es#Enter -> input dispSpecific(display)
 "opt(pre:'specific ')" -> options dispSpecific()
