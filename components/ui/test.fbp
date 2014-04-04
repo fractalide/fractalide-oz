@@ -1,54 +1,54 @@
 % First step : two fields
-l1(ui/label) uo -> ui#1 lr(ui/lr)
-l1() eo -> ei lr()
-"set("x: ")" -> ei l1()
-f1(ui/entry) uo -> ui#2 lr()
-f1() eo -> ei lr()
-f2(ui/entry) uo -> ui#3 lr()
-f2() eo -> ei lr()
-"set([48 32 48])" -> ei f1()
+l1(ui/label) ui_out -> ui_in#1 lr(ui/lr)
+l1() actions_out -> actions_in lr()
+"set("x: ")" -> actions_in l1()
+f1(ui/entry) ui_out -> ui_in#2 lr()
+f1() actions_out -> actions_in lr()
+f2(ui/entry) ui_out -> ui_in#3 lr()
+f2() actions_out -> actions_in lr()
+"set([48 32 48])" -> actions_in f1()
 
 
 % Second step : lr, button and result field
-lr() uo -> ui#1 td(ui/td)
-lr() eo -> ei td()
-calcButton(ui/button) uo -> ui#2 td()
-calcButton() eo -> ei td()
-fResult(ui/entry) uo -> ui#3 td()
-fResult() eo -> ei td()
+lr() ui_out -> ui_in#1 td(ui/td)
+lr() actions_out -> actions_in td()
+calcButton(ui/button) ui_out -> ui_in#2 td()
+calcButton() actions_out -> actions_in td()
+fResult(ui/entry) ui_out -> ui_in#3 td()
+fResult() actions_out -> actions_in td()
 
 % Third step : td to window
-td() uo -> ui win(ui/window)
-td() eo -> input dispDefault(display)
+td() ui_out -> ui_in win(ui/window)
+td() actions_out -> input dispDefault(display)
 
 % Logic
 % From button
 % Button to get
-calcButton() es#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(string) out -> ei f1()
-get1() out -> ei f2()
+calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(string) out -> actions_in f1()
+get1() out -> actions_in f2()
 "opt(text:get(getAdd))" -> options get1()
 % Field to logicAdd
-f1() es#getAdd -> input#1 add(add) output -> input setAdd(string) out -> ei fResult()
-f2() es#getAdd -> input#2 add() 
+f1() action#getAdd -> input#1 add(add) output -> input setAdd(string) out -> actions_in fResult()
+f2() action#getAdd -> input#2 add() 
 "opt(text:set)" -> options setAdd()
 % Button color
-buttonLogic() color -> ei calcButton()
+buttonLogic() color -> actions_in calcButton()
 
 % From TD
-td() es#KeyPress -> input buttonLogic()
-td() es#KeyRelease -> input buttonLogic()
-td() es#KeyPress -> input dispDefault()
-td() es#keyRelease -> input dispDefault()
+td() action#KeyPress -> input buttonLogic()
+td() action#KeyRelease -> input buttonLogic()
+td() action#KeyPress -> input dispDefault()
+td() action#keyRelease -> input dispDefault()
 % Specific
-f1() es#Enter -> input dispSpecific(display)
+f1() action#Enter -> input dispSpecific(display)
 "opt(pre:'specific ')" -> options dispSpecific()
 
 % size of field
-"set(height:1 width:15)" -> ei fResult()
-"set(height:1 width:15)" -> ei f1()
-"set(height:1 width:15)" -> ei f2()
+"set(height:1 width:15)" -> actions_in fResult()
+"set(height:1 width:15)" -> actions_in f1()
+"set(height:1 width:15)" -> actions_in f2()
 
 % Some options
 "opt(pre:'default ')" -> options dispDefault()
-"set(text:calc)" -> ei calcButton()
-"set(title:'Calculator')" -> ei td()
+"set(text:calc)" -> actions_in calcButton()
+"set(title:'Calculator')" -> actions_in td()

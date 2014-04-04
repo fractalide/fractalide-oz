@@ -7,9 +7,9 @@ define
    fun {New Name} 
       {Comp.new component(
 		   name: Name type:buttonCreate
-		   outPorts(uo)
+		   outPorts(ui_out)
 		   procedures(proc {$ Out NVar State Options}
-				 {Out.uo fun{$ _}
+				 {Out.ui_out fun{$ _}
 					    text
 					 end
 				 }

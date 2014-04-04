@@ -1,7 +1,7 @@
-ui => input tc(ui/tdCreate) out -> ui sc(ui/simpleCreate) uo => uo
-sc() eo -> ei sui(ui/simpleui)
+ui_in => input tc(ui/tdCreate) out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+sc() actions_out -> actions_in sui(ui/simpleui)
 sc() opt -> options sui()
-sui() eo => eo
-sui() es => es
-ei => ei sui()
+sui() actions_out => actions_out
+sui() action => action
+actions_in => actions_in sui()
 options => options sui()

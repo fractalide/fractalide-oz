@@ -7,17 +7,17 @@ export
    sendOut: SendOut
 define
    proc {SendOut OutPorts Event}
-      if {List.member {Label Event} {Arity OutPorts.es}} then
-	 {OutPorts.es.{Label Event} Event}
+      if {List.member {Label Event} {Arity OutPorts.action}} then
+	 {OutPorts.action.{Label Event} Event}
       else
-	 {OutPorts.eo Event}
+	 {OutPorts.actions_out Event}
       end
    end
    fun {CompNewGen Name Catch}
       {Comp.new comp(
 		   name:Name type:simpleui
 		   inPorts(
-		      ei: proc{$ Buf Out NVar State Options} IP Res in
+		      actions_in: proc{$ Buf Out NVar State Options} IP Res in
 				 IP = {Buf.get}
 				 Res = {Catch IP Buf.put Out NVar State Options}
 				 if  {Label Res} == some then
@@ -28,8 +28,8 @@ define
 				 end
 			      end
 			  )
-		   outArrayPorts(es)
-		   outPorts(eo)
+		   outArrayPorts(action)
+		   outPorts(actions_out)
 		   options(handle:_) 
 		   )
       }
