@@ -1,7 +1,15 @@
-% First step : two fields
-test1(ui/test) uo -> ui ph(ui/placeholder) uo -> ui#1 td(ui/td) uo -> ui win(ui/window)
-test2(ui/test) uo -> ui ph()
-test1() eo -> ei ph()
-test2() eo -> ei ph()
-ph() eo -> ei td() eo -> input disp(display)
+% First step : two calculator in ph
+test1(ui/test) ui_out -> ui_in ph(ui/placeholder) ui_out -> ui_in#1 td(ui/td) ui_out -> ui_in win(ui/window)
+test2(ui/test) ui_out -> ui_in ph()
+test1() actions_out -> actions_in ph()
+test2() actions_out -> actions_in ph()
+ph() actions_out -> actions_in td() actions_out -> input disp(display)
+% Second step
+button(ui/button) ui_out -> ui_in#2 td()
+button() actions_out -> actions_in td()
+button() action#button_clicked -> input lb(loadbalancer) output#1 -> input st(string) out -> actions_in test1()
+lb() output#2 -> input st2(string) out -> actions_in test2()
+"opt(text:display(true))" -> options st()
+"opt(text:display(true))" -> options st2()
+"set(text:'next calculator')" -> actions_in button()
 "opt(pre:'default ')" -> options disp()

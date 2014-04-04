@@ -1,8 +1,8 @@
-phc(ui/placeholderCreate) uo -> ui sc(ui/simpleCreate) uo => uo
-sc() eo -> ei phw(ui/placeholderWidget)
+phc(ui/placeholderCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+sc() actions_out -> actions_in phw(ui/placeholderWidget)
 sc() opt -> options phw()
-phw() eo => eo
-phw() es => es
-ei => ei phw()
-ui => input set(string) out -> ei phw()
+phw() actions_out => actions_out
+phw() action => action
+actions_in => actions_in phw()
+ui_in => input set(string) out -> actions_in phw()
 "opt(text:set)" -> options set()

@@ -10,10 +10,14 @@ export
    start: Start
    stop: Stop
    getUnBoundPorts: GetUnBoundPorts
+   getCache: GetCache
 define
    Unique = {NewCell 0}
    ComponentCache = {NewDictionary}
    SubComponentCache = {NewDictionary}
+   fun {GetCache}
+      SubComponentCache
+   end
    /*Comments
    Return a graph from the specific FBP file.
    PRE : File is a String representing a path to a FBP file.
@@ -34,7 +38,6 @@ define
 	 Grouped = {RegroupWords Tokens}
 	 SubComponentCache.FileAtom := Grouped
       end
-
       {BuildGraph Grouped}
    end
    /*
@@ -333,7 +336,7 @@ define
 	       % It's a word inside " or ', then build an optgen component and put it on stack
 	       if X.1 == "\"".1 orelse X.1 == '\"' then Arg Comp Name NNodes NGraph in
 		  Arg = {Reverse {Reverse X.2}.2} %remove the brackets
-		  Name = {Int.toString @Unique}.1|"GenOPT"
+		  Name = {List.append {Int.toString @Unique} "GenOPT"}
 		  Unique := @Unique+1
 		  try
 		     Comp = {GenOpt.newArgs {VirtualString.toAtom Name} opt(arg:{Compiler.virtualStringToValue Arg})}

@@ -1,6 +1,6 @@
-tc(ui/textCreate) uo -> ui sc(ui/simpleCreate) uo => uo
-sc() eo -> ei tw(ui/textWidget)
+tc(ui/textCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+sc() actions_out -> actions_in tw(ui/textWidget)
 sc() opt -> options tw()
-tw() eo => eo
-tw() es => es
-ei => ei tw()
+tw() actions_out => actions_out
+tw() action => action
+actions_in => actions_in tw()
