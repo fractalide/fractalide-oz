@@ -22,14 +22,22 @@ td() uo -> ui win(ui/window)
 td() eo -> input dispDefault(display)
 
 % Logic
+% From button
 % Button to get
-calcButton() es#button_clicked -> input get1(string) out -> ei f1()
+calcButton() es#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(string) out -> ei f1()
 get1() out -> ei f2()
 "opt(text:get(getAdd))" -> options get1()
 % Field to logicAdd
 f1() es#getAdd -> input#1 add(add) output -> input setAdd(string) out -> ei fResult()
 f2() es#getAdd -> input#2 add() 
 "opt(text:set)" -> options setAdd()
+% Button color
+buttonLogic() color -> ei calcButton()
+
+% From TD
+td() es#KeyPress -> input keyLogic(calculator/keyLogic) default -> input dispDefault(display)
+td() es#KeyRelease -> input keyLogic()
+keyLogic() option -> options buttonLogic()
 
 % Specific
 f1() es#Enter -> input dispSpecific(display)
