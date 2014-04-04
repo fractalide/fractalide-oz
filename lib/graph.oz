@@ -10,14 +10,10 @@ export
    start: Start
    stop: Stop
    getUnBoundPorts: GetUnBoundPorts
-   getCache: GetCache
 define
    Unique = {NewCell 0}
    ComponentCache = {NewDictionary}
    SubComponentCache = {NewDictionary}
-   fun {GetCache}
-      SubComponentCache
-   end
    /*Comments
    Return a graph from the specific FBP file.
    PRE : File is a String representing a path to a FBP file.
