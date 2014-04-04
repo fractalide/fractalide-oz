@@ -4,4 +4,3 @@ sc() opt -> options tw()
 tw() eo => eo
 tw() es => es
 ei => ei tw()
-options => options tw()

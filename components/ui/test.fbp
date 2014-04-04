@@ -17,10 +17,6 @@ calcButton() eo -> ei td()
 fResult(ui/entry) uo -> ui#3 td()
 fResult() eo -> ei td()
 
-% Third step : td to window
-td() uo -> ui win(ui/window)
-td() eo -> input dispDefault(display)
-
 % Logic
 % Button to get
 calcButton() es#button_clicked -> input get1(string) out -> ei f1()
@@ -41,6 +37,10 @@ f1() es#Enter -> input dispSpecific(display)
 "set(height:1 width:15)" -> ei f2()
 
 % Some options
-"opt(pre:'default ')" -> options dispDefault()
 "set(text:calc)" -> ei calcButton()
 "set(title:'Calculator')" -> ei td()
+
+
+%OutLinks
+td() uo => uo
+td() eo => eo

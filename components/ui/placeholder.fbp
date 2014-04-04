@@ -1,0 +1,8 @@
+phc(ui/placeholderCreate) uo -> ui sc(ui/simpleCreate) uo => uo
+sc() eo -> ei phw(ui/placeholderWidget)
+sc() opt -> options phw()
+phw() eo => eo
+phw() es => es
+ei => ei phw()
+ui => input set(string) out -> ei phw()
+"opt(text:set)" -> options set()

@@ -1,0 +1,7 @@
+% First step : two fields
+test1(ui/test) uo -> ui ph(ui/placeholder) uo -> ui#1 td(ui/td) uo -> ui win(ui/window)
+test2(ui/test) uo -> ui ph()
+test1() eo -> ei ph()
+test2() eo -> ei ph()
+ph() eo -> ei td() eo -> input disp(display)
+"opt(pre:'default ')" -> options disp()

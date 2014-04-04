@@ -1,8 +1,20 @@
 declare
 %Launch this paragraph first
 [GraphM] = {Module.link ["./lib/graph.ozf"]}
-G = {GraphM.loadGraph "components/ui2/test.fbp"}
-{GraphM.start G}
+G = {GraphM.loadGraph "components/ui/test2.fbp"}
+{Browse G}
+%{GraphM.start G}
+
+declare
+T1 = {G.nodes.test1.comp getState($)}
+T2 = {G.nodes.test2.comp getState($)}
+
+{Browse T1}
+{Browse T2}
+
+{T1.graph.nodes.td.comp send(ei display _)}
+
+{T2.graph.nodes.td.comp send(ei display _)}
 
 % Once it works, we can hotswap the procedure of add to do a multiplication. There is a delay of 5 second to test 2 button_clicked in a row (click once, change value and relick inside the 5 seconds. The two events will be treated).
 {G.nodes.add.comp changeProcPort(input
@@ -24,3 +36,8 @@ G = {GraphM.loadGraph "components/ui2/test.fbp"}
 {Browse G}
 
 {G.nodes.calcButton.comp send(events set(text:hello) _)}
+
+declare
+[Phc] = {Module.link ["./components/ui/placeholderCreate.ozf"]}
+P = {Phc.new hello}
+{Browse {P getState($)}}

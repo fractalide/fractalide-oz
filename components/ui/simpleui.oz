@@ -36,7 +36,11 @@ define
    end
    fun {CompNewArgs Name}
       Catch = fun {$ IP BufPut Out NVar State Options}
-		 some(IP)
+		 case IP
+		 of display then some(set(Options.handle))
+		 else
+		    some(IP)
+		 end
 	      end
    in
       {CompNewGen Name Catch}
