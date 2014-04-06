@@ -18,16 +18,16 @@ define
 		   name:Name type:simpleui
 		   inPorts(
 		      actions_in: proc{$ Buf Out NVar State Options} IP Res in
-				 IP = {Buf.get}
-				 Res = {Catch IP Buf.put Out NVar State Options}
-				 if  {Label Res} == some then
-				    try {Options.handle Res.1}
-				    catch _ then 
-				       {SendOut Out Res.1}
-				    end
-				 end
-			      end
-			  )
+				     IP = {Buf.get}
+				     Res = {Catch IP Buf.put Out NVar State Options}
+				     if  {Label Res} == some then
+					try {Options.handle Res.1}
+					catch _ then
+					   {SendOut Out Res.1}
+					end
+				     end
+				  end
+		      )
 		   outArrayPorts(action)
 		   outPorts(actions_out)
 		   options(handle:_) 

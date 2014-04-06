@@ -20,7 +20,7 @@ T2 = {G.nodes.test2.comp getState($)}
 
 declare
 [GraphM] = {Module.link ["./lib/graph.ozf"]}
-G1 = {GraphM.loadGraph "components/ui/test.fbp"}
+G1 = {GraphM.loadGraph "components/ui/test2.fbp"}
 {Browse G1}
 
 declare
@@ -63,6 +63,13 @@ B2 = {G2.nodes.calcButton.comp getState($)}
 {G.nodes.calcButton.comp send(events set(text:hello) _)}
 
 declare
-[Phc] = {Module.link ["./components/ui/placeholderCreate.ozf"]}
+[Phc] = {Module.link ["./components/ui/canvas/windowCreate.ozf"]}
 P = {Phc.new hello}
-{Browse {P getState($)}}
+%{Browse {P getState($)}}
+[Di] = {Module.link ["./components/display.ozf"]}
+D = {Di.new he}
+{P bind(ui_out D input)}
+
+{P send(input test _)}
+
+{P start}

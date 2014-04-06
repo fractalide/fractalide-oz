@@ -6,14 +6,15 @@ export
 define
    fun {New Name} 
       {Comp.new component(
-		   name: Name type:buttonCreate
+		   name: Name type:windowCreate
 		   outPorts(ui_out)
-		   procedures(proc {$ Out NVar State Options}
-				 {Out.ui_out fun{$ _}
-					    create(window 0 0 window:td(button(text:test)))
-					 end
-				 }
-			      end)
+		   inPorts(ui_in: proc {$ Buf Out NVar State Options} IP in
+				     IP = {Buf.get}
+				     {Out.ui_out fun{$ _}
+						    create(window 0 0 window:IP)
+						 end
+				     }
+				  end)
 		   )
       }
    end
