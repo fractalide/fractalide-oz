@@ -21,13 +21,13 @@ fResult() actions_out -> actions_in td()
 % Logic
 % From button
 % Button to get
-calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(string) out -> actions_in f1()
+calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(ipEdit) out -> actions_in f1()
 get1() out -> actions_in f2()
 "opt(text:get(getAdd))" -> options get1()
 % Field to logicAdd
-f1() action#getAdd -> input#1 add(add) output -> input setAdd(string) out -> actions_in fResult()
+f1() action#getAdd -> input#1 add(add) output -> input setAdd(ipEdit) out -> actions_in fResult()
 f2() action#getAdd -> input#2 add() 
-"opt(text:set)" -> options setAdd()
+"opt(text:set(_))" -> options setAdd()
 % Button color
 buttonLogic() color -> actions_in calcButton()
 
