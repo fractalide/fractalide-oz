@@ -1,7 +1,7 @@
 declare
 %Launch this paragraph first
 [GraphM] = {Module.link ["./lib/graph.ozf"]}
-G = {GraphM.loadGraph "components/ui/test2.fbp"}
+G = {GraphM.loadGraph "components/ui/canvas.fbp"}
 {Browse G}
 
 {GraphM.start G}
