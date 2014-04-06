@@ -1,5 +1,5 @@
 phc(ui/placeholderCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
-sc() actions_out -> actions_in phw(ui/placeholderWidget)
+sc() actions_out -> actions_in phw(ui/simpleui)
 sc() opt -> options phw()
 phw() actions_out => actions_out
 phw() action => action

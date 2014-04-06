@@ -48,4 +48,8 @@ text() actions_out -> actions_in canvas()
  b2() actions_out -> actions_in tdw()
 % Options
 "opt(pre:'default ')" -> options disp()
-%"opt(pre:'final')" -> options df()
+
+% Get test
+"getCoords(output:coordRectTest)" -> actions_in rect()
+"get(width arrow fill output:lineGetTest)" -> actions_in line()
+
