@@ -10,8 +10,7 @@ define
 		   outPorts(ui_out)
 		   procedures(proc {$ Out NVar State Options}
 				 {Out.ui_out fun{$ Out}
-					    button(action: proc{$} {Out button_clicked} end
-						   text:default
+					    entry(action: proc{$} {Out modify} end
 						  )
 					 end
 				 }

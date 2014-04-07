@@ -4,6 +4,8 @@ comp:
 	cd components/ && ozc -c *.oz && cd ..
 	cd components/ui && ozc -c *.oz && cd ../..
 	cd components/gates && ozc -c *.oz && cd ../..
+	cd components/calculator && ozc -c *.oz && cd ../../
+	cd components/ui/canvas && ozc -c *.oz && cd ../../
 
 library:
 	cd lib/ && ozc -c *.oz && cd ..

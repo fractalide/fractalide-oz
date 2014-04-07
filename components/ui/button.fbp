@@ -1,7 +1,7 @@
-bc(ui/buttonCreate) uo => uo
-bc() eo -> ei suib(ui/simpleui)
-bc() opt -> options suib()
-suib() eo => eo
-suib() es => es
-ei => ei suib()
+bc(ui/buttonCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+sc() actions_out -> actions_in suib(ui/simpleui)
+sc() opt -> options suib()
+suib() actions_out => actions_out
+suib() action => action
+actions_in => actions_in suib()
 options => options suib()

@@ -6,9 +6,9 @@ export
 define
    fun {New Name} 
       {Comp.new component(
-		   name: Name type:trCreate
-		   outPorts(eo opt uo)
-		   inArrayPorts(ui: proc {$ Buffers Out NVar State Options} Rec H in
+		   name: Name type:tdCreate
+		   outPorts(out)
+		   inArrayPorts(input: proc {$ Buffers Out NVar State Options} Rec in
 				       Rec = {List.toRecord td
 					      {List.mapInd Buffers
 					       fun {$ Ind El} E in
@@ -17,9 +17,7 @@ define
 					       end
 					      }
 					     }
-				       {Out.uo {Record.adjoinAt Rec handle H}}
-				       {Wait H}
-				       {Out.opt opt(handle:H)}
+				       {Out.out fun {$ _} Rec end}
 				    end)
 		   )
       }

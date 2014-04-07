@@ -6,13 +6,11 @@ export
 define
    fun {New Name} 
       {Comp.new component(
-		   name: Name type:buttonCreate
+		   name: Name type:labelCreate
 		   outPorts(ui_out)
 		   procedures(proc {$ Out NVar State Options}
-				 {Out.ui_out fun{$ Out}
-					    button(action: proc{$} {Out button_clicked} end
-						   text:default
-						  )
+				 {Out.ui_out fun{$ _}
+					    label
 					 end
 				 }
 			      end)

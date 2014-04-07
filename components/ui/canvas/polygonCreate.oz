@@ -1,6 +1,6 @@
 functor
 import
-   Comp at '../../lib/component.ozf'
+   Comp at '../../../lib/component.ozf'
 export
    new: New
 define
@@ -9,10 +9,8 @@ define
 		   name: Name type:buttonCreate
 		   outPorts(ui_out)
 		   procedures(proc {$ Out NVar State Options}
-				 {Out.ui_out fun{$ Out}
-					    button(action: proc{$} {Out button_clicked} end
-						   text:default
-						  )
+				 {Out.ui_out fun{$ _}
+					    create(polygon 0 0 0 0 0 0)
 					 end
 				 }
 			      end)
@@ -20,4 +18,4 @@ define
       }
    end
 end
-     
+          

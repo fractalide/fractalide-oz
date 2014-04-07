@@ -1,6 +1,7 @@
 functor
 import
-   Browser
+   %Browser
+   System
    Comp at '../lib/component.ozf'
 export
    new: CompNew
@@ -9,7 +10,8 @@ define
    proc {FunPort1 Buffer Out NVar State Options}
       IP = {Buffer.get}
    in
-      {Browser.browse Options.pre#IP#Options.post}
+      %{Browser.browse Options.pre#IP#Options.post}
+      {System.show Options.pre#IP#Options.post}
       {Out.output IP}
    end
    fun {CompNewArgs Name Args} Options in

@@ -9,7 +9,7 @@ define
       {Comp.new comp(
 		   name:Name type:simpleui
 		   inPorts(
-		      ui: proc{$ Buf Out NVar State Options} IP H in
+		      ui_in: proc{$ Buf Out NVar State Options} IP H in
 			     IP = {Buf.get}
 			     H = IP.handle
 			     H = {Qtk.build {Record.subtract IP handle}}

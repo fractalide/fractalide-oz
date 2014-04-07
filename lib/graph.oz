@@ -34,7 +34,6 @@ define
 	 Grouped = {RegroupWords Tokens}
 	 SubComponentCache.FileAtom := Grouped
       end
-
       {BuildGraph Grouped}
    end
    /*
@@ -242,7 +241,7 @@ define
 	 of nil then "'".1|Acc
 	 [] X|Xr then 
 	    if X == "#".1 then
-	       {List.append {Reverse Xr} X|"'".1|Acc}
+	       {Rec Xr "'".1|X|"'".1|Acc}
 	    else
 	       {Rec Xr X|Acc}
 	    end
@@ -252,7 +251,7 @@ define
       {Reverse {Rec Xs "'".1|nil}}
    end
    /*
-   pre : Xs is a list of characters
+   pre : Xs is a list of characters representing an InPort 
    post : return a value corresponding to the list of characters
    */
    fun {GetPort Xs}
@@ -333,7 +332,7 @@ define
 	       % It's a word inside " or ', then build an optgen component and put it on stack
 	       if X.1 == "\"".1 orelse X.1 == '\"' then Arg Comp Name NNodes NGraph in
 		  Arg = {Reverse {Reverse X.2}.2} %remove the brackets
-		  Name = {Int.toString @Unique}.1|"GenOPT"
+		  Name = {List.append {Int.toString @Unique} "GenOPT"}
 		  Unique := @Unique+1
 		  try
 		     Comp = {GenOpt.newArgs {VirtualString.toAtom Name} opt(arg:{Compiler.virtualStringToValue Arg})}

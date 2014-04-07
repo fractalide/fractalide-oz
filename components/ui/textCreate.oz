@@ -6,12 +6,13 @@ export
 define
    fun {New Name} 
       {Comp.new component(
-		   name: Name type:textCreate
-		   outPorts(eo opt uo)
-		   procedures(proc {$ Out NVar State Options} H in
-				 {Out.uo text(handle:H)}
-				 {Wait H}
-				 {Out.opt opt(handle:H)}
+		   name: Name type:buttonCreate
+		   outPorts(ui_out)
+		   procedures(proc {$ Out NVar State Options}
+				 {Out.ui_out fun{$ _}
+					    text
+					 end
+				 }
 			      end)
 		   )
       }
