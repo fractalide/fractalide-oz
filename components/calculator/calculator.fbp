@@ -23,7 +23,7 @@ fResult() actions_out -> actions_in td()
 % Button to get
 calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(ipEdit) out -> actions_in f1()
 get1() out -> actions_in f2()
-"opt(text:get(getAdd))" -> options get1()
+"opt(text:get(output:getAdd))" -> options get1()
 % Field to logicAdd
 f1() action#getAdd -> input#1 add(add) output -> input setAdd(ipEdit) out -> actions_in fResult()
 f2() action#getAdd -> input#2 add() 

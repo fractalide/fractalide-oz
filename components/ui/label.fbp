@@ -1,5 +1,5 @@
 lc(ui/labelCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
-sc() actions_out -> actions_in lw(ui/labelWidget)
+sc() actions_out -> actions_in lw(ui/simpleui)
 sc() opt -> options lw()
 lw() actions_out => actions_out
 lw() action => action

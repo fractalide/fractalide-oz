@@ -2,9 +2,7 @@ functor
 import
    Comp at '../../lib/component.ozf'
 export
-   new: CompNewArgs
-   newSpec: CompNewGen
-   sendOut: SendOut
+   new: CompNewGen
 define
    proc {SendOut OutPorts Event}
       if {List.member {Label Event} {Arity OutPorts.action}} then
@@ -13,17 +11,32 @@ define
 	 {OutPorts.actions_out Event}
       end
    end
-   fun {CompNewGen Name Catch}
+   fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:simpleui
 		   inPorts(
-		      actions_in: proc{$ Buf Out NVar State Options} IP Res in
+		      actions_in: proc{$ Buf Out NVar State Options} IP in
 				     IP = {Buf.get}
-				     Res = {Catch IP Buf.put Out NVar State Options}
-				     if  {Label Res} == some then
-					try {Options.handle Res.1}
-					catch _ then
-					   {SendOut Out Res.1}
+				     case {Label IP}
+				     of display then {SendOut Out set(Options.handle)}
+				     else
+					if {HasFeature IP output} then Res Get L in
+					   Get = {Record.subtract IP output}
+					   L = if {Record.width Get} == 0 then [1] else {Record.toList Get} end
+					   Res = {Record.make IP.output
+						  L
+						 }
+					   try
+					      {Options.handle {Record.adjoin Res {Label IP}}}
+					      {SendOut Out Res}
+					   catch _ then
+					      {SendOut Out IP}
+					   end
+					else
+					   try {Options.handle IP}
+					   catch _ then
+					      {SendOut Out IP}
+					   end
 					end
 				     end
 				  end
@@ -33,16 +46,5 @@ define
 		   options(handle:_) 
 		   )
       }
-   end
-   fun {CompNewArgs Name}
-      Catch = fun {$ IP BufPut Out NVar State Options}
-		 case {Label IP}
-		 of display then some(set(Options.handle))
-		 else
-		    some(IP)
-		 end
-	      end
-   in
-      {CompNewGen Name Catch}
    end
 end
