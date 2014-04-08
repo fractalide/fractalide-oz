@@ -18,7 +18,7 @@ Javascript has many flaws, single process, no object oriented support, and a ple
 Fractalide?
 -------
 Fractalide means Fractal Integrating Development Environment. We take a leaf of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, or GNU's unix commands.
-Fractalide, to be implemented in Rust-lang will have fractallang and the libmozart library ported to it, once we're satisfied with fractallang on Mozart2 as a proof of concept.
+Fractalide, to be implemented in Rust-lang will have fractallang and the libmozart library included in it, once we're satisfied with fractallang on Mozart2 as a proof of concept.
 
 Usage
 -----
