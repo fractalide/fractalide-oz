@@ -13,13 +13,12 @@ The Internet was designed to connect computers together, it wasn't designed for 
 
 Why Fractallang? Why not Javascript?
 -------------
-Javascript has many flaws, single process, no object oriented support, and a plethora of other issues. Most importantly textual code isn't very approachable by the average non-programwer. We feel that Flow Based Programming (FBP) is a much better approach to programming and by using Mozart-oz to implement FBP we deliver some 30 odd different and factored language concepts to FBP component developers. Most importantly we make extensive use of the Declarative Concurrent Paradigm which enables the simple creation of open Internet applications.
+Javascript has many flaws, single process, no object oriented support, and a plethora of other issues. Most importantly textual code isn't very approachable by the average non-programmer. We feel that Flow Based Programming (FBP) is a much better approach to programming and by using Mozart-oz to implement FBP we deliver some 30 odd different and factored language concepts to FBP component developers. Most importantly we make extensive use of the Declarative Concurrent Paradigm which enables the simple creation of open Internet applications.
 
 Fractalide?
 -------
-Fractalide means Fractal Integrating Development Environment. We take a leaf of of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, or GNU's unix commands.
-Fractalide is the fully fledged open source project, fractallang and the libmozart library will be ported to fractalide once we're satisfied with fractallang os a proof of concept.
-Fractalide will be implemented in Rust-lang.
+Fractalide means Fractal Integrating Development Environment. We take a leaf of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, or GNU's unix commands.
+Fractalide, to be implemented in Rust-lang will have fractallang and the libmozart library ported to it, once we're satisfied with fractallang on Mozart2 as a proof of concept.
 
 Usage
 -----
