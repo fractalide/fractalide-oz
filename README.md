@@ -5,7 +5,7 @@ Fractal-lang is an implementation of flow based programming language using Mozar
 
 It is the front end language for fractalide content centric browser.
 
-In other words, what Javascript is to a Channel Centric Browser, so Fractal-lang is to a Content Centric Browser.
+In other words, what Javascript is to a Channel Centric Browser (HTTP Browser), so Fractal-lang is to a Content Centric Browser.
 
 Usage
 -----
