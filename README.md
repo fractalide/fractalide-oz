@@ -13,7 +13,7 @@ The Internet was designed to connect computers together, it wasn't designed for 
 
 Why Fractallang? Why not Javascript?
 -------------
-Javascript has many flaws, single process, no object oriented support, and a plethora of other issues. Most importantly textual code isn't very approachable to the average non-programmer. We feel that Flow Based Programming (FBP) is a much better approach to programming and by using Mozart-oz to implement FBP we deliver some 30 odd different and factored language concepts to FBP component developers. Most importantly we make extensive use of the Declarative Concurrent Paradigm which enables the simple creation of open Internet applications.
+Javascript has many flaws, single process, no object oriented support, and a plethora of other issues. Most importantly textual code isn't very approachable to the average non-programmer. We feel that Flow Based Programming (FBP) is a much better approach to programming and by using Mozart-oz to implement FBP we deliver some 30 odd different and factored language concepts to FBP component developer. Afew of those concepts allow for the Declarative Concurrent paradigm which enables the simple creation of open Internet applications.
 
 Fractalide?
 -------
