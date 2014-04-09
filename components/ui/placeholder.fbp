@@ -1,8 +1,7 @@
-phc(ui/placeholderCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
-sc() actions_out -> actions_in phw(ui/simpleui)
+ui_in => ui_in phc(ui/placeholderCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+phc() set -> actions_in phw(ui/simpleui)
+sc() actions_out -> actions_in phw()
 sc() opt -> options phw()
 phw() actions_out => actions_out
 phw() action => action
 actions_in => actions_in phw()
-ui_in => input set(ipEdit) out -> actions_in phw()
-"opt(text:set(_))" -> options set()

@@ -6,14 +6,15 @@ export
 define
    fun {New Name} 
       {Comp.new component(
-		   name: Name type:canvasCreate
+		   name: Name type:listboxCreate
 		   outPorts(ui_out)
 		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI D FuturOut in
 				     NewUI = {Buf.get}
-				     D = canvas
+				     D = listbox(action: proc{$} {FuturOut get(firstselection selection output:select)} end
+							)
 				     {Out.ui_out fun{$ FO}
 						    FuturOut = FO
-						    {Record.adjoin {Record.adjoin D NewUI} canvas}
+						    {Record.adjoin {Record.adjoin D NewUI} listbox}
 						 end
 				     }
 				  end)

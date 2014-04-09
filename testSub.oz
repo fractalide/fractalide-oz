@@ -1,9 +1,9 @@
 functor
 import
    GraphM at './lib/graph.ozf'
-   %Browser
+   Application
 define
-   G = {GraphM.loadGraph "testCanvas.fbp"}
-   %{Browser.browse G}
+   Args = {Application.getArgs plain}
+   G = {GraphM.loadGraph Args.1}
    {GraphM.start G}
 end

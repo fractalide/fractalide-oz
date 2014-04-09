@@ -18,7 +18,11 @@ define
 		      actions_in: proc{$ Buf Out NVar State Options} IP in
 				     IP = {Buf.get}
 				     case {Label IP}
-				     of display then {SendOut Out set(Options.handle)}
+				     of display then {SendOut Out set(Options.handlePH)}
+				     [] getHandle then R in
+					R = {Record.make IP.output [1]}
+					R.1 = Options.handle
+					{SendOut Out R} 
 				     else
 					if {HasFeature IP output} then Res Get L in
 					   Get = {Record.subtract IP output}

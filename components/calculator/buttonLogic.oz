@@ -26,7 +26,7 @@ define
 				       [] 'button_clicked' then
 					  if State.ctrl andthen State.maj then Color in
 					     Color = c(({OS.rand} mod 255) ({OS.rand} mod 255) ({OS.rand} mod 255))
-					     {Out.color set(bg:Color activebackground:Color)}
+					     {Out.color set(bg:blue activebackground:blue)}
 					  else
 					     {Out.click IP}
 					  end

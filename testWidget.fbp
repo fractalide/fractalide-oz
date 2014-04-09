@@ -1,0 +1,84 @@
+td(ui/td) ui_out -> ui_in w(ui/window)
+td() actions_out -> actions_in w(ui/window) actions_out -> input d(display)
+"opt(pre:default)" -> options d()
+
+b(ui/button) ui_out -> ui_in#1 td()
+b() actions_out -> actions_in td()
+"start(text:"Test")" -> ui_in b()
+
+% Canvas -> more in testCanvas.fbp
+canvas(ui/canvas) ui_out -> ui_in#2 td()
+canvas() actions_out -> actions_in td()
+"start(10 10 190 30 tags:"rect")" -> ui_in rect(ui/canvas/rectangle) ui_out -> actions_in canvas()
+rect() actions_out -> actions_in canvas()
+"set(width:200 height:40)" -> ui_in canvas()
+"set(fill:red)" -> actions_in rect()
+cb(ui/checkbutton) ui_out -> ui_in#3 td()
+cb() actions_out -> actions_in td()
+"start(text:"check button" init:true)" -> ui_in cb()
+
+ddlb(ui/dropdownlistbox) ui_out -> ui_in#4 td()
+ddlb() actions_out -> actions_in td()
+"start(init:["choice1" "choice2" "choice3"])" -> ui_in ddlb()
+
+entry(ui/entry) ui_out -> ui_in#5 td()
+entry() actions_out -> actions_in td()
+"start(init:"type here" width:40)" -> ui_in entry()
+"set(width:20)" -> actions_in entry()
+
+%GRID
+grid(ui/grid) ui_out -> ui_in#6 td()
+grid() actions_out -> actions_in td()
+"start(text:"1")" -> ui_in l1(ui/label) ui_out -> ui_in#1 grid()
+"start(text:"2")" -> ui_in l2(ui/label) ui_out -> ui_in#2 grid()
+"newline" -> ui_in#3 grid()
+"empty" -> ui_in#4 grid()
+"start(text:"3")" -> ui_in bGrid(ui/button) ui_out -> ui_in#5 grid()
+bGrid() actions_out -> actions_in grid()
+"start(text:"5")" -> ui_in l5(ui/label) ui_out -> input ipedit(ipEdit) out -> actions_in grid()
+l5() actions_out -> actions_in grid()
+"opt(text:configure(_ column:1 row:1))" -> options ipedit()
+
+label(ui/label) ui_out -> ui_in#7 td()
+label() actions_out -> actions_in td()
+"set(text:"alabel")" -> ui_in label()
+
+lb(ui/listbox) ui_out -> ui_in#8 td()
+lb() actions_out -> actions_in td()
+"start(init:["choice1" "choice2"] tdscrollbar:true)" -> ui_in lb()
+"set(height:3)" -> actions_in lb()
+			    
+%MENU -> TODO
+
+message(ui/message) ui_out -> ui_in#9 td()
+message() actions_out -> actions_in td()
+"start(aspect:90 init:"This is a message widget")" -> ui_in message()
+
+numberentry(ui/numberentry) ui_out -> ui_in#91 td()
+numberentry() actions_out -> actions_in td()
+"start(min:0 max:100 init:50)" -> ui_in numberentry()
+
+panel(ui/panel) ui_out -> ui_in#92 td()
+panel() actions_out -> actions_in td()
+"start(text:"b1")" -> ui_in bp1(ui/button) ui_out -> input ipep1(ipEdit) out -> ui_in#1 panel()
+bp1() actions_out -> actions_in panel()
+"opt(text:td(_ title:"Panel1"))" -> options ipep1()
+"start(text:"b2")" -> ui_in bp2(ui/button) ui_out -> input ipep2(ipEdit) out -> ui_in#2 panel()
+bp2() actions_out -> actions_in panel()
+"opt(text:td(_ title:"Panel2"))" -> options ipep2()
+% How to set glue or anything else for panel?
+
+placeholder(ui/placeholder) ui_out -> ui_in#93 td()
+placeholder() actions_out -> actions_in td()
+"start" -> ui_in bph(ui/button) ui_out -> ui_in#1 placeholder()
+bph() actions_out -> actions_in placeholder()
+"start(text:'last')" -> ui_in bph2(ui/button) ui_out -> ui_in#2 placeholder()
+bph2() actions_out -> actions_in placeholder()
+%"display" -> actions_in bph()
+
+
+
+
+
+
+

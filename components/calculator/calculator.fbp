@@ -1,13 +1,13 @@
 % First step : two fields
 l1(ui/label) ui_out -> ui_in#1 lr(ui/lr)
 l1() actions_out -> actions_in lr()
-"set("x: ")" -> actions_in l1()
+"set(init:"x: ")" -> ui_in l1()
 f1(ui/entry) ui_out -> ui_in#2 lr()
 f1() actions_out -> actions_in lr()
 f2(ui/entry) ui_out -> ui_in#3 lr()
 f2() actions_out -> actions_in lr()
-"set([48])" -> actions_in f1()
-"set([48])" -> actions_in f2()
+"set(init:[48])" -> ui_in f1()
+"set(init:[48])" -> ui_in f2()
 
 
 % Second step : lr, button and result field
@@ -34,19 +34,17 @@ buttonLogic() color -> actions_in calcButton()
 % From TD
 td() action#KeyPress -> input buttonLogic()
 td() action#KeyRelease -> input buttonLogic()
-%td() action#KeyPress => actions_out
-%td() action#keyRelease => actions_out
 % Specific
 f1() action#Enter -> input dispSpecific(display)
 "opt(pre:'specific ')" -> options dispSpecific()
 
 % size of field
-"set(height:1 width:15)" -> actions_in fResult()
-"set(height:1 width:15)" -> actions_in f1()
-"set(height:1 width:15)" -> actions_in f2()
+"set(width:15)" -> ui_in fResult()
+"set(width:15)" -> actions_in f1()
+"set(width:15)" -> actions_in f2()
 
 % Some options
-"set(text:calc)" -> actions_in calcButton()
+"set(text:calc)" -> ui_in calcButton()
 "set(title:'Calculator')" -> actions_in td()
 
 
