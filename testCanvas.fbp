@@ -16,6 +16,7 @@ imItem(ui/canvas/image) ui_out -> actions_in canvas()
 imItem() actions_out -> actions_in canvas()
 "photo(file:"logo.gif")" -> input im(ui/image) output -> image imItem()
 "start(350 150)" -> ui_in imItem()
+"move(100 100)" -> actions_in imItem()
 % Line
 line(ui/canvas/line) ui_out -> actions_in canvas()
 line() actions_out -> actions_in canvas()

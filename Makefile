@@ -1,14 +1,14 @@
 all: library comp test
 
 comp:
-	cd components/ && ozc -c *.oz && cd ..
-	cd components/ui && ozc -c *.oz && cd ../..
-	cd components/gates && ozc -c *.oz && cd ../..
-	cd components/calculator && ozc -c *.oz && cd ../../
-	cd components/ui/canvas && ozc -c *.oz && cd ../../
+	cd components/ && ~/oz/bin/ozc -c *.oz && cd ..
+	cd components/ui && ~/oz/bin/ozc -c *.oz && cd ../..
+	cd components/gates && ~/oz/bin/ozc -c *.oz && cd ../..
+	cd components/calculator && ~/oz/bin/ozc -c *.oz && cd ../../
+	cd components/ui/canvas && ~/oz/bin/ozc -c *.oz && cd ../../
 
 library:
-	cd lib/ && ozc -c *.oz && cd ..
+	cd lib/ && ~/oz/bin/ozc -c *.oz && cd ..
 
 test:
 	ozc -c *.oz

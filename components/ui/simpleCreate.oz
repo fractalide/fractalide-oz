@@ -19,7 +19,6 @@ define
 				     NewUI = {Buf.get}
 				     {State.handle set({Record.adjoinAt {NewUI Out.actions_out} handle HandleNewUI})}
 
-
 				  Events = ['Activate'#nil
 					    'Deactivate'#nil
 					    'FocusIn'#nil
@@ -33,8 +32,8 @@ define
 				  end
 				  for E in ['KeyPress' 'KeyRelease'] do
 				     {HandleNewUI bind(event:"<"#{Atom.toString E}#">"
-					     args:[int(k) int(x) int(y)]
-					     action: proc {$ K X Y} {Out.actions_out E(key:K x:X y:Y)} end
+					     args:[int(k) int(x) int(y) string(s) string('A') string('T') string('W')]
+					     action: proc {$ K X Y S A T W} {Out.actions_out E(key:K x:X y:Y state:S ascii:A type:T path:W)} end
 					    )}
 				  end
 				  for E in ['ButtonPress' 'ButtonRelease'] do
@@ -43,6 +42,10 @@ define
 					     action: proc {$ B X Y} {Out.actions_out E(button:B x:X y:Y)} end
 					    )}
 				  end
+				  {HandleNewUI bind(event:"<Motion>"
+						    args:[int(x) int(y) string(s)]
+						    action: proc{$ X Y S} {Out.actions_out 'Motion'(x:X y:Y state:State)} end
+						   )}
 				  for E in ['Enter' 'Leave'] do
 				     {HandleNewUI bind(event:"<"#{Atom.toString E}#">"
 					     args:[string(d) int(f) string(m) int(x) int(y) string(s)]

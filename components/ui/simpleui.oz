@@ -1,6 +1,7 @@
 functor
 import
    Comp at '../../lib/component.ozf'
+   System
 export
    new: CompNewGen
 define
@@ -38,7 +39,8 @@ define
 					   end
 					else
 					   try {Options.handle IP}
-					   catch _ then
+					   catch X then
+					      {System.show X}
 					      {SendOut Out IP}
 					   end
 					end
