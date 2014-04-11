@@ -1,5 +1,6 @@
-td(ui/td) ui_out -> ui_in w(ui/window)
-td() actions_out -> actions_in w(ui/window) actions_out -> input d(display)
+td(ui/td) ui_out -> frame sf(ui/scrollframe) ui_out -> ui_in w(ui/window)
+"start(tdscrollbar:true lrscrollbar:true)" -> ui_in sf()
+td() actions_out -> actions_in sf() actions_out actions_in w(ui/window) actions_out -> input d(display)
 "opt(pre:default)" -> options d()
 
 b(ui/button) ui_out -> ui_in#1 td()
@@ -86,7 +87,8 @@ rb3() actions_out -> actions_in lrrb()
 lrrb() ui_out -> ui_in#94 td()
 lrrb() actions_out -> actions_in td()
 
-
+"start(glue:ew)" -> ui_in text(ui/text) ui_out -> ui_in#95 td()
+text() actions_out -> actions_in td()
 
 
 

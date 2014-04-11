@@ -1,4 +1,5 @@
-ui_in => ui_in c(ui/textCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+ui_in => ui_in c(ui/scrollframeCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+frame => frame c()
 sc() actions_out -> actions_in suib(ui/simpleui)
 sc() opt -> options suib()
 suib() actions_out => actions_out

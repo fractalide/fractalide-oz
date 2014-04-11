@@ -1,7 +1,6 @@
 functor
 import
    Comp at '../../lib/component.ozf'
-   OS
 export
    new: CompNew
 define
