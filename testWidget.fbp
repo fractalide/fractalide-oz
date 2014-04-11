@@ -76,7 +76,15 @@ bph() actions_out -> actions_in placeholder()
 bph2() actions_out -> actions_in placeholder()
 %"display" -> actions_in bph()
 
+"start(text:'b1' group:g1)" -> ui_in rb1(ui/radiobutton) ui_out -> ui_in#1 lrrb(ui/lr)
+rb1() actions_out -> actions_in lrrb()
+"start(text:'b2' group:g1)" -> ui_in rb2(ui/radiobutton) ui_out -> ui_in#2 lrrb()
+rb2() actions_out -> actions_in lrrb()
+"start(text:'b3' group:g1)" -> ui_in rb3(ui/radiobutton) ui_out -> ui_in#3 lrrb()
+rb3() actions_out -> actions_in lrrb()
 
+lrrb() ui_out -> ui_in#94 td()
+lrrb() actions_out -> actions_in td()
 
 
 
