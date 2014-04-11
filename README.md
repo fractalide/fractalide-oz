@@ -28,4 +28,6 @@ Usage
 * `git clone git://github.com/fractalide/fractallang.git`
 * `cd fractallang`
 * `make`
-* `ozengine testSub.ozf`
+* `ozengine testSub.ozf testCanvas.fbp`
+* `ozengine testSub.ozf testWidget.fbp`
+* `ozengine testSub.ozf test.fbp`
