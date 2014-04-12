@@ -34,12 +34,12 @@ define
    * There is a max size, which represent the size of the buffer.
    * The get operation block the operation if the queue is empty
    */ 
-   fun {NewQueue}
+   fun {NewQueue MaxSize}
       Given GivePort = {NewPort Given}
       Taken TakePort = {NewPort Taken}
       Size = {NewCell 0}
       Buffer = {NewCell nil}
-      Max = 20
+      Max = MaxSize
       proc {Match Xs Ys}
 	 case Xs # Ys
 	 of (X|Xr) # (Y|Yr) then
@@ -253,7 +253,7 @@ define
 					      case Port
 					      of port(q:Queue p:_) then
 						 IPs = Queue
-					      [] arrayPort(qs:Qs p:_) then
+					      [] arrayPort(qs:Qs p:_ size:_) then
 						 IPs = {Record.foldR Qs fun{$ E Acc} E|Acc end nil}
 					      end
 					      {SubThread proc{$}
@@ -315,7 +315,7 @@ define
 		R=State.outPorts.Port
 		State
 	     [] addinArrayPort(Port Index) then NPort NInPorts in
-		NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue}}}
+		NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}}
 		NInPorts = {Record.adjoinAt State.inPorts Port NPort}
 		{Record.adjoinAt State inPorts NInPorts}
 	     [] changeProcPort(Port Proc) then NPort NInPorts in
@@ -369,17 +369,19 @@ define
    end
    %% Functions to build a new component
    fun {InPorts In}
-      {Record.foldLInd In
-       fun {$ Name Acc Proc}
-	  {Record.adjoinAt Acc Name port(q:{NewQueue} p:Proc)}
+      {Record.foldL In
+       fun {$ Acc P} Size in
+	  Size = if {HasFeature P size} then P.size else 25 end
+	  {Record.adjoinAt Acc {Label P} port(q:{NewQueue Size} p:P.1)}
        end
        'in'()
       }
    end
    fun {InArrayPorts In}
-      {Record.foldLInd In
-       fun {$ Name Acc Proc}
-	  {Record.adjoinAt Acc Name arrayPort(qs:queues() p:Proc)}
+      {Record.foldL In
+       fun {$ Acc P} Size in
+	  Size = if {HasFeature P size} then P.size else 25 end
+	  {Record.adjoinAt Acc {Label P} arrayPort(qs:queues() p:P.1 size:Size)}
        end
        'arrayIn'()
       }
