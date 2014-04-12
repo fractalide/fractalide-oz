@@ -258,7 +258,7 @@ define
 					      end
 					      {SubThread proc{$}
 							    T = {Thread.this}
-							    {Port.p IPs Out NVar State.state State.options}
+							    {Port.p IPs Out State}
 							 end
 					      }
 					      T|Acc
@@ -270,7 +270,7 @@ define
 					   fun {$ Acc Proc} T in
 					      {SubThread proc{$}
 							    T = {Thread.this}
-							    {State.procs.Proc Out NVar State.state State.options}
+							    {State.procs.Proc Out State}
 							 end
 					      }
 					      T|Acc
