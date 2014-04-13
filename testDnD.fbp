@@ -8,8 +8,7 @@ win() actions_out -> input disp(display)
 imItem(ui/canvas/image) ui_out -> actions_in canvas()
 imItem() actions_out -> actions_in canvas()
 "photo(file:"logo.gif")" -> input im(ui/image) output -> image imItem()
-"start(350 150)" -> ui_in imItem()
-"move(~100 0)" -> actions_in imItem()
+"start(100 100)" -> ui_in imItem()
 
 % Drag and drop image
 imItem() action#ButtonPress -> input dnd(dnd/dndLogic) output -> actions_in imItem()

@@ -1,5 +1,5 @@
 ui_in => ui_in tc(ui/tdCreate) out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
-widgets => input tc()
+place => input tc()
 sc() actions_out -> actions_in sui(ui/simpleui)
 sc() opt -> options sui()
 sui() actions_out => actions_out
