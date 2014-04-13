@@ -5,7 +5,7 @@ win() actions_out -> input disp(display)
 "set(glue:nswe bg:white)" -> ui_in canvas()
 "set(title:"Fractallang")" -> actions_in win()
 % Image
-imItem(ui/canvas/image) ui_out -> actions_in canvas()
+imItem(ui/canvas/image) ui_out -> widget canvas()
 imItem() actions_out -> actions_in canvas()
 "photo(file:"logo.gif")" -> input im(ui/image) output -> image imItem()
 "start(100 100)" -> ui_in imItem()

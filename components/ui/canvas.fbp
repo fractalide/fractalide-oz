@@ -3,4 +3,5 @@ sc() actions_out -> actions_in suib(ui/simpleui)
 sc() opt -> options suib()
 suib() actions_out => actions_out
 suib() action => action
+widget => actions_in suib()
 actions_in => actions_in suib()

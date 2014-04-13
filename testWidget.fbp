@@ -11,10 +11,11 @@ b() actions_out -> actions_in td()
 % Canvas -> more in testCanvas.fbp
 canvas(ui/canvas) ui_out -> place#2 td()
 canvas() actions_out -> actions_in td()
-"start(10 10 190 30 tags:"rect")" -> ui_in rect(ui/canvas/rectangle) ui_out -> actions_in canvas()
+"start(10 10 190 30 tags:"rect")" -> ui_in rect(ui/canvas/rectangle) ui_out -> widget canvas()
 rect() actions_out -> actions_in canvas()
 "set(width:200 height:40)" -> ui_in canvas()
 "set(fill:red)" -> actions_in rect()
+
 cb(ui/checkbutton) ui_out -> place#3 td()
 cb() actions_out -> actions_in td()
 "start(text:"check button" init:true)" -> ui_in cb()
