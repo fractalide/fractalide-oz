@@ -326,7 +326,18 @@ define
 	     [] send(InPort#N Msg Ack) then
 		{State.inPorts.InPort.qs.N.put Msg Ack}
 		{Exec State}
-	     [] send(options Msg Ack) then NOptions NState in 
+	     [] send('START' _ Ack) then
+		Ack = ack
+		{Exec State}
+	     [] send('STOP' _ Ack) then
+		Ack = ack
+		for T in State.threads do
+		   if {Thread.state T} \= terminated then
+		      {Thread.terminate T}
+		   end
+		end
+		State
+	     [] send(options Msg Ack) then NOptions NState in
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
 		Ack = ack
 		NState = {Record.adjoinAt State options NOptions}
@@ -419,7 +430,11 @@ define
    end
    fun {NewState GivenRecord}
       DefaultState NState in
-      DefaultState = component(name:_ type:_ description:"" inPorts:'in'() outPorts:out() procs:procs() var:var() state:{NewDictionary} threads:threads() options:opt())
+      DefaultState = component(name:_ type:_ description:""
+			       inPorts:'in'() outPorts:out()
+			       procs:procs() var:var() state:{NewDictionary}
+			       threads:threads() options:opt()
+			      )
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
 		   case {Record.label Rec}
