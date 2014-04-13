@@ -32,8 +32,8 @@ define
 				  end
 				  for E in ['KeyPress' 'KeyRelease'] do
 				     {HandleNewUI bind(event:"<"#{Atom.toString E}#">"
-					     args:[int(k) int(x) int(y) string(s) string('A') string('T') string('W')]
-					     action: proc {$ K X Y S A T W} {Out.actions_out E(key:K x:X y:Y state:S ascii:A type:T path:W)} end
+					     args:[int(k) int(x) int(y) string(s) string('A') string('T') string('W') string('K') int('X') int('Y')]
+					     action: proc {$ K X Y S A T W TK XR YR} {Out.actions_out E(key:K x:X y:Y state:S ascii:A type:T path:W textual_string:TK x_root:XR y_root:YR)} end
 					    )}
 				  end
 				  for E in ['ButtonPress' 'ButtonRelease'] do
