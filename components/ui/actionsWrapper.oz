@@ -15,9 +15,9 @@ define
       {Comp.new comp(
 		   name:Name type:actionsWrapper
 		   inPorts(
-		      actions_in: proc{$ Buf Out NVar State Options} 
-				     {SendOut Out {Buf.get}}
-				  end
+		      actions_in(proc{$ Buf Out Comp} 
+				    {SendOut Out {Buf.get}}
+				 end)
 		      )
 		   outArrayPorts(action)
 		   outPorts(actions_out)

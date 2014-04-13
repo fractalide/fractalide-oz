@@ -8,17 +8,18 @@ define
       {Comp.new component(
 		   name: Name type:tdCreate
 		   outPorts(out)
-		   inArrayPorts(input: proc {$ Buffers Out NVar State Options} Rec in
-				       Rec = {List.toRecord lr
-					      {List.mapInd Buffers
-					       fun {$ Ind El} E in
-						  E = {El.get}
-						  Ind#E
-					       end
-					      }
-					     }
-				       {Out.out fun {$ _} Rec end}
-				    end)
+		   inArrayPorts(input(proc {$ Buffers Out Comp} Rec in
+					 Rec = {List.toRecord lr
+						{List.mapInd Buffers
+						 fun {$ Ind El} E in
+						    E = {El.get}
+						    Ind#E
+						 end
+						}
+					       }
+					 {Out.out fun {$ _} Rec end}
+				      end)
+			       )
 		   )
       }
    end

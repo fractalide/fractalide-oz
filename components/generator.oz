@@ -4,11 +4,11 @@ import
 export
    new: New
 define
-   proc {Proc Out NVar State Options}
+   proc {Proc Out Comp}
       proc {Rec}
 	 {Delay 1000}
-	 {Out.output State.cpt}
-	 State.cpt := State.cpt + 1
+	 {Out.output Comp.state.cpt}
+	 Comp.state.cpt := Comp.state.cpt + 1
 	 {Rec}
       end
    in

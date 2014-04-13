@@ -8,10 +8,10 @@ define
       {Comp.new component(
 		   name: Name type:canvasCreate
 		   outPorts(ui_out)
-		   procedures(proc {$ Out NVar State Options}
+		   procedures(proc {$ Out Comp}
 				 {Out.ui_out fun{$ _}
-					    canvas
-					 end
+						canvas
+					     end
 				 }
 			      end)
 		   )

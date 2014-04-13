@@ -11,10 +11,11 @@ define
       {Comp.new comp(
 		   name:Name type:add2
 		   inPorts(
-		      mul: proc{$ Buf Out NVar State Options}
-			      NVar.mul = {Buf.get}
-			   end)
-		   inArrayPorts(add: proc{$ Buffers Out NVar State Options}
+		      mul(proc{$ Buf Out Comp}
+			     Comp.var.mul = {Buf.get}
+			  end)
+		      )
+		   inArrayPorts(add(proc{$ Buffers Out Comp}
 				     fun {AddStream Buffer}
 					fun {AddStreamRec Acc} IP in
 					   IP = {Buffer.get}
@@ -29,19 +30,19 @@ define
 					thread {AddStreamRec 0} end
 				     end
 				  in
-				     NVar.add = {FoldL Buffers fun{$ Acc Buffer} Acc+{AddStream Buffer} end 0}
-				  end)
-		   procedures(proc {$ Out NVar State Options}
-				 if Options.operation == 'mul' then
-				    {Out.output NVar.mul*NVar.add}
+				     Comp.var.add = {FoldL Buffers fun{$ Acc Buffer} Acc+{AddStream Buffer} end 0}
+				    end)
+				)
+		   procedures(proc {$ Out Comp}
+				 if Comp.options.operation == 'mul' then
+				    {Out.output Comp.var.mul*Comp.var.add}
 				 else
-				    {Out.output NVar.mul+NVar.add}
+				    {Out.output Comp.var.mul+Comp.var.add}
 				 end
 			      end)
 		   outPorts(output)
 		   var(mul add)
 		   options(operation:_)
-		   ui(procedure:fun {$} 1 end)
 		   )}
    end
 end

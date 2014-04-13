@@ -15,31 +15,32 @@ define
       {Comp.new comp(
 		   name:Name type:simpleui
 		   inPorts(
-		      actions_in: proc{$ Buf Out NVar State Options} IP in
-				     IP = {Buf.get}
-				     case {Label IP}
-				     of display then {SendOut Out set(Options.handle)}
-				     else
-					if {HasFeature IP output} then Res Get L in
-					   Get = {Record.subtract IP output}
-					   L = if {Record.width Get} == 0 then [1] else {Record.toList Get} end
-					   Res = {Record.make IP.output
-						  L
-						 }
-					   try
-					      {Options.handle {Record.adjoin Res {Label IP}}}
-					      {SendOut Out Res}
-					   catch _ then
-					      {SendOut Out IP}
-					   end
-					else
-					   try {Options.handle IP}
-					   catch _ then
-					      {SendOut Out IP}
-					   end
-					end
-				     end
-				  end
+		      actions_in(proc{$ Buf Out Comp} IP in
+				    IP = {Buf.get}
+				    case {Label IP}
+				    of display then {SendOut Out set(Comp.options.handle)}
+				    else
+				       if {HasFeature IP output} then Res Get L in
+					  Get = {Record.subtract IP output}
+					  L = if {Record.width Get} == 0 then [1] else {Record.toList Get} end
+					  Res = {Record.make IP.output
+						 L
+						}
+					  try
+					     {Comp.options.handle {Record.adjoin Res {Label IP}}}
+					     {SendOut Out Res}
+					  catch _ then
+					     {SendOut Out IP}
+					  end
+				       else
+					  try {Comp.options.handle IP}
+					  catch _ then
+					     {SendOut Out IP}
+					  end
+				       end
+				    end
+				 end
+				)
 		      )
 		   outArrayPorts(action)
 		   outPorts(actions_out)

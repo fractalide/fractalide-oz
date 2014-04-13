@@ -7,16 +7,16 @@ define
    fun {NewNand Name}
       {Comp.new comp(name:Name type:nand
 		     inPorts(
-			a: proc{$ Buffer Out NVar State Options}
-			      NVar.a = {Buffer.get}
-			   end
-			b: proc{$ Buffer Out NVar State Options}
-			      NVar.b = {Buffer.get}
-			   end
+			a(proc{$ Buffer Out Comp}
+			     Comp.var.a = {Buffer.get}
+			  end)
+			b(proc{$ Buffer Out Comp}
+			     Comp.var.b = {Buffer.get}
+			  end)
 			)
 		     outPorts(out)
-		     procedures(proc {$ Out NVar State Options}
-				   case NVar.a#NVar.b
+		     procedures(proc {$ Out Comp}
+				   case Comp.var.a#Comp.var.b
 				   of 1#1 then {Out.out 0}
 				   else {Out.out 1}
 				   end

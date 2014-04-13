@@ -8,11 +8,11 @@ define
       {Comp.new component(
 		   name: Name type:buttonCreate
 		   outPorts(ui_out)
-		   procedures(proc {$ Out NVar State Options}
+		   procedures(proc {$ Out Comp}
 				 {Out.ui_out fun{$ Out}
-					    entry(action: proc{$} {Out modify} end
-						  )
-					 end
+						entry(action: proc{$} {Out modify} end
+						     )
+					     end
 				 }
 			      end)
 		   )
