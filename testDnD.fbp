@@ -2,7 +2,7 @@
 canvas(ui/canvas) ui_out -> ui_in#1 td(ui/td) ui_out -> ui_in win(ui/window)
 canvas() actions_out -> actions_in td()
 td() actions_out -> input disp(display)
-"set(width:500 height:500 bg:white)" -> ui_in canvas()
+"set(glue:nswe bg:white)" -> ui_in canvas()
 % Image
 imItem(ui/canvas/image) ui_out -> actions_in canvas()
 imItem() actions_out -> actions_in canvas()

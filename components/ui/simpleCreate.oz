@@ -1,6 +1,7 @@
 functor
 import
    Comp at '../../lib/component.ozf'
+   System
 export
    new: New
 define
@@ -9,15 +10,22 @@ define
 		   name: Name type:textCreate
 		   state(handle:nil)
 		   outPorts(actions_out opt ui_out)
-		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI HandlePH HandleNewUI Events in
+		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI HandlePH HandleNewUI Events GeneralOptions in
+				     NewUI = {{Buf.get} Out.actions_out}
+				     {System.show NewUI}
+				     GeneralOptions = {Record.filterInd NewUI
+						       fun {$ I _}
+							  {List.member I
+							   [glue width height]}
+						       end}
 				     % Initialize the placeholder
 				     if State.handle == nil then
-					{Out.ui_out placeholder(handle: HandlePH)}
+					{Out.ui_out {Record.adjoin GeneralOptions placeholder(handle: HandlePH)}}
 					{Wait HandlePH}
 					State.handle := HandlePH
 				     end
-				     NewUI = {Buf.get}
-				     {State.handle set({Record.adjoinAt {NewUI Out.actions_out} handle HandleNewUI})}
+
+				     {State.handle set({Record.adjoinAt NewUI handle HandleNewUI})}
 
 				  Events = ['Activate'#nil
 					    'Deactivate'#nil
