@@ -1,14 +1,15 @@
 % First step : two calculator in ph
-test1(calculator/calculator) ui_out -> ui_in#1 ph(ui/placeholder) ui_out -> ui_in#1 td(ui/td) ui_out -> ui_in win(ui/window)
+test1(calculator/calculator) ui_out -> ui_in#1 ph(ui/placeholder) ui_out -> widgets#1 td(ui/td) ui_out -> ui_in win(ui/window)
 test2(calculator/calculator) ui_out -> ui_in#2 ph()
 test1() actions_out -> actions_in ph()
 test2() actions_out -> actions_in ph()
 ph() actions_out -> actions_in td() actions_out -> actions_in win() actions_out -> input disp(display)
 % Second step : a button to switch
-button(ui/button) ui_out -> ui_in#2 td()
+button(ui/button) ui_out -> widgets#2 td()
 button() actions_out -> actions_in td()
 button() action#button_clicked -> input st(ipEdit) out -> input lb(loadbalancer) output#1 -> actions_in test1()
 lb() output#2 -> actions_in test2()
 "opt(text:display)" -> options st()
 "set(text:'next calculator')" -> ui_in button()
 "opt(pre:'default ')" -> options disp()
+"start" -> ui_in td()

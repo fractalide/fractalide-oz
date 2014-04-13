@@ -1,22 +1,23 @@
 % First step : two fields
-l1(ui/label) ui_out -> ui_in#1 lr(ui/lr)
+l1(ui/label) ui_out -> widgets#1 lr(ui/lr)
 l1() actions_out -> actions_in lr()
 "set(init:"x: ")" -> ui_in l1()
-f1(ui/entry) ui_out -> ui_in#2 lr()
+f1(ui/entry) ui_out -> widgets#2 lr()
 f1() actions_out -> actions_in lr()
-f2(ui/entry) ui_out -> ui_in#3 lr()
+f2(ui/entry) ui_out -> widgets#3 lr()
 f2() actions_out -> actions_in lr()
 "set(init:[48])" -> ui_in f1()
 "set(init:[48])" -> ui_in f2()
-
+"start" -> ui_in lr()
 
 % Second step : lr, button and result field
-lr() ui_out -> ui_in#1 td(ui/td)
+lr() ui_out -> widgets#1 td(ui/td)
 lr() actions_out -> actions_in td()
-calcButton(ui/button) ui_out -> ui_in#2 td()
+calcButton(ui/button) ui_out -> widgets#2 td()
 calcButton() actions_out -> actions_in td()
-fResult(ui/entry) ui_out -> ui_in#3 td()
+fResult(ui/entry) ui_out -> widgets#3 td()
 fResult() actions_out -> actions_in td()
+"start" -> ui_in td()
 
 % Logic
 % From button
