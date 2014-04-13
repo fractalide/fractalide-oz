@@ -1,7 +1,6 @@
 functor
 import
    Comp at '../../lib/component.ozf'
-   System
 export
    new: New
 define
@@ -12,7 +11,6 @@ define
 		   outPorts(actions_out opt ui_out)
 		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI HandlePH HandleNewUI Events GeneralOptions in
 				     NewUI = {{Buf.get} Out.actions_out}
-				     {System.show NewUI}
 				     GeneralOptions = {Record.filterInd NewUI
 						       fun {$ I _}
 							  {List.member I
