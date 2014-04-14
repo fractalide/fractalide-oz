@@ -66,14 +66,13 @@ numberentry() actions_out -> actions_in td()
 
 panel(ui/panel) ui_out -> place#92 td()
 panel() actions_out -> actions_in td()
-"start(text:"b1")" -> ui_in bp1(ui/button) ui_out -> input ipep1(ipEdit) out -> panel#1 panel()
+"start(text:"b1")" -> ui_in bp1(ui/button) ui_out -> panel pf1(ui/panelframe) ui_out -> panel#1 panel()
 bp1() actions_out -> actions_in panel()
-"opt(text:td(_ title:"Panel1"))" -> options ipep1()
-"start(text:"b2")" -> ui_in bp2(ui/button) ui_out -> input ipep2(ipEdit) out -> panel#2 panel()
+""Panel1"" -> title pf1()
+"start(text:"b2")" -> ui_in bp2(ui/button) ui_out -> panel pf2(ui/panelframe) ui_out -> panel#2 panel()
 bp2() actions_out -> actions_in panel()
-"opt(text:td(_ title:"Panel2"))" -> options ipep2()
+""Panel2"" -> title pf2()
 "start(bg:white)" -> ui_in panel()
-% How to set glue or anything else for panel?
 
 placeholder(ui/placeholder) ui_out -> place#93 td()
 placeholder() actions_out -> actions_in td()
