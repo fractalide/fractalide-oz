@@ -225,7 +225,7 @@ define
 		   else {Rec Threads} end
 		end
 	     in
-		{CheckThread State.threads} andthen {CheckOpt State.options}
+		{CheckThread State.threads} andthen {CheckOpt State.options} andthen {CheckBuffers {Record.toList State.inPorts}}
 	     end
 	     /*
 	     Exec -

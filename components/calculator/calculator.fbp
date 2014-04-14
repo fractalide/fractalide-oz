@@ -35,6 +35,8 @@ buttonLogic() color -> actions_in calcButton()
 % From TD
 td() action#KeyPress -> input buttonLogic()
 td() action#KeyRelease -> input buttonLogic()
+%td() action#KeyPress => actions_out
+%td() action#keyRelease => actions_out
 % Specific
 f1() action#Enter -> input dispSpecific(display)
 "opt(pre:'specific ')" -> options dispSpecific()
