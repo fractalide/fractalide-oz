@@ -22,7 +22,8 @@ cb() actions_out -> actions_in td()
 
 ddlb(ui/dropdownlistbox) ui_out -> place#4 td()
 ddlb() actions_out -> actions_in td()
-"start(init:["choice1" "choice2" "choice3"])" -> ui_in ddlb()
+"["choice1" "choice2" "choice3" "choice4"]" -> list ddlb()
+"start" -> ui_in ddlb()
 
 entry(ui/entry) ui_out -> place#5 td()
 entry() actions_out -> actions_in td()
@@ -49,7 +50,8 @@ label() actions_out -> actions_in td()
 
 lb(ui/listbox) ui_out -> place#8 td()
 lb() actions_out -> actions_in td()
-"start(init:["choice1" "choice2"] tdscrollbar:true)" -> ui_in lb()
+"["choice1" "choice2" "choice3" "choice4"]" -> list lb()
+"start(tdscrollbar:true)" -> ui_in lb()
 "set(height:3)" -> actions_in lb()
 			    
 %MENU -> TODO
