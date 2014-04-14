@@ -16,13 +16,13 @@ define
       {Comp.new comp(
 		   name:Name type:simpleui
 		   inPorts(
-		      actions_in: proc{$ Buf Out NVar State Options} IP in
-				     IP = {Buf.get}
+		      actions_in(proc{$ In Out Comp} IP in
+				     IP = {In.get}
 				     case {Label IP}
-				     of display then {SendOut Out set(Options.handlePH)}
+				     of display then {SendOut Out set(Comp.options.handlePH)}
 				     [] getHandle then R in
 					R = {Record.make IP.output [1]}
-					R.1 = Options.handle
+					R.1 = Comp.options.handle
 					{SendOut Out R} 
 				     else
 					if {HasFeature IP output} then Res Get L in
@@ -32,19 +32,19 @@ define
 						  L
 						 }
 					   try
-					      {Options.handle {Record.adjoin Res {Label IP}}}
+					      {Comp.options.handle {Record.adjoin Res {Label IP}}}
 					      {SendOut Out Res}
 					   catch _ then
 					      {SendOut Out IP}
 					   end
 					else
-					   try {Options.handle IP}
+					   try {Comp.options.handle IP}
 					   catch _ then
 					      {SendOut Out IP}
 					   end
 					end
 				     end
-				  end
+				  end)
 		      )
 		   outArrayPorts(action)
 		   outPorts(actions_out)

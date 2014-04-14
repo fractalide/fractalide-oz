@@ -8,18 +8,19 @@ define
       {Comp.new component(
 		   name: Name type:listboxCreate
 		   outPorts(ui_out)
-		   inPorts(list: proc {$ In Out Var State Options}
-				    Var.list = l(init:{In.get})
-				 end
-			   ui_in: proc {$ Buf Out Var State Options} 
-				     Var.options = {Buf.get}
-				  end)
-		   procedures(proc {$ Out Var State Options} D FuturOut in
+		   inPorts(list(proc{$ In Out Comp}
+				    Comp.var.list = l(init:{In.get})
+				 end)
+			   ui_in(proc{$ In Out Comp} 
+				     Comp.var.options = {In.get}
+				 end)
+			   )
+		   procedures(proc {$ Out Comp} D FuturOut in
 				 D = listbox(action: proc{$} {FuturOut get(firstselection selection output:select)} end
 					    )
 				 {Out.ui_out fun{$ FO}
 						FuturOut = FO
-						{Record.adjoin {Record.adjoin Var.options Var.list} D}
+						{Record.adjoin {Record.adjoin Comp.var.options Comp.var.list} D}
 					    end
 				 }
 			      end

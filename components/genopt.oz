@@ -8,12 +8,12 @@ define
    fun {CompNewArgs Name Args} Options in
       Options = {Record.adjoinList options(arg:'') {Record.toListInd Args}}
       {Comp.new comp(name:Name type:genopt
-		   outPorts(output)
-		   procedures(proc{$ Out NVar State Options}
-				 {Out.output Options.arg}
-			      end)
-		   Options
-		   )
+		     outPorts(output)
+		     procedures(proc{$ Out Comp}
+				   {Out.output Comp.options.arg}
+				end)
+		     Options
+		    )
       }
    end
    fun {CompNew Name}

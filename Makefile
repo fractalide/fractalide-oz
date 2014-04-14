@@ -12,7 +12,7 @@ library:
 	cd lib/ && ~/oz/bin/ozc -c *.oz && cd ..
 
 test:
-	ozc -c *.oz
+	~/oz/bin/ozc -c *.oz
 
 clean:
 	rm -Rrf lib/*.ozf

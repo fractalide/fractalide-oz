@@ -7,12 +7,12 @@ define
    fun {NewNand Name}
       {Comp.new comp(name:Name type:ipEdit
 		     inPorts(
-			input: proc{$ Buffer Out NVar State Options} Msg NMsg in
+			input(proc{$ Buffer Out Comp} Msg NMsg in
 				  Msg = {Buffer.get}
-				  NMsg = {Record.map Options.text
+				  NMsg = {Record.map Comp.options.text
 					  fun {$ E} if {IsDet E} then E else Msg end end}
 				  {Out.out NMsg}
-			       end
+			       end)
 			)
 		     outPorts(out)
 		     options(text:_)

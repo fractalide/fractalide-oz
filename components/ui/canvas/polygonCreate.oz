@@ -22,13 +22,14 @@ define
       {Comp.new component(
 		   name: Name type:polygonCreate
 		   outPorts(ui_out)
-		   inPorts(ui_in: proc {$ Buf Out NVar State Options} UI in
-				     UI = {Buf.get}
-				     {Out.ui_out fun{$ _}
-						    {Record.adjoin {RecordIncInd UI} create(polygon)}
-						 end
-				     }
-				  end)
+		   inPorts(ui_in(proc{$ In Out Comp} UI in
+				     UI = {In.get}
+				    {Out.ui_out fun{$ _}
+						   {Record.adjoin {RecordIncInd UI} create(polygon)}
+						end
+				    }
+				 end)
+			  )
 		   )
       }
    end

@@ -8,8 +8,8 @@ define
       {Comp.new component(
 		   name: Name type:buttonCreate
 		   outPorts(ui_out)
-		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI D FuturOut in
-				     NewUI = {Buf.get}
+		   inPorts(ui_in(proc {$ In Out Comp} NewUI D FuturOut in
+				     NewUI = {In.get}
 				     D = button(action: proc{$} {FuturOut button_clicked} end
 						text:default
 					       )
@@ -18,7 +18,8 @@ define
 						    {Record.adjoin {Record.adjoin D NewUI} button}
 						 end
 				     }
-				  end)
+				 end)
+			   )
 		   )
       }
    end

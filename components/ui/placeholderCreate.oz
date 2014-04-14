@@ -8,20 +8,21 @@ define
       {Comp.new component(
 		   name: Name type:placeholderCreate
 		   outPorts(ui_out set)
-		   inArrayPorts(place: proc {$ Buffers Out Var State Options}
-					  Var.widgets = {Map Buffers fun {$ Buf} {Buf.get} end}
+		   inArrayPorts(place(proc{$ Ins Out Comp}
+					  Comp.var.widgets = {Map Ins fun {$ In} {In.get} end}
 
 				       end)
-		   inPorts(ui_in: proc {$ In Out Var State Options}
-				     Var.uiin = {In.get}
-				  end
+			       )
+		   inPorts(ui_in(proc{$ In Out Comp}
+				     Comp.var.uiin = {In.get}
+				  end)
 			  )
-		   procedures(proc {$ Out Var State Options}
+		   procedures(proc {$ Out Comp}
 				 {Out.ui_out fun{$ _}
-						{Record.adjoin Var.uiin placeholder}
+						{Record.adjoin Comp.var.uiin placeholder}
 					     end
 				 }
-				 for UI in Var.widgets do
+				 for UI in Comp.var.widgets do
 				    {Out.set set(UI)}
 				 end
 			      end

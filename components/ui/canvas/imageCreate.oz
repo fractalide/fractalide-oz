@@ -22,19 +22,19 @@ define
       {Comp.new component(
 		   name: Name type:imageCreate
 		   outPorts(ui_out)
-		   inPorts(ui_in: proc {$ Buf Out NVar State Options} UI in
-				     UI = {Buf.get}
-				     NVar.rec = {Record.adjoin {RecordIncInd UI} create(image image:_)}
-				  end
-			   image : proc {$ Buf Out NVar State Options} Im in
-				      Im = {Buf.get}
-				      (NVar.rec).image = Im
-				   end
+		   inPorts(ui_in(proc{$ In Out Comp} UI in
+				     UI = {In.get}
+				     Comp.var.rec = {Record.adjoin {RecordIncInd UI} create(image image:_)}
+				  end)
+			   image(proc{$ In Out Comp} Im in
+				      Im = {In.get}
+				      (Comp.var.rec).image = Im
+				   end)
 			  )
-		   procedures(proc {$ Out NVar State Options}
-				 {Wait NVar.rec.image}
+		   procedures(proc {$ Out Comp}
+				 {Wait Comp.var.rec.image}
 				 {Out.ui_out fun{$ _}
-						NVar.rec
+						Comp.var.rec
 					     end
 				 }
 			      end)

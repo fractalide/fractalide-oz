@@ -6,7 +6,7 @@ export
 define
    fun {CompNewArgs Name}
       {Comp.new comp(name:Name type:add
-		     inArrayPorts(input: proc{$ IP Out NVar State Options}
+		     inArrayPorts(input(proc{$ IP Out Component}
 					    {Out.output {FoldL IP
 							 fun{$ Acc X} E I in
 							    E = {X.get}.1
@@ -18,7 +18,8 @@ define
 							    Acc+I
 							 end
 							 0}}
-					 end)
+					end)
+				  )
 		     outPorts(output)
 		   )}
    end

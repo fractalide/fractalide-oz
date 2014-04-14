@@ -8,18 +8,19 @@ define
       {Comp.new component(
 		   name: Name type:panelCreate
 		   outPorts(ui_out)
-		   inPorts(ui_in: proc {$ Buf Out Var State Options} UI in
-				     UI = {Buf.get}
-				     Var.uiin = {Record.adjoin UI panel}
-				  end
+		   inPorts(ui_in(proc{$ In Out Comp} UI in
+				     UI = {In.get}
+				     Comp.var.uiin = {Record.adjoin UI panel}
+				  end)
 			  )
-		   inArrayPorts(panel: proc {$ Buffers Out Var State Options} NewUI in
-					  NewUI = {List.toRecord panel {List.mapInd Buffers fun {$ I Buf} I#{Buf.get} end}}
-					  Var.panel = {Record.adjoin NewUI panel}
-				       end)
-		   procedures(proc {$ Out Var State Options}
+		   inArrayPorts(panel(proc{$ Ins Out Comp} NewUI in
+					  NewUI = {List.toRecord panel {List.mapInd Ins fun {$ I In} I#{In.get} end}}
+					  Comp.var.panel = {Record.adjoin NewUI panel}
+				      end)
+				)
+		   procedures(proc {$ Out Comp}
 				 {Out.ui_out fun {$ _}
-						{Record.adjoin Var.panel Var.uiin}
+						{Record.adjoin Comp.var.panel Comp.var.uiin}
 					     end
 				 }
 			      end
