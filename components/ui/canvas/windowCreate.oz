@@ -22,19 +22,19 @@ define
       {Comp.new component(
 		   name: Name type:windowCreate
 		   outPorts(ui_out)
-		   inPorts(ui_in: proc {$ Buf Out NVar State Options} UI in
-				     UI = {Buf.get}
-				     NVar.rec = {Record.adjoin {RecordIncInd UI} create(window window:_)}
-
-				  end
-			   window: proc {$ Buf Out NVar State Options}
-				    (NVar.rec).window = {Buf.get}
-				 end
+		   inPorts(ui_in(proc{$ In Out Comp} UI in
+				    UI = {In.get}
+				    Comp.var.rec = {Record.adjoin {RecordIncInd UI} create(window window:_)}
+				    
+				 end)
+			   window(proc{$ In Out Comp}
+				     (Comp.var.rec).window = {In.get}
+				  end)
 			  )
-		   procedures(proc {$ Out NVar State Options}
-				 {Wait (NVar.rec).window}
+		   procedures(proc {$ Out Comp}
+				 {Wait (Comp.var.rec).window}
 				 {Out.ui_out fun{$ _}
-						NVar.rec
+						Comp.var.rec
 					     end
 				 }
 			      end)

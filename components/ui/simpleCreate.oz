@@ -9,21 +9,21 @@ define
 		   name: Name type:textCreate
 		   state(handle:nil)
 		   outPorts(actions_out opt ui_out)
-		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI HandlePH HandleNewUI Events GeneralOptions in
-				     NewUI = {{Buf.get} Out.actions_out}
+		   inPorts(ui_in(proc{$ In Out Comp} NewUI HandlePH HandleNewUI Events GeneralOptions in
+				     NewUI = {{In.get} Out.actions_out}
 				     GeneralOptions = {Record.filterInd NewUI
 						       fun {$ I _}
 							  {List.member I
 							   [glue width height]}
 						       end}
 				     % Initialize the placeholder
-				     if State.handle == nil then
+				     if Comp.state.handle == nil then
 					{Out.ui_out {Record.adjoin GeneralOptions placeholder(handle: HandlePH)}}
 					{Wait HandlePH}
-					State.handle := HandlePH
+					Comp.state.handle := HandlePH
 				     end
 
-				     {State.handle set({Record.adjoinAt NewUI handle HandleNewUI})}
+				     {Comp.state.handle set({Record.adjoinAt NewUI handle HandleNewUI})}
 
 				  Events = ['Activate'#nil
 					    'Deactivate'#nil
@@ -50,7 +50,7 @@ define
 				  end
 				  {HandleNewUI bind(event:"<Motion>"
 						    args:[int(x) int(y) string(s)]
-						    action: proc{$ X Y S} {Out.actions_out 'Motion'(x:X y:Y state:State)} end
+						    action: proc{$ X Y S} {Out.actions_out 'Motion'(x:X y:Y state:S)} end
 						   )}
 				  for E in ['Enter' 'Leave'] do
 				     {HandleNewUI bind(event:"<"#{Atom.toString E}#">"
@@ -60,6 +60,7 @@ define
 				  end
 				  {Out.opt opt(handle:HandleNewUI handlePH:HandlePH)}
 			       end)
+			  )
 		   )
       }
    end

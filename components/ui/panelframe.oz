@@ -8,15 +8,15 @@ define
       {Comp.new component(
 		   name: Name type:panelframe
 		   outPorts(ui_out)
-		   inPorts(panel: proc {$ In Out Var State Options}
-				     Var.panel = widget({In.get})
-				  end
-			   title: proc {$ In Out Var State Options}
-				     Var.title = td(title:{In.get})
-				  end
+		   inPorts(panel(proc{$ In Out Comp}
+				     Comp.var.panel = widget({In.get})
+				  end)
+			   title(proc{$ In Out Comp}
+				     Comp.var.title = td(title:{In.get})
+				  end)
 			  )
-		   procedures(proc {$ Out Var State Options}
-				 {Out.ui_out {Record.adjoin Var.panel Var.title}}
+		   procedures(proc {$ Out Comp}
+				 {Out.ui_out {Record.adjoin Comp.var.panel Comp.var.title}}
 			      end
 			     )
 		   var(panel title)

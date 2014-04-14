@@ -8,15 +8,16 @@ define
       {Comp.new component(
 		   name: Name type:messageCreate
 		   outPorts(ui_out)
-		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI D FuturOut in
-				     NewUI = {Buf.get}
+		   inPorts(ui_in(proc{$ In Out Comp} NewUI D FuturOut in
+				     NewUI = {In.get}
 				     D = message
 				     {Out.ui_out fun{$ FO}
 						    FuturOut = FO
 						    {Record.adjoin {Record.adjoin D NewUI} message}
 						 end
 				     }
-				  end)
+				 end)
+			  )
 		   )
       }
    end

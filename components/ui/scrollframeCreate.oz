@@ -8,18 +8,18 @@ define
       {Comp.new component(
 		   name: Name type:scrollframeCreate
 		   outPorts(ui_out)
-		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI in
-				     NewUI = {Buf.get}
-				     NVar.rec = {Record.adjoin NewUI scrollframe(1:_)}
-				  end
-			   frame: proc{$ Buf Out NVar State Options} Frame in
-				     Frame = {Buf.get}
-				     NVar.rec.1 = Frame
-				  end
+		   inPorts(ui_in(proc{$ In Out Comp} NewUI in
+				     NewUI = {In.get}
+				     Comp.var.rec = {Record.adjoin NewUI scrollframe(1:_)}
+				  end)
+			   frame(proc{$ In Out Comp} Frame in
+				     Frame = {In.get}
+				     Comp.var.rec.1 = Frame
+				  end)
 			  )
-		   procedures(proc{$ Out NVar State Options}
-				 {Wait NVar.rec.1}
-				 {Out.ui_out fun{$ _} NVar.rec end}
+		   procedures(proc{$ Out Comp}
+				 {Wait Comp.var.rec.1}
+				 {Out.ui_out fun{$ _} Comp.var.rec end}
 			      end
 			     )
 		   var(rec)

@@ -10,8 +10,8 @@ define
 		   name:Name type:window
 		   outPorts(actions_out opt)
 		   inPorts(
-		      ui_in: proc{$ Buf Out NVar State Options} IP H Events in
-				IP = {Buf.get}
+		      ui_in(proc{$ In Out Comp} IP H Events in
+				IP = {In.get}
 				H = {Qtk.build td(IP)}
 				{H show}
 				{Out.opt opt(handle:H)}
@@ -44,7 +44,7 @@ define
 						     action: proc{$ D F M X Y S} {Out.actions_out E(detail:D focus:F mode:M x:X y:Y state:S)} end
 						    )}
 				end
-			     end
+			     end)
 		      )
 		   )
       }

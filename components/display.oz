@@ -11,7 +11,6 @@ define
       IP = {IN.get}
    in
       %{Browser.browse Options.pre#IP#Options.post}
-      {Delay 1000}
       {System.show Comp.options.pre#IP#Comp.options.post}
       {Out.output IP}
    end
