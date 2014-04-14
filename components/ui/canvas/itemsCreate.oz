@@ -39,6 +39,10 @@ define
 					     action: proc{$ D F M X Y S} {Out.actions_out E(detail:D focus:F mode:M x:X y:Y state:S)} end
 					    )}
 				  end
+				  {H bind(event:"<Motion>"
+					  args:[int(x) int(y) string(s)]
+					  action: proc{$ X Y S} {Out.actions_out 'Motion'(x:X y:Y state:State)} end
+					 )}
 				  {Out.opt opt(handle:H)}
 			       end)
 		   )
