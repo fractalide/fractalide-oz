@@ -10,7 +10,7 @@ define
 		   name: Name type:image
 		   outPorts(output)
 		   inPorts(input: proc {$ Buf Out NVar State Options} NOptions in
-				     NOptions = {Record.adjoin {Record.adjoin {Buf.get} Options} photo}
+				     NOptions = {Record.adjoin {Buf.get} photo}
 				     {Out.output {QTk.newImage NOptions}}
 				  end)
 		   )

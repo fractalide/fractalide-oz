@@ -6,15 +6,18 @@ export
 define
    fun {New Name} 
       {Comp.new component(
-		   name: Name type:buttonCreate
+		   name: Name type:entryCreate
 		   outPorts(ui_out)
-		   procedures(proc {$ Out Comp}
-				 {Out.ui_out fun{$ Out}
-						entry(action: proc{$} {Out modify} end
-						     )
-					     end
-				 }
-			      end)
+		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI D FuturOut in
+				     NewUI = {Buf.get}
+				     D = entry(action: proc{$} {FuturOut get(firstselection output:select)} end
+					      )
+				     {Out.ui_out fun{$ FO}
+						    FuturOut = FO
+						    {Record.adjoin {Record.adjoin D NewUI} entry}
+						 end
+				     }
+				  end)
 		   )
       }
    end

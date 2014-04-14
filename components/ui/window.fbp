@@ -1,0 +1,5 @@
+ui_in => ui_in c(ui/windowCreate) actions_out -> actions_in sui(ui/simpleui)
+c() opt -> options sui()
+sui() actions_out => actions_out
+sui() action => action
+actions_in => actions_in sui()

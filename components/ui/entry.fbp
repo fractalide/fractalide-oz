@@ -1,6 +1,6 @@
-ec(ui/entryCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
-sc() actions_out -> actions_in ew(ui/simpleui)
-sc() opt -> options ew()
-ew() actions_out => actions_out
-ew() action => action
-actions_in => actions_in ew()
+ui_in => ui_in c(ui/entryCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+sc() actions_out -> actions_in suib(ui/simpleui)
+sc() opt -> options suib()
+suib() actions_out => actions_out
+suib() action => action
+actions_in => actions_in suib()

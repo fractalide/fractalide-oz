@@ -1,6 +1,6 @@
-lc(ui/labelCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
-sc() actions_out -> actions_in lw(ui/simpleui)
-sc() opt -> options lw()
-lw() actions_out => actions_out
-lw() action => action
-actions_in => actions_in lw()
+ui_in => ui_in c(ui/labelCreate) ui_out -> ui_in sc(ui/simpleCreate) ui_out => ui_out
+sc() actions_out -> actions_in suib(ui/simpleui)
+sc() opt -> options suib()
+suib() actions_out => actions_out
+suib() action => action
+actions_in => actions_in suib()

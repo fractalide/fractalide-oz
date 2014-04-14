@@ -8,12 +8,15 @@ define
       {Comp.new component(
 		   name: Name type:canvasCreate
 		   outPorts(ui_out)
-		   procedures(proc {$ Out Comp}
-				 {Out.ui_out fun{$ _}
-						canvas
-					     end
-				 }
-			      end)
+		   inPorts(ui_in: proc {$ Buf Out NVar State Options} NewUI D FuturOut in
+				     NewUI = {Buf.get}
+				     D = canvas
+				     {Out.ui_out fun{$ FO}
+						    FuturOut = FO
+						    {Record.adjoin {Record.adjoin D NewUI} canvas}
+						 end
+				     }
+				  end)
 		   )
       }
    end

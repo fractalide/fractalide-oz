@@ -6,6 +6,7 @@ comp:
 	cd components/gates && ~/oz/bin/ozc -c *.oz && cd ../..
 	cd components/calculator && ~/oz/bin/ozc -c *.oz && cd ../../
 	cd components/ui/canvas && ~/oz/bin/ozc -c *.oz && cd ../../
+	cd components/dnd/ && ~/oz/bin/ozc -c *.oz && cd ../../
 
 library:
 	cd lib/ && ~/oz/bin/ozc -c *.oz && cd ..

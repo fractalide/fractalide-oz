@@ -255,10 +255,16 @@ define
    post : return a value corresponding to the list of characters
    */
    fun {GetPort Xs}
-      try VS in 
+      try Port in 
 	 if Xs == bind then raise virtualString_expected_at(Xs) end end
-	 VS = {Compiler.virtualStringToValue {SurroundNamePort Xs}}
-	 if {Record.is VS} andthen {Label VS} == '#' andthen {String.isInt VS.2} then VS.1#{String.toInt VS.2} else VS end
+	 Port = {Compiler.virtualStringToValue {SurroundNamePort Xs}}
+	 if {HasFeature Port 2} then Value in
+	    Value = {Atom.toString Port.2}
+	    if {String.isInt Value} then Port.1#{String.toInt Value}
+	    else Port end
+	 else
+	    Port
+	 end
       catch Error then
 	 raise unvalid_port(Xs error:Error) end
       end
