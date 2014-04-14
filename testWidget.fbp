@@ -77,10 +77,11 @@ bp2() actions_out -> actions_in panel()
 
 placeholder(ui/placeholder) ui_out -> place#93 td()
 placeholder() actions_out -> actions_in td()
-"start" -> ui_in bph(ui/button) ui_out -> ui_in#1 placeholder()
+"start" -> ui_in bph(ui/button) ui_out -> place#1 placeholder()
 bph() actions_out -> actions_in placeholder()
-"start(text:'last')" -> ui_in bph2(ui/button) ui_out -> ui_in#2 placeholder()
+"start(text:'last')" -> ui_in bph2(ui/button) ui_out -> place#2 placeholder()
 bph2() actions_out -> actions_in placeholder()
+"start" -> ui_in placeholder()
 %"display" -> actions_in bph()
 
 "start(text:'b1' group:g1)" -> ui_in rb1(ui/radiobutton) ui_out -> place#1 lrrb(ui/lr)
