@@ -1,54 +1,17 @@
 declare
 %Launch this paragraph first
 [GraphM] = {Module.link ["./lib/graph.ozf"]}
-G = {GraphM.loadGraph "components/ui/canvas.fbp"}
-{Browse G}
-
+G = {GraphM.loadGraph "components/ui/uiWindow.fbp"}
+G1 = {G.nodes.test.comp getState($)}
 {GraphM.start G}
 
-declare
-T1 = {G.nodes.test1.comp getState($)}
-T2 = {G.nodes.test2.comp getState($)}
-
-{Browse T1}
-{Browse T2}
-
-{T1.graph.nodes.td.comp send(actions_in display _)}
-
-{T2.graph.nodes.td.comp send(actions_in display _)}
-
-
-declare
-[GraphM] = {Module.link ["./lib/graph.ozf"]}
-G1 = {GraphM.loadGraph "components/ui/test2.fbp"}
-{Browse G1}
-
-declare
-G2 = {GraphM.loadGraph "components/ui/test.fbp"}
-{Browse G2}
-
-{Browse {Dictionary.toRecord a {GraphM.getCache}}}
-
-declare
-B1 = {G1.nodes.calcButton.comp getState($)}
-{Browse {B1.graph.nodes.suib.comp getState($)}}
-B2 = {G2.nodes.calcButton.comp getState($)}
-{Browse {B2.graph.nodes.suib.comp getState($)}}
-
-
-
-
-
-
-
 % Once it works, we can hotswap the procedure of add to do a multiplication. There is a delay of 5 second to test 2 button_clicked in a row (click once, change value and relick inside the 5 seconds. The two events will be treated).
-{G.nodes.add.comp changeProcPort(input
-				 proc{$ IP Out NVar State Options}
-				    {Delay 5000}
-			       {Out.output {FoldL IP
-					    fun{$ Acc X} E I in
-					       E = {X.get}.1
-					       if {String.isInt E} then
+{G1.graph.nodes.add.comp changeProcPort(input
+				 proc{$ Ins Out Comp}
+				    {Out.output {FoldL Ins
+						 fun{$ Acc In} E I in
+						    E = {In.get}.1
+						    if {String.isInt E} then
 						  I = {String.toInt E}
 					       else
 						  I = 0
@@ -58,18 +21,3 @@ B2 = {G2.nodes.calcButton.comp getState($)}
 					    1}}
 			    end)}
 
-{Browse G}
-
-{G.nodes.calcButton.comp send(events set(text:hello) _)}
-
-declare
-[Phc] = {Module.link ["./components/ui/canvas/windowCreate.ozf"]}
-P = {Phc.new hello}
-%{Browse {P getState($)}}
-[Di] = {Module.link ["./components/display.ozf"]}
-D = {Di.new he}
-{P bind(ui_out D input)}
-
-{P send(input test _)}
-
-{P start}

@@ -24,8 +24,12 @@ define
 					    Comp.state.maj := false
 					 end
 				      [] 'button_clicked' then
-					 if Comp.state.ctrl andthen Comp.state.maj then Color in
-					    Color = c(({OS.rand} mod 255) ({OS.rand} mod 255) ({OS.rand} mod 255))
+					 if Comp.state.ctrl andthen Comp.state.maj then Color R in
+					    R = fun{$} T in
+						   T = {OS.rand} mod 255
+						   if T < 0 then ~T else T end
+						end
+					    Color = c({R} {R} {R})
 					    {Out.color set(bg:Color activebackground:Color)}
 					 else
 					    {Out.click IP}
