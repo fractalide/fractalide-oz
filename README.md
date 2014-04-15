@@ -19,13 +19,13 @@ We aim to make the process of creating and sharing applications so simple you ca
 Fractalide?
 -------
 Fractalide means Fractal Integrating Development Environment. We take a leaf of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, favourite text editor or GNU's unix commands.
-Fractalide, to be implemented in Rust-lang, will have fractallang and the libmozart library included into it. Though, only once we're satisfied with fractallang on Mozart2 programming environment as a proof of concept. This is the main standalone executable that includes the content centric networking backend.
+Fractalide, to be implemented in Rust-lang, will have fractallang and the libmozart library included into it. Though, only once we're satisfied with fractallang on the Mozart2 programming environment as a proof of concept. This is the main standalone executable that includes the content centric networking backend.
 Hence Fractalide is an implementation of Hypercard on a Content Centric Network.
 
 Usage
 -----
 
-* You'll need to setup the latest versoin of [mozart](www.github.com/mozart/mozart2) (as we found a bug in Mozart2 stdlib that prevented correct rendering of the Canvas element)
+* You'll need to setup the latest version of [mozart](www.github.com/mozart/mozart2) (as we found a bug in Mozart2 stdlib that prevented correct rendering of the Canvas element)
 * Setup Oz's environmental variables; point `OZHOME` to the root folder and put the `bin` folder on `PATH`
 * `git clone git://github.com/fractalide/fractallang.git`
 * `cd fractallang`
