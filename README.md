@@ -9,7 +9,7 @@ In other words, what Javascript is to a Channel Centric Browser (HTTP Browser), 
 
 Why?
 -----
-The Internet was designed to connect computers together, it wasn't designed for today's usage, namely delivering exabytes of data across the wires. Content Centric Networking, the brain child of Van Jacobson etal is a good solution to this problem. The problem has shifted away from connecting computers to disseminating data far and wide cheaply. We shouldn't have to rely on billion dollar companies to disseminate our data. Content Centric Networking builds data dissemination and search into the networking protocol. So it makes sense for a new browser specifically engineered for content centric networking be created.
+When TCP/IP was invented a printer cost as much as a house and content was on punch cards in your pocket. The Internet was designed to connect computers together to share resources. It wasn't designed for today's usage, namely disseminating exabytes of content across wires. We're currently disseminating content over a point-to-point network. Leslie Lamport showed this process is quadratic time best case, exponential time worst case scenario. Content Centric Networking, the brain child of Van Jacobson etal is a good solution to this problem. In other words, problem has shifted away from connecting computers to cheaply disseminating data far and wide. We shouldn't have to rely on billion dollar companies to disseminate our data. Content Centric Networking builds data dissemination and search into the networking protocol. So it makes sense for a new browser specifically engineered for Content Centric Networking be created.
 
 Fractallang
 -------------
