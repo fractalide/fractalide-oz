@@ -1,9 +1,9 @@
 Fractallang
 ===========
 
-Fractallang is an implementation of Hypercard that swaps out Hypertalk for a flow based programming language implemented in Mozart Oz (www.mozart-oz.org)
+Fractallang is an implementation of Hypercard that swaps out Hypertalk for a Flow Based Programming language.
 
-It is the front end language for fractalide a content centric network browser.
+It is the front end language for Fractalide a content centric network browser.
 
 In other words, what Javascript is to a Channel Centric Browser (HTTP Browser), so Fractallang is to a Content Centric Browser.
 
@@ -13,13 +13,13 @@ The Internet was designed to connect computers together, it wasn't designed for 
 
 Fractallang
 -------------
-Textual code isn't very approachable to the average non-programmer. We feel the combination of Hypercard with a Flow Based Programming (FBP) language is a much better approach to programming. By using Mozart-oz to implement FBP we deliver some 30 odd factored language concepts to FBP component developers. A few of those concepts allows for the Declarative Concurrent paradigm which enables the simple creation of open Internet applications.
+Textual code isn't very approachable to the average non-programmer. We feel the combination of Hypercard with a Flow Based Programming (FBP) language is a much better approach to programming. By using [Mozart Oz](www.mozart-oz.org) to implement FBP we deliver some 30 odd factored language concepts to FBP component developers. A few of those concepts allows for the Declarative Concurrent paradigm which enables the simple creation of open Internet applications.
 We aim to make the process of creating and sharing applications so simple you can do it on your tablet with just your finger.
 
 Fractalide
 -------
-Fractalide means Fractal Integrating Development Environment. We take a leaf of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, favourite text editor or GNU's unix commands.
-Fractalide, to be implemented in Rust-lang, will have fractallang and the libmozart library included into it. Though, only once we're satisfied with fractallang on the Mozart2 programming environment as a proof of concept. This is the main standalone executable that includes the content centric networking backend.
+Fractalide means Fractal Integrating Development Environment. We take a leaf of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, favourite text editor or GNU's unix commands. Indeed, Fractalide will also be released in library form, so you can include it into your applications and integrate with a Content Centric Network (obviously you would just use FBP and not Hypercard).
+Fractalide, to be implemented in Rust-lang, will have Fractallang and the libmozart library included into it. Though, only once we're satisfied with Fractallang on the Mozart2 Programming Environment as a proof of concept. This is the main standalone executable that includes the Content Centric Networking backend.
 Hence Fractalide is an implementation of Hypercard on a Content Centric Network.
 
 Usage
