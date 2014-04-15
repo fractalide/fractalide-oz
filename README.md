@@ -3,7 +3,7 @@ Fractallang
 
 Fractallang is an implementation of Hypercard that swaps out Hypertalk for a Flow Based Programming language.
 
-It is the front end language for Fractalide a content centric network browser.
+It is the front end language for Fractalide a Content Centric Network browser.
 
 In other words, what Javascript is to a Channel Centric Browser (HTTP Browser), so Fractallang is to a Content Centric Browser.
 
@@ -19,7 +19,7 @@ We aim to make the process of creating and sharing applications so simple you ca
 Fractalide
 -------
 Fractalide means Fractal Integrating Development Environment. We take a leaf of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, favourite text editor or GNU's unix commands. Indeed, Fractalide will also be released in library form, so you can include it into your applications and integrate with a Content Centric Network (obviously you would just use FBP and not Hypercard).
-Fractalide, to be implemented in Rust-lang, will have Fractallang and the libmozart library included into it. Though, only once we're satisfied with Fractallang aasas a proof of concept on the Mozart2 Programming Environment. This is the main standalone executable that includes the Content Centric Networking backend.
+Fractalide, to be implemented in Rust-lang, will have Fractallang and the libmozart library included into it. Though, only once we're satisfied with Fractallang as a proof of concept on the Mozart2 Programming Environment. This is the main standalone executable that includes the Content Centric Networking backend.
 Hence Fractalide is an implementation of Hypercard on a Content Centric Network.
 
 Usage
@@ -40,4 +40,4 @@ License
 All code is AGPL v3-or-later.
 All content published on this platform is licensed as Community Commons. 
 This is not a commercial dual license project. You own your contributions. 
-If you want your privacy, then encrypt your content. (This will eventually be automatic)
+If you want privacy, encrypt your content. (This will eventually be automatic)
