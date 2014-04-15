@@ -5,11 +5,10 @@ export
    new: CompNew
 define
    proc {FunPort1 Buf Out Comp}
-      Num ANum
+      Num
    in
       Num = (Comp.state.cpt mod {Record.width Out.output}) + 1
-      ANum = {String.toAtom {Int.toString Num}}
-      {Out.output.ANum {Buf.get}}
+      {Out.output.Num {Buf.get}}
       Comp.state.cpt := Num
    end
    fun {CompNew Name}
