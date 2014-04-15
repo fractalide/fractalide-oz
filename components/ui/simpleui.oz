@@ -24,6 +24,10 @@ define
 					R = {Record.make IP.output [1]}
 					R.1 = Comp.options.handle
 					{SendOut Out R} 
+				     [] getEntryPoint then R in
+					R = {Record.make IP.output [1]}
+					R.1 = Comp.entryPoint
+					{SendOut Out R}
 				     else
 					if {HasFeature IP output} then Res Get L in
 					   Get = {Record.subtract IP output}

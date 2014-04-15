@@ -15,8 +15,15 @@ define
       {Comp.new comp(
 		   name:Name type:actionsWrapper
 		   inPorts(
-		      actions_in(proc{$ Buf Out Comp} 
-				    {SendOut Out {Buf.get}}
+		      actions_in(proc{$ Buf Out Comp} IP in
+				    IP = {Buf.get}
+				    if {Label IP} == getEntryPoint then R in
+				    	R = {Record.make IP.output [1]}
+				    	R.1 = Comp.entryPoint
+				       {SendOut Out R}
+				    else
+				       {SendOut Out IP}
+				    end
 				 end)
 		      )
 		   outArrayPorts(action)

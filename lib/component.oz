@@ -375,8 +375,11 @@ define
 	  _
 	 }
       end
+      P
    in
-      proc {$ Msg} {Send Point Msg} end
+      P = proc {$ Msg} {Send Point Msg} end
+      NewState.entryPoint = P
+      P
    end
    %% Functions to build a new component
    fun {InPorts In}
@@ -434,6 +437,7 @@ define
 			       inPorts:'in'() outPorts:out()
 			       procs:procs() var:var() state:{NewDictionary}
 			       threads:threads() options:opt()
+			       entryPoint:_
 			      )
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
