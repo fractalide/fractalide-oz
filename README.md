@@ -13,12 +13,12 @@ The Internet was designed to connect computers together, it wasn't designed for 
 
 Fractallang?
 -------------
-Textual code isn't very approachable to the average non-programmer. We feel the combination of Hypercard with a Flow Based Programming (FBP) language is a much better approach to programming. By using Mozart-oz to implement FBP we deliver some 30 odd factored language concepts to FBP component developers. A few of those concepts allows for the Declarative Concurrent paradigm which enables the simple creation of open Internet applications. Fractallang serves as the front end language for Fractalide.
+Textual code isn't very approachable to the average non-programmer. We feel the combination of Hypercard with a Flow Based Programming (FBP) language is a much better approach to programming. By using Mozart-oz to implement FBP we deliver some 30 odd factored language concepts to FBP component developers. A few of those concepts allows for the Declarative Concurrent paradigm which enables the simple creation of open Internet applications.
 We aim to make the process of creating and sharing applications so simple you can do it on your tablet with just your finger.
 
 Fractalide?
 -------
-Fractalide means Fractal Integrating Development Environment. We take a leaf of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, favourite next editor or GNU's unix commands.
+Fractalide means Fractal Integrating Development Environment. We take a leaf of Rob Pike's ACME text editor by making the implementation integrate well with your existing environment, by using your existing tools such as a pdf reader, favourite text editor or GNU's unix commands.
 Fractalide, to be implemented in Rust-lang, will have fractallang and the libmozart library included into it. Though, only once we're satisfied with fractallang on Mozart2 programming environment as a proof of concept. This is the main standalone executable that includes the content centric networking backend.
 Hence Fractalide is an implementation of Hypercard on a Content Centric Network.
 
