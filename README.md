@@ -37,4 +37,4 @@ Usage
 
 License
 --------
-AGPL v3-or-later, all content published on this platform is licensed as Community Commons. This is not a dual commercial licensed project. You own your contributions.
+AGPL v3-or-later, all content published on this platform is licensed as Community Commons. This is not a dual commercial licensed project. You own your contributions. If you want your content private, then encrypt it.
