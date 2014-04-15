@@ -1,5 +1,5 @@
 % Creation
-ui_in => input (editor/component/create) rect -> ui_in rect(ui/canvas/rectangle) ui_out => ui_out
+ui_in => input create(editor/component/create) rect -> ui_in rect(ui/canvas/rectangle) ui_out => ui_out
 rect() actions_out => actions_out
 rect() action => action
 actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in rect()
@@ -10,6 +10,7 @@ rect() action#ButtonRelease -> input dnd()
 rect() action#Motion -> input dnd()
 
 % Left click to begin link
-% rect() action#ButtonPress -> input lc(editor/component/leftClick) output -> options ipLC1(ipEdit) out -> input d(display) output -> actions_in aw()
-% lc() output -> input ipLC2(ipEdit) out -> actions_in aw() action#getEPleftClick -> input ipLC1()
-% "opt(text:getEntryPoint(output:getEPleftClick))" -> options ipLC2()
+rect() action#ButtonPress -> input lc(editor/component/leftClick) output -> options ipLC1(ipEdit) out-> actions_in aw()
+rect() action#ButtonRelease -> input lc()
+lc() output -> input ipLC2(ipEdit) out -> actions_in aw() action#getEPleftClick -> input gf1(editor/component/recFeature1) output -> input ipLC1()
+"opt(text:getEntryPoint(output:getEPleftClick))" -> options ipLC2()

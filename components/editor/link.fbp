@@ -1,0 +1,14 @@
+% Creation
+ui_in => input create(editor/link/create) line -> ui_in line(ui/canvas/line) ui_out => ui_out
+line() actions_out => actions_out
+line() action => action
+actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in line()
+
+% MoveBegin
+aw() action#moveBegin -> input ie1(ipEdit) out -> move moveL(editor/link/move) output -> actions_in line()
+aw() action#moveEnd -> input d(display) output -> input ie2(ipEdit) out -> move moveL()
+"opt(text:moveBegin(_))" -> options ie1()
+"opt(text:moveEnd(_))" -> options ie2()
+aw() action#moveBegin -> input ie3(ipEdit) out -> actions_in line() action#getCoordMove -> coord moveL()
+aw() action#moveEnd -> input ie3()
+"opt(text:getCoords(ouput:getCoordMove))" -> options ie3()
