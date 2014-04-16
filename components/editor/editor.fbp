@@ -34,17 +34,16 @@ dclick() output -> input ie4(ipEdit) out -> port send()
 bind() outComp -> input start(graph/start)
 
 
-"start(x:10 y:10)" -> ui_in l(editor/link) ui_out -> widget canvas()
-"moveEnd(x:100 y:100)" -> actions_in l()
 
 % ---
 % Create the links
-canvas() action#beginLink -> begin join(editor/join) output -> input createLink(editor/createLink)
-canvas() action#endLink -> input createLink()
-canvas() action#Motion -> input createLink()
+canvas() action#createLink -> begin join(editor/join) output -> input createLink(editor/createLink)
+canvas() action#Motion -> input d(display) output -> input createLink()
 canvas() action#ButtonRelease -> input createLink()
-canvas() action#beginLink -> input ieLink(ipEdit) out -> actions_in canvas() action#entryPointLink -> canvas join()
+canvas() action#createLink -> input ieLink(ipEdit) out -> actions_in canvas() action#entryPointLink -> canvas join()
 "opt(text:getEntryPoint(output:entryPointLink))" -> options ieLink()
+%"opt(pre:before)" -> options d1()
+"opt(pre:post)" -> options d()
 
 
 

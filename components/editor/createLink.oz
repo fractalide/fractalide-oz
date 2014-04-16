@@ -12,49 +12,38 @@ define
 		   inPorts(
 		      input(proc{$ In Out Comp} IP in
 			       IP = {In.get}
-			       {System.show IP}
 			       case IP
-			       of beginLink(entryPoint:BPoint x:X y:Y canvas:Canvas) then L in
-				  {System.show beginLink}
+			       of createLink(entryPoint:BPoint x:X y:Y canvas:Canvas) andthen {Not Comp.state.click} then L in
 				  L = {SubComp.new test type "/home/denis/fractalide/fractallang/components/editor/link.fbp"}
 				  Comp.state.link := L
 				  {L bind(ui_out Canvas actions_in)}
 				  {L bind(actions_out Canvas actions_in)}
+				  {L send(actions_in lower _)}
 				  {L start}
 				  {L send(ui_in startline(x:X y:Y) _)}
 				  Comp.state.bPoint := BPoint
 				  Comp.state.click := true
-				  Comp.state.x := X
-				  Comp.state.y := Y
-				  {System.show endBeginLink}
-			       [] endLink(entryPoint:EPoint x:_ y:_) andthen Comp.state.link \= nil andthen Comp.state.bPoint \= nil then
-				  {System.show endlink}
+			       [] createLink(entryPoint:EPoint x:_ y:_ canvas:_) andthen Comp.state.click andthen Comp.state.link \= nil andthen Comp.state.bPoint \= nil then
+				  {System.show Comp.state.bPoint == EPoint}
 				  {Comp.state.bPoint bind(action#moveBegin Comp.state.link actions_in)}
 				  {EPoint bind(action#moveEnd Comp.state.link actions_in)}
 				  Comp.state.link := nil
 				  Comp.state.bPoint := nil
 				  Comp.state.click := false
-				  {System.show endEndlink}
-			       [] 'ButtonRelease'(button:3 x:_ y:_) then
-				  {Comp.state.link send(actions_in delete _)}
-				  Comp.state.link := nil
-				  Comp.state.bPoint := nil
-				  Comp.state.click := false
-				  {System.show endbuttonrelease}
+ 			       % [] 'ButtonRelease'(button:3 x:_ y:_) andthen Comp.state.click == true then
+			       % 	  {Comp.state.link send(actions_in delete _)}
+			       % 	  Comp.state.link := nil
+			       % 	  Comp.state.bPoint := nil
+			       % 	  Comp.state.click := false
 			       [] 'Motion'(state:_ x:X y:Y) andthen Comp.state.link \= nil andthen Comp.state.click then
-				  {System.show beginmotion}
-				  {Comp.state.link send(actions_in moveEnd(x:X-Comp.state.x y:Y-Comp.state.y) _)}
-				  Comp.state.x := X
-				  Comp.state.y := Y
-				  {System.show endmotion}
+				  {Comp.state.link send(actions_in moveEnd(x:X y:Y) _)}
 			       else
-				  {System.show Comp.state.link}
-				  {System.show Comp.state.click}
+				  skip
 			       end
 			    end)
 		      )
 		   outPorts(line)
-		   state(link:nil bPoint:nil x:0 y:0 click:false)
+		   state(link:nil bPoint:nil click:false)
 		   )
       }
    end

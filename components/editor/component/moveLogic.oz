@@ -6,14 +6,15 @@ export
 define
    fun {CompNewGen Name}
       {Comp.new comp(
-		   name:Name type:'components/editor/link/create'
+		   name:Name type:'components/editor/component/moveLogic'
 		   inPorts(
 		      input(proc{$ In Out Comp} Rec in
 			       Rec = {In.get}
-			       {Out.line start(Rec.x Rec.y Rec.x Rec.y)}
+			       {Out.output moveBegin(x:Rec.1 y:Rec.2)}
+			       {Out.output moveEnd(x:Rec.1 y:Rec.2)}
 			    end)
 		      )
-		   outPorts(line)
+		   outPorts(output)
 		   )
       }
    end
