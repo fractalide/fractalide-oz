@@ -10,7 +10,7 @@ define
 		   inPorts(
 		      input(proc{$ In Out Comp} Rec in
 			       Rec = {In.get}
-			       {Out.line start(Rec.x Rec.y Rec.x Rec.y)}
+			       {Out.line start(Rec.x Rec.y Rec.x Rec.y arrow:last)}
 			    end)
 		      )
 		   outPorts(line)

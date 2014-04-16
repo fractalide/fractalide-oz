@@ -19,6 +19,8 @@ define
 				  {L bind(ui_out Canvas actions_in)}
 				  {L bind(actions_out Canvas actions_in)}
 				  {L send(actions_in lower _)}
+				  {L send(actions_in moveBegin(x:X y:Y) _)}
+				  {L send(actions_in moveEnd(x:X y:Y) _)}
 				  {L start}
 				  {L send(ui_in startline(x:X y:Y) _)}
 				  Comp.state.bPoint := BPoint
