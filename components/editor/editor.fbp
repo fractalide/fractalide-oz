@@ -1,13 +1,13 @@
 % First step
 canvas(ui/canvas) ui_out -> ui_in win(ui/window)
 canvas() actions_out -> actions_in win()
-win() actions_out -> input disp(display)
+%win() actions_out -> input disp(display)
 "set(glue:nswe bg:white)" -> ui_in canvas()
 "set(title:"Fractallang Editor")" -> actions_in win()
 
 % ---
 % Double-click to add component
-canvas() action#ButtonPress -> input dclick(mouse/doubleclick)
+canvas() action#ButtonPress -> input dclick(mouse/doubleclick) output
 
 % Generate the Component
 dclick() output -> input ie1(ipEdit) out -> type compgen(graph/generator)
@@ -31,23 +31,23 @@ dclick() output -> input ie4(ipEdit) out -> port send()
 "opt(text:ui_in)" -> options ie4()
 
 % Start the comp
-bind() outComp -> input start(graph/start)
+bind() outComp -> input d(display) output -> input start(graph/start)
 
 
 
 % ---
 % Create the links
 canvas() action#createLink -> begin join(editor/join) output -> input createLink(editor/createLink)
-canvas() action#Motion -> input d(display) output -> input createLink()
+canvas() action#Motion -> input createLink()
 canvas() action#ButtonRelease -> input createLink()
 canvas() action#createLink -> input ieLink(ipEdit) out -> actions_in canvas() action#entryPointLink -> canvas join()
 "opt(text:getEntryPoint(output:entryPointLink))" -> options ieLink()
 %"opt(pre:before)" -> options d1()
-"opt(pre:post)" -> options d()
+%"opt(pre:post)" -> options d()
 
 
 
 % Options
-"opt(pre:'default ')" -> options disp()
+%"opt(pre:'default ')" -> options disp()
 
 

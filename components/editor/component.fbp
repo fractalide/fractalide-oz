@@ -7,7 +7,7 @@ actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in rect()
 % Drag&Drop
 rect() action#ButtonPress -> input dnd(dnd/dndLogic) move -> actions_in aw()
 rect() action#ButtonRelease -> input dnd()
-rect() action#Motion -> input dnd()
+rect() action#Motion -> input d(display) output -> input dnd()%input temp(timeFrame) output -> input dnd()
 
 % Left click to begin link
 rect() action#ButtonRelease -> input lc(editor/component/leftClick) output -> options ipLC1(ipEdit) out-> actions_in aw()
@@ -17,4 +17,4 @@ lc() output -> input ipLC2(ipEdit) out -> actions_in rect() action#getEPleftClic
 
 % Move
 aw() action#move -> actions_in rect()
-dnd() position -> input d(display) output -> input moveLogic(editor/component/moveLogic) output -> actions_in rect()
+dnd() position -> input moveLogic(editor/component/moveLogic) output -> actions_in rect()
