@@ -7,20 +7,17 @@ canvas() actions_out -> actions_in win()
 
 % ---
 % Double-click to add component
-canvas() action#ButtonPress -> input dclick(mouse/doubleclick) output
-% Generate the comp
+canvas() action#ButtonPress -> input dclick(mouse/doubleclick)
 dclick() output -> input createComp(editor/createComp)
-dclick() output -> input ie2(ipEdit) out -> actions_in canvas()
-"opt(text:getEntryPoint(output:entryPointBind))" -> options ie2()
-canvas() action#entryPointBind -> canvas createComp()
+createComp() widget_out -> widget canvas()
+createComp() actions_out -> actions_in canvas()
 
 % ---
 % Create the links
-canvas() action#createLink -> begin join(editor/join) output -> input createLink(editor/createLink)
+canvas() action#createLink -> input createLink(editor/createLink)
 canvas() action#Motion -> input createLink()
-canvas() action#ButtonRelease -> input createLink()
-canvas() action#createLink -> input ieLink(ipEdit) out -> actions_in canvas() action#entryPointLink -> canvas join()
-"opt(text:getEntryPoint(output:entryPointLink))" -> options ieLink()
+createLink() widget_out -> widget canvas()
+createLink() actions_out -> actions_in canvas()
 
 % Options
 %"opt(pre:'default ')" -> options disp()
