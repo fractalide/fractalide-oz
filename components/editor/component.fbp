@@ -9,6 +9,11 @@ create() inPorts -> ui_in inPortsPanel(editor/component/portPanel) widget_out =>
 create() outPorts -> ui_in outPortsPanel(editor/component/portPanel) widget_out => ui_out
 inPortsPanel() actions_out -> actions_in awOut()
 outPortsPanel() actions_out -> actions_in awOut()
+% name
+create() name -> ui_in name(editor/labelentry) ui_out -> place#1 td(ui/td) ui_out -> window winCanvas(ui/canvas/window) ui_out => ui_out
+name() actions_out -> actions_in awOut()
+create() pos -> ui_in winCanvas()
+"start" -> ui_in td()
 
 "add("1")" -> actions_in inPortsPanel()
 "add("2")" -> actions_in inPortsPanel()
@@ -20,14 +25,7 @@ outPortsPanel() actions_out -> actions_in awOut()
 rect() action#ButtonPress -> input dnd(dnd/dndLogic) move -> actions_in rect()
 rect() action#ButtonRelease -> input dnd()
 rect() action#Motion -> input dnd()%input temp(timeFrame) output -> input dnd()
-%dnd() position -> input moveLogic(editor/component/moveLogic) output -> actions_in inPortsPanel()
-%dnd() position -> actions_in inPortsPanel()
-%dnd() position -> actions_in outPortsPanel()
+
 dnd() move -> actions_in inPortsPanel()
 dnd() move -> actions_in outPortsPanel()
-
-% Right click to begin link
-% rect() action#ButtonRelease -> input lc(editor/component/leftClick) output -> options ipLC1(ipEdit) out-> actions_in awOut()
-%rect() action#ButtonRelease -> input lc()
-% lc() output -> input ipLC2(ipEdit) out -> actions_in awOut() action#getEPleftClick -> input gf1(editor/component/recFeature1) output -> input ipLC1()
-%"opt(text:getEntryPoint(output:getEPleftClick))" -> options ipLC2()
+dnd() move -> actions_in winCanvas()

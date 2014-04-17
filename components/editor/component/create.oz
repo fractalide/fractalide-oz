@@ -23,9 +23,12 @@ define
 			       {Out.rect start(X Y X2 Y2 width:3 fill:white)}
 			       {Out.inPorts opt(side:right x:Rec.x-H2-30.0 y:Rec.y)}
 			       {Out.outPorts opt(side:left x:Rec.x+H2+30.0 y:Rec.y)}
+			       %Name
+			       {Out.name create(init:"initName")}
+			       {Out.pos start(Rec.x Rec.y)}
 			    end)
 		      )
-		   outPorts(rect inPorts outPorts)
+		   outPorts(rect inPorts outPorts name pos)
 		   )
       }
    end

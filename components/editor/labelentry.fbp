@@ -1,0 +1,34 @@
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% UI stream
+ui_in => ui_in create(editor/labelentry/create) ui_out -> ui_in label(ui/label)
+create() ui_out -> ui_in entry(ui/entry)
+label() ui_out -> place#2 ph(ui/placeholder) ui_out => ui_out
+label() actions_out -> actions_in ph() actions_out -> actions_in awOut()
+entry() ui_out -> place#1 ph()
+entry() actions_out -> actions_in ph()
+"set(bg:white)" -> ui_in ph()
+
+ph() actions_out -> actions_in awOut()
+
+
+% ---
+% Double click on label switch to the entry
+label() action#ButtonPress -> input dclick(mouse/doubleclick)
+dclick() output -> input ieLabel(ipEdit) out -> actions_in entry()
+"opt(text:display)" -> options ieLabel()
+
+% ---
+% Focus out, enter switch to the label with the new text
+entry() action#KeyPress -> input qEntry(editor/labelentry/quitEntry)
+entry() action#FocusOut -> input qEntry()
+qEntry() change -> actions_in entry() action#getText -> input setText(editor/labelentry/setText)
+setText() output -> actions_in label()
+qEntry() esc -> actions_in label()
+
+% ---
+% Remove click for upper level
+awOut() action#ButtonPress -> input d(discard)
