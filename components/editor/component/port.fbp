@@ -1,0 +1,12 @@
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% UI stream
+ui_in => ui_in rect(ui/canvas/rectangle)
+rect() ui_out => ui_out
+rect() actions_out => actions_out
+
+% Move
+awIn() action#move -> actions_in rect()
