@@ -4,16 +4,26 @@ import
 export
    new: CompNewGen
 define
-   fun {CompNewGen Name}
+   fun {CompNewGen Name} Width Height in
+      Width = 100
+      Height = 50
       {Comp.new comp(
 		   name:Name type:'components/editor/component/create'
 		   inPorts(
-		      input(proc{$ In Out Comp} Rec in
+		      input(proc{$ In Out Comp} Rec X X2 Y Y2 W2 H2 in
+			       W2 = {Float.toInt {Int.toFloat Width}/2.0}
+			       H2 = {Float.toInt {Int.toFloat Height}/2.0}
 			       Rec = {In.get}
-			       {Out.rect start(Rec.x Rec.y Rec.x+50 Rec.y+50 fill:black)}
+			       X = Rec.x - W2
+			       Y = Rec.y - H2
+			       X2 = X+Width
+			       Y2 = Y+Height
+			       {Out.rect start(X Y X2 Y2 width:3 fill:white)}
+			       {Out.inPorts opt(side:right x:Rec.x-H2-30 y:Rec.y)}
+			       {Out.outPorts opt(side:left x:Rec.x+H2+30 y:Rec.y)}
 			    end)
 		      )
-		   outPorts(rect)
+		   outPorts(rect inPorts outPorts)
 		   )
       }
    end

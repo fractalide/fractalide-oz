@@ -12,8 +12,8 @@ define
       end
    end
    Inter = 5.0
-   Height = 20.0
-   Width = 100.0
+   Height = 10.0
+   Width = 75.0
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:'components/editor/createComp'
@@ -38,21 +38,23 @@ define
 				  Y = Comp.state.y + ~(Height/2.0) + ({Int.toFloat {List.length Comp.state.list}}*((Height/2.0)+(Inter/2.0)))
 				  {C send(ui_in create(X Y X2 Y+Height) _)}
 				  Comp.state.list := C | Comp.state.list
-			       [] move then
+			       [] move then DX DY in
+				  DX = {Int.toFloat IP.1}
+				  DY = {Int.toFloat IP.2}
 				  for Port in Comp.state.list do Ack in
-				     {Port send(actions_in move(IP.x IP.y) Ack)}
+				     {Port send(actions_in move(DX DY) Ack)}
 				     {Wait Ack}
 				  end
-				  Comp.state.x := Comp.state.x + IP.x
-				  Comp.state.y := Comp.state.y + IP.y
+				  Comp.state.x := Comp.state.x + DX
+				  Comp.state.y := Comp.state.y + DY
 			       else skip
 			       end
 			    end)
 		      )
 		   procedures(proc{$ Out Comp}
 				 if Comp.state.x == ~1 andthen Comp.state.y == ~1 then
-				    Comp.state.x := Comp.options.x
-				    Comp.state.y := Comp.options.y
+				    Comp.state.x := {Int.toFloat Comp.options.x}
+				    Comp.state.y := {Int.toFloat Comp.options.y}
 				 end
 			      end)
 		   outPorts(widget_out actions_out)

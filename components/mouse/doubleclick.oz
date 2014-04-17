@@ -14,9 +14,9 @@ define
 				   in
 				      case {Label IP}
 				      of 'ButtonPress' andthen IP.button == 1 then T in
-					 T = {Milli.getReferenceTime}
-					 %T = {OS.time}
-					 if Comp.state.last > 0 andthen T-Comp.state.last < 500 then {Out.output {Record.adjoin IP doubleclick}} end %% 1 by 500
+					 %T = {Milli.getReferenceTime}
+					 T = {OS.time}
+					 if Comp.state.last > 0 andthen T-Comp.state.last < 1 then {Out.output {Record.adjoin IP doubleclick}} end %% 1 by 500
 					 Comp.state.last := T
 				      else skip
 				      end
