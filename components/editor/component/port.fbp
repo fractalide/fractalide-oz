@@ -6,7 +6,23 @@ awOut() action => action
 % UI stream
 ui_in => ui_in rect(ui/canvas/rectangle)
 rect() ui_out => ui_out
-rect() actions_out => actions_out
+rect() actions_out -> actions_in awOut()
 
 % Move
 awIn() action#move -> actions_in rect()
+awIn() action#move -> input moveLogic(editor/component/moveLogic) output -> actions_in awOut()
+
+% ---
+% Leftclick : getCoord, get EP of awIn and send create
+% getCoord
+rect() action#ButtonRelease -> input ieCoord(ipEdit) out -> actions_in rect()
+rect() action#getCoordLC -> coord lc(editor/component/leftClick)
+"opt(text:getCoords(output:getCoordLC))" -> options ieCoord()
+% getEntryPoint
+rect() action#ButtonRelease -> input ieEP(ipEdit) out -> actions_in awOut()
+awOut() action#getEntryPointLC -> ep lc()
+"opt(text:getEntryPoint(output:getEntryPointLC))" -> options ieEP()
+% main stream
+rect() action#ButtonRelease -> input lc() output -> actions_in awOut()
+% Remove ButtonPress for upper level
+rect() action#ButtonPress -> input discard(discard)

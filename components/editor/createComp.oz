@@ -2,12 +2,14 @@ functor
 import
    Comp at '../../lib/component.ozf'
    SubComp at '../../lib/subcomponent.ozf'
+   System
 export
    new: CompNewGen
 define
    Unique = {NewCell 0}
    fun {OutPortWrapper Out} 
       proc{$ send(N Msg Ack)}
+	 {System.show wrappercreatecomp#Msg}
 	 {Out.N Msg}
 	 Ack = ack
       end
@@ -16,14 +18,15 @@ define
       {Comp.new comp(
 		   name:Name type:'components/editor/createComp'
 		   inPorts(
-		      input(proc{$ In Out Comp} IP C Name in
+		      input(proc{$ In Out Comp} IP IPF C Name in
 			       IP = {In.get}
+			       IPF = doubleclick(button:IP.button x:{Int.toFloat IP.x} y:{Int.toFloat IP.y})
 			       Name = {VirtualString.toAtom "comp"#@Unique}
 			       Unique := @Unique + 1
 			       C = {SubComp.new Name "editor/component" "/home/denis/fractalide/fractallang/components/editor/component.fbp"}
 			       {Wait C}
 			       Comp.var.comp = C
-			       Comp.var.init = IP
+			       Comp.var.init = IPF
 			    end)
 		      )
 		   procedures(proc{$ Out Comp} C in

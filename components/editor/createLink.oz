@@ -18,8 +18,9 @@ define
 		   inPorts(
 		      input(proc{$ In Out Comp} IP in
 			       IP = {In.get}
+			       {System.show IP}
 			       case IP
-			       of createLink(entryPoint:BPoint x:X y:Y) andthen {Not Comp.state.click} then L in
+			       of createLink(entryPoint:BPoint x1:_ x2:X y:Y) andthen {Not Comp.state.click} then L in
 				  L = {SubComp.new test type "/home/denis/fractalide/fractallang/components/editor/link.fbp"}
 				  Comp.state.link := L
 				  {L bind(ui_out {OutPortWrapper Out} widget_out)}
@@ -31,10 +32,11 @@ define
 				  {L send(ui_in startline(x:X y:Y) _)}
 				  Comp.state.bPoint := BPoint
 				  Comp.state.click := true
-			       [] createLink(entryPoint:EPoint x:_ y:_) andthen Comp.state.click andthen Comp.state.link \= nil andthen Comp.state.bPoint \= nil then
+			       [] createLink(entryPoint:EPoint x1:X x2:_ y:Y) andthen Comp.state.click andthen Comp.state.link \= nil andthen Comp.state.bPoint \= nil then
 				  {System.show Comp.state.bPoint == EPoint}
 				  {Comp.state.bPoint bind(action#moveBegin Comp.state.link actions_in)}
 				  {EPoint bind(action#moveEnd Comp.state.link actions_in)}
+				  {Comp.state.link send(actions_in moveEndMotion(x:X y:Y) _)}
 				  Comp.state.link := nil
 				  Comp.state.bPoint := nil
 				  Comp.state.click := false
@@ -44,7 +46,7 @@ define
 			       % 	  Comp.state.bPoint := nil
 			       % 	  Comp.state.click := false
 			       [] 'Motion'(state:_ x:X y:Y) andthen Comp.state.link \= nil andthen Comp.state.click then
-				  {Comp.state.link send(actions_in moveEnd(x:X y:Y) _)}
+				  {Comp.state.link send(actions_in moveEndMotion(x:{Int.toFloat X} y:{Int.toFloat Y}) _)}
 			       else
 				  skip
 			       end

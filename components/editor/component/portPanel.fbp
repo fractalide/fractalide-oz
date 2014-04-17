@@ -13,3 +13,6 @@ manager() actions_out -> actions_in awOut()
 awIn() action#add -> input manager()
 awIn() action#remove -> input manager()
 awIn() action#move -> input manager()
+
+% The move logic
+awIn() action#position -> input manager()
