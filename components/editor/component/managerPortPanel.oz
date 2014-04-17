@@ -6,9 +6,13 @@ import
 export
    new: CompNewGen
 define
-   fun {OutPortWrapper Out}
+   fun {OutPortWrapper Out Side}
       proc{$ send(N Msg Ack)}
-	 {Out.N Msg}
+	 if {Label Msg} == createLink then
+	    {Out.N {Record.adjoin r(side:Side) Msg}}
+	 else
+	    {Out.N Msg}
+	 end
 	 Ack = ack
       end
    end
@@ -25,9 +29,9 @@ define
 			       of add then C X X2 Y in
 				  C = {SubComp.new IP.1 "editor/component/port" "/home/denis/fractalide/fractallang/components/editor/component/port.fbp"}
 				  {Wait C}
-				  {C bind(ui_out {OutPortWrapper Out} widget_out)}
+				  {C bind(ui_out {OutPortWrapper Out Comp.options.side} widget_out)}
 				  % Little rectangle will resend info to the manager
-				  {C bind(actions_out {OutPortWrapper Out} actions_out)}
+				  {C bind(actions_out {OutPortWrapper Out Comp.options.side} actions_out)}
 				  {C start}
 				  % Move already existing port up
 				  for Port in Comp.state.list do Ack in
