@@ -14,18 +14,26 @@ outPortsPanel() actions_out -> actions_in awOut()
 create() name -> ui_in name(editor/labelentry) ui_out -> place#1 td(ui/td) ui_out -> window winCanvas(ui/canvas/window) ui_out => ui_out
 name() actions_out -> actions_in awOut()
 create() pos -> ui_in winCanvas()
-"start" -> ui_in td()
+"start(bg:white)" -> ui_in td()
 % Reload button
-"start(text:"select")" -> ui_in selectButton(ui/button) ui_out -> place#2 td()
+"start(text:"select" glue:ew)" -> ui_in selectButton(ui/button) ui_out -> place#2 td()
 selectButton() actions_out -> actions_in awOut()
+% Start Stop button
+"start(text:"start")" -> ui_in startButton(ui/button) ui_out -> place#1 lr(ui/lr)
+startButton() actions_out -> actions_in awOut()
+"start(text:"stop")" -> ui_in stopButton(ui/button) ui_out -> place#2 lr()
+stopButton() actions_out -> actions_in awOut()
+lr() ui_out -> place#3 td()
+lr() actions_out -> actions_in td()
+"start(bg:white)" -> ui_in lr()
 
 % ---
 % Dummy add of ports, for the example!
-"add("ui_in")" -> actions_in inPortsPanel()
-"add("actions_in")" -> actions_in inPortsPanel()
-"add("ui_out")" -> actions_in outPortsPanel()
-"add("actions_out")" -> actions_in outPortsPanel()
-"add("action")" -> actions_in outPortsPanel()
+% "add("ui_in")" -> actions_in inPortsPanel()
+% "add("actions_in")" -> actions_in inPortsPanel()
+% "add("ui_out")" -> actions_in outPortsPanel()
+% "add("actions_out")" -> actions_in outPortsPanel()
+% "add("action")" -> actions_in outPortsPanel()
 
 % ---
 % Drag&Drop
@@ -50,6 +58,13 @@ inPortsPanel() action#endLink -> input compManager()
 
 % ---
 % select a new type of comp
-selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input compManager()
+selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input d(display) output -> input compManager()
 compManager() newInPort -> actions_in inPortsPanel()
 compManager() newOutPort -> actions_in outPortsPanel()
+
+% ---
+% Start Stop a comp
+startButton() action#button_clicked -> input ieStart(ipEdit) out -> input compManager()
+"opt(text:start)" -> options ieStart()
+stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input compManager()
+"opt(text:stop)" -> options ieStop()

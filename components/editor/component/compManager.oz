@@ -1,6 +1,7 @@
 functor
 import
    CompLib at '../../../lib/component.ozf'
+   System
 export
    new: CompNewGen
 define
@@ -19,6 +20,7 @@ define
 			       [] endLink then
 				  {Out.output {Record.adjoin ep(comp:Comp.state.comp) IP}}
 			       [] newComp then NState in
+				  {System.show compmanager#IP}
 				  % Delete old port
 				  {Out.delete delete}
 				  % TODO : good delete
@@ -32,6 +34,12 @@ define
 				   proc {$ I _}
 				      {Out.newOutPort add({Atom.toString I})}
 				   end}
+				  % Replace the entry point
+				  Comp.state.comp := IP.1
+			       [] start then
+				  {Comp.state.comp start}
+			       [] stop then
+				  {Comp.state.comp stop}
 			       end
 			    end)
 		      )

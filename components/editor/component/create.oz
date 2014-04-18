@@ -7,7 +7,7 @@ define
    fun {CompNewGen Name} Width Height in
       % Width and Height of a component
       Width = 120.0
-      Height = 50.0
+      Height = 70.0
       {Comp.new comp(
 		   name:Name type:'components/editor/component/create'
 		   inPorts(
@@ -23,8 +23,8 @@ define
 			       % Create the main box
 			       {Out.rect start(X Y X2 Y2 width:3 fill:white)}
 			       % Create the port panels
-			       {Out.inPorts opt(side:right x:Rec.x-H2-40.0 y:Rec.y)}
-			       {Out.outPorts opt(side:left x:Rec.x+H2+40.0 y:Rec.y)}
+			       {Out.inPorts opt(side:right x:Rec.x-H2-30.0 y:Rec.y)}
+			       {Out.outPorts opt(side:left x:Rec.x+H2+30.0 y:Rec.y)}
 			       % Create the name
 			       {Out.name create(init:{Atom.toString Rec.name})}
 			       % Create the "real" comp

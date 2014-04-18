@@ -3,6 +3,7 @@ import
    Comp at '../../lib/component.ozf'
    SubComp at '../../lib/subcomponent.ozf'
    Module
+   System
 export
    new: New
 define
@@ -12,13 +13,14 @@ define
 		   inPorts(type(proc{$ In Out Comp} C Type Name TheComp in
 				   Name#Type = {In.get}
 				   try
-				      [C] = {Module.link ["./components/"#Type#".ozf"]}
+				      [C] = {Module.link [Type]}
 				      {Wait C}
 				      TheComp = {C.new Name}
 				   catch _ then
 				      try
-					 TheComp = {SubComp.new Name Type "./components/"#Type#".fbp"}
+					 TheComp = {SubComp.new Name Type Type}
 				      catch _ then
+					 {System.show typenotfound#Type}
 					 TheComp = nil
 				      end
 				   end
