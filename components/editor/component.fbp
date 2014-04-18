@@ -28,14 +28,6 @@ lr() actions_out -> actions_in td()
 "start(bg:white)" -> ui_in lr()
 
 % ---
-% Dummy add of ports, for the example!
-% "add("ui_in")" -> actions_in inPortsPanel()
-% "add("actions_in")" -> actions_in inPortsPanel()
-% "add("ui_out")" -> actions_in outPortsPanel()
-% "add("actions_out")" -> actions_in outPortsPanel()
-% "add("action")" -> actions_in outPortsPanel()
-
-% ---
 % Drag&Drop
 rect() action#ButtonPress -> input dnd(dnd/dndLogic) move -> actions_in rect()
 rect() action#ButtonRelease -> input dnd()
@@ -50,7 +42,7 @@ dnd() move -> actions_in winCanvas()
 % The manager
 create() comp -> input compManager(editor/component/compManager)
 
-% At link creation, add the Comp entry point to the record
+% At link creation, add the real comp entry point to the record
 outPortsPanel() action#beginLink -> input compManager() output -> actions_in awOut()
 outPortsPanel() action#endLink -> input compManager()
 inPortsPanel() action#beginLink -> input compManager()
@@ -65,6 +57,6 @@ compManager() newOutPort -> actions_in outPortsPanel()
 % ---
 % Start Stop a comp
 startButton() action#button_clicked -> input ieStart(ipEdit) out -> input compManager()
-"opt(text:start)" -> options ieStart()
+"opt(text:start bg:white)" -> options ieStart()
 stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input compManager()
-"opt(text:stop)" -> options ieStop()
+"opt(text:stop bg:white)" -> options ieStop()
