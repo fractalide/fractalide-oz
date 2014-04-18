@@ -17,11 +17,11 @@ create() pos -> ui_in winCanvas()
 "start" -> ui_in td()
 
 % Dummy add of ports, for the example!
-"add("1")" -> actions_in inPortsPanel()
-"add("2")" -> actions_in inPortsPanel()
-"add("1")" -> actions_in outPortsPanel()
-"add("1")" -> actions_in outPortsPanel()
-"add("1")" -> actions_in outPortsPanel()
+"add("ui_in")" -> actions_in inPortsPanel()
+"add("actions_in")" -> actions_in inPortsPanel()
+"add("ui_out")" -> actions_in outPortsPanel()
+"add("actions_out")" -> actions_in outPortsPanel()
+"add("action")" -> actions_in outPortsPanel()
 
 % ---
 % Drag&Drop
@@ -32,3 +32,14 @@ rect() action#Motion -> input dnd()
 dnd() move -> actions_in inPortsPanel()
 dnd() move -> actions_in outPortsPanel()
 dnd() move -> actions_in winCanvas()
+
+% ---
+% The "real" component
+% The manager
+create() comp -> input compManager(editor/component/compManager)
+
+% At link creation, add the Comp entry point to the record
+outPortsPanel() action#beginLink -> input compManager() output -> actions_in awOut()
+outPortsPanel() action#endLink -> input compManager()
+inPortsPanel() action#endLink -> input compManager()
+inPortsPanel() action#beginLink -> input compManager()

@@ -12,9 +12,13 @@ manager() actions_out -> actions_in awOut()
 % ---
 % Add, remove, move
 awIn() action#add -> input manager()
-awIn() action#remove -> input manager()
+awIn() action#remove -> input manager() % Not yet useful
 awIn() action#move -> input manager()
 
 % ---
 % The move logic
 awIn() action#position -> input manager()
+
+% ---
+% Wrap createLink to make beginLink/endLink and good x/y
+manager() actions_out -> input createLinkLogic(editor/component/createLinkLogic) output -> actions_in awOut()

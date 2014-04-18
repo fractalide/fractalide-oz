@@ -43,7 +43,7 @@ define
 				  X2 = if Comp.options.side == left then X+Width else X-Width end
 				  % Y = y + (-H/2) + (n * (H/2 + I/2))
 				  Y = Comp.state.y + ~(Height/2.0) + ({Int.toFloat {List.length Comp.state.list}}*((Height/2.0)+(Inter/2.0)))
-				  {C send(ui_in create(X Y X2 Y+Height fill:white) _)}
+				  {C send(ui_in create(X Y X2 Y+Height fill:white name:IP.1) _)}
 				  Comp.state.list := C | Comp.state.list
 			       [] move then DX DY in
 				  DX = {Int.toFloat IP.1}

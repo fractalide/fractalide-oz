@@ -27,10 +27,12 @@ define
 			       {Out.outPorts opt(side:left x:Rec.x+H2+40.0 y:Rec.y)}
 			       % Create the name
 			       {Out.name create(init:{Atom.toString Rec.name})}
+			       % Create the "real" comp
+			       {Out.comp create(name:{Atom.toString Rec.name})}
 			       {Out.pos start(Rec.x Rec.y)}
 			    end)
 		      )
-		   outPorts(rect inPorts outPorts name pos)
+		   outPorts(rect inPorts outPorts name pos comp)
 		   )
       }
    end

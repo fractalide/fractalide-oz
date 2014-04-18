@@ -15,7 +15,8 @@ createComp() actions_out -> actions_in canvas()
 
 % ---
 % Create the links
-canvas() action#createLink -> input createLink(editor/createLink)
+canvas() action#beginLink -> input createLink(editor/createLink)
+canvas() action#endLink -> input createLink()
 canvas() action#Motion -> input createLink()
 createLink() widget_out -> widget canvas()
 createLink() actions_out -> actions_in canvas()

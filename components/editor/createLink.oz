@@ -18,7 +18,7 @@ define
 		      input(proc{$ In Out Comp} IP in
 			       IP = {In.get}
 			       case IP
-			       of createLink(entryPoint:BPoint x1:_ x2:X y:Y side:left) andthen {Not Comp.state.click} then L in
+			       of beginLink(entryPoint:BPoint x:X y:Y comp:OutComp) andthen {Not Comp.state.click} then L in
 				  L = {SubComp.new test type "./components/editor/link.fbp"}
 				  Comp.state.link := L
 				  % Bind port and create it
@@ -32,7 +32,7 @@ define
 				  {L send(ui_in startline(x:X y:Y) _)}
 				  Comp.state.bPoint := BPoint
 				  Comp.state.click := true
-			       [] createLink(entryPoint:EPoint x1:X x2:_ y:Y side:right) andthen Comp.state.click andthen Comp.state.link \= nil andthen Comp.state.bPoint \= nil then
+			       [] endLink(entryPoint:EPoint x:X y:Y comp:InComp) andthen Comp.state.click andthen Comp.state.link \= nil andthen Comp.state.bPoint \= nil then
 				  % The port is binded to an input port
 				  % Bind for the message moveBegin and moveEnd
 				  {Comp.state.bPoint bind(action#moveBegin Comp.state.link actions_in)}
