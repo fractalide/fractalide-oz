@@ -22,6 +22,9 @@ define
 			     ep(proc{$ In Out Comp}
 				   Comp.var.ep = {In.get}.1
 				end)
+			     name(proc{$ In Out Comp}
+				     Comp.var.name = {VirtualString.toAtom {In.get}.text}
+				  end)
 			    )
 		     procedures(proc{$ Out Comp}
 				   if Comp.var.input then C X1 X2 Y in
@@ -29,11 +32,11 @@ define
 				      X1 = C.1
 				      X2 = C.3
 				      Y = C.2 + (C.4-C.2)/2.0
-				      {Out.output createLink(x1:X1 x2:X2 y:Y entryPoint:Comp.var.ep)}
+				      {Out.output createLink(x1:X1 x2:X2 y:Y entryPoint:Comp.var.ep name:Comp.var.name)}
 				   end
 				end)
 		     outPorts(output)
-		     var(input coord ep)
+		     var(input coord ep name)
 		    )
       }
    end

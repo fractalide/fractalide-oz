@@ -29,6 +29,10 @@ rect() action#getCoordLC -> coord lc(editor/component/leftClick)
 rect() action#ButtonRelease -> input ieEP(ipEdit) out -> actions_in awOut()
 awOut() action#getEntryPointLC -> ep lc()
 "opt(text:getEntryPoint(output:getEntryPointLC))" -> options ieEP()
+% getName
+rect() action#ButtonRelease -> input ieName(ipEdit) out -> actions_in text()
+text() action#getNameLC -> name lc()
+"opt(text:get(text output:getNameLC))" -> options ieName()
 % main stream
 rect() action#ButtonRelease -> input lc() output -> actions_in awOut()
 % Remove ButtonPress for upper level
@@ -37,3 +41,4 @@ rect() action#ButtonPress -> input discard(discard)
 text() action#ButtonRelease -> input ieCoord()
 text() action#ButtonRelease -> input ieEP()
 text() action#ButtonRelease -> input lc()
+text() action#ButtonRelease -> input ieName()
