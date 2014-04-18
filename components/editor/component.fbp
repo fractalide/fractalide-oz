@@ -1,3 +1,4 @@
+% ---
 % Creation
 % Rect (main box)
 ui_in => input create(editor/component/create) rect -> ui_in rect(ui/canvas/rectangle) ui_out => ui_out
@@ -15,16 +16,18 @@ name() actions_out -> actions_in awOut()
 create() pos -> ui_in winCanvas()
 "start" -> ui_in td()
 
+% Dummy add of ports, for the example!
 "add("1")" -> actions_in inPortsPanel()
 "add("2")" -> actions_in inPortsPanel()
 "add("1")" -> actions_in outPortsPanel()
 "add("1")" -> actions_in outPortsPanel()
 "add("1")" -> actions_in outPortsPanel()
 
+% ---
 % Drag&Drop
 rect() action#ButtonPress -> input dnd(dnd/dndLogic) move -> actions_in rect()
 rect() action#ButtonRelease -> input dnd()
-rect() action#Motion -> input dnd()%input temp(timeFrame) output -> input dnd()
+rect() action#Motion -> input dnd()
 
 dnd() move -> actions_in inPortsPanel()
 dnd() move -> actions_in outPortsPanel()

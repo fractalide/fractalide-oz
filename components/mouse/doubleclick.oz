@@ -1,9 +1,12 @@
 functor
 import
    Comp at '../../lib/component.ozf'
-   Milli at 'x-oz://boot/Time'
+   
+   % For mozart2
+   %Milli at 'x-oz://boot/Time'
+   % For mozart1.4
    OS
-   System
+   
 export
    new: CompNew
 define
@@ -14,9 +17,14 @@ define
 				   in
 				      case {Label IP}
 				      of 'ButtonPress' andthen IP.button == 1 then T in
+					 % For Mozart2
 					 %T = {Milli.getReferenceTime}
+					 % For Mozart1.4
 					 T = {OS.time}
-					 if Comp.state.last > 0 andthen T-Comp.state.last < 1 then {Out.output {Record.adjoin IP doubleclick}} end %% 1 by 500
+
+					 % For Mozart2 : < 500
+					 % For Mozart1.4 : < 1
+					 if Comp.state.last > 0 andthen T-Comp.state.last < 1 then {Out.output {Record.adjoin IP doubleclick}} end 
 					 Comp.state.last := T
 				      else skip
 				      end

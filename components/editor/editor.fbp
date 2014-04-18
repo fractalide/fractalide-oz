@@ -1,4 +1,5 @@
-% First step
+% ---
+% Creation
 canvas(ui/canvas) ui_out -> ui_in win(ui/window)
 canvas() actions_out -> actions_in win()
 win() actions_out -> input disp(display)

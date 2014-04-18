@@ -1,19 +1,23 @@
+% ---
 % Logic stream
 actions_in => actions_in awIn(ui/actionsWrapper)
 awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
 awOut() action => action
 
+% ---
 % UI stream
 ui_in => ui_in rect(ui/canvas/rectangle)
 rect() ui_out => ui_out
 rect() actions_out -> actions_in awOut()
 
+% ---
 % Move
 awIn() action#move -> actions_in rect()
 awIn() action#move -> input moveLogic(editor/component/moveLogic) output -> actions_in awOut()
 
 % ---
-% Leftclick : getCoord, get EP of awIn and send create
+% Leftclick : createLink out
+%             so getCoord, get EP of awIn and send create
 % getCoord
 rect() action#ButtonRelease -> input ieCoord(ipEdit) out -> actions_in rect()
 rect() action#getCoordLC -> coord lc(editor/component/leftClick)

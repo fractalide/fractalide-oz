@@ -11,7 +11,7 @@ imItem() actions_out -> actions_in canvas()
 "start(100 100)" -> ui_in imItem()
 
 % Drag and drop image
-imItem() action#ButtonPress -> input dnd(dnd/dndLogic) output -> actions_in imItem()
+imItem() action#ButtonPress -> input dnd(dnd/dndLogic) move -> actions_in imItem()
 imItem() action#ButtonRelease -> input dnd()
 imItem() action#Motion -> input dnd()
 

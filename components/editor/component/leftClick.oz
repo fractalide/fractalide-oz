@@ -1,21 +1,19 @@
 functor
 import
    Comp at '../../../lib/component.ozf'
-   System
 export
    new: CompNew
 define
    fun {CompNew Name}
-      {Comp.new comp(name:Name type:leftClick
+      {Comp.new comp(name:Name type:"editor/component/leftClick"
 		     inPorts(input(proc{$ In Out Comp}
 				      IP = {In.get}
 				   in
 				      if {Label IP} == 'ButtonRelease' andthen IP.button == 1 then
-					 Comp.var.input = IP
+					 Comp.var.input = true
 				      else
-					 Comp.var.input = nil
+					 Comp.var.input = false
 				      end
-
 				   end)
 			     coord(proc{$ In Out Comp} IP in
 				      IP = {In.get}.1
@@ -26,7 +24,7 @@ define
 				end)
 			    )
 		     procedures(proc{$ Out Comp}
-				   if Comp.var.input \= nil then C X1 X2 Y in
+				   if Comp.var.input then C X1 X2 Y in
 				      C = Comp.var.coord
 				      X1 = C.1
 				      X2 = C.3

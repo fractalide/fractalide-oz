@@ -12,12 +12,12 @@ define
 		   inPorts(type(proc{$ In Out Comp} C Type Name TheComp in
 				   Name#Type = {In.get}
 				   try
-				      [C] = {Module.link ["/home/denis/fractalide/fractallang/components/"#Type#".ozf"]}
+				      [C] = {Module.link ["./components/"#Type#".ozf"]}
 				      {Wait C}
 				      TheComp = {C.new Name}
 				   catch _ then
 				      try
-					 TheComp = {SubComp.new Name Type "/home/denis/fractalide/fractallang/components/"#Type#".fbp"}
+					 TheComp = {SubComp.new Name Type "./components/"#Type#".fbp"}
 				      catch _ then
 					 TheComp = nil
 				      end

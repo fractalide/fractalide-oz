@@ -1,18 +1,20 @@
+% ---
 % Logic stream
 actions_in => actions_in awIn(ui/actionsWrapper)
 awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
 awOut() action => action
 
+% ---
 % UI stream
-%ui_in => ui_in createPP(editor/component/createPortPanel)
-%createPP() point -> options manager(editor/component/managerPortPanel)
 ui_in => options manager(editor/component/managerPortPanel) widget_out => widget_out
 manager() actions_out -> actions_in awOut()
 
+% ---
 % Add, remove, move
 awIn() action#add -> input manager()
 awIn() action#remove -> input manager()
 awIn() action#move -> input manager()
 
+% ---
 % The move logic
 awIn() action#position -> input manager()

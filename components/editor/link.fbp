@@ -1,13 +1,16 @@
+% ---
 % Creation
 ui_in => input create(editor/link/create) line -> ui_in line(ui/canvas/line) ui_out => ui_out
 line() actions_out => actions_in awOut(ui/actionsWrapper) actions_out => actions_out
 awOut() action => action
 actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in awOut()
 
+% ---
 % Lower action
 aw() action#lower -> actions_in line()
 
-% MoveBegin
+% ---
+% moveBegin, moveEnd, moveEndMotion
 aw() action#moveBegin -> move moveL(editor/link/move) output -> actions_in line()
 aw() action#moveEnd -> move moveL()
 aw() action#moveEndMotion -> move moveL()

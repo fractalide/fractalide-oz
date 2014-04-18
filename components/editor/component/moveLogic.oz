@@ -6,7 +6,7 @@ export
 define
    fun {CompNewGen Name}
       {Comp.new comp(
-		   name:Name type:'components/editor/component/moveLogic'
+		   name:Name type:"editor/component/moveLogic"
 		   inPorts(
 		      input(proc{$ In Out Comp} Rec in
 			       Rec = {In.get}
