@@ -15,7 +15,11 @@ create() name -> ui_in name(editor/labelentry) ui_out -> place#1 td(ui/td) ui_ou
 name() actions_out -> actions_in awOut()
 create() pos -> ui_in winCanvas()
 "start" -> ui_in td()
+% Reload button
+"start(text:"select")" -> ui_in selectButton(ui/button) ui_out -> place#2 td()
+selectButton() actions_out -> actions_in awOut()
 
+% ---
 % Dummy add of ports, for the example!
 "add("ui_in")" -> actions_in inPortsPanel()
 "add("actions_in")" -> actions_in inPortsPanel()
@@ -41,5 +45,11 @@ create() comp -> input compManager(editor/component/compManager)
 % At link creation, add the Comp entry point to the record
 outPortsPanel() action#beginLink -> input compManager() output -> actions_in awOut()
 outPortsPanel() action#endLink -> input compManager()
-inPortsPanel() action#endLink -> input compManager()
 inPortsPanel() action#beginLink -> input compManager()
+inPortsPanel() action#endLink -> input compManager()
+
+% ---
+% select a new type of comp
+selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input compManager()
+compManager() newInPort -> actions_in inPortsPanel()
+compManager() newOutPort -> actions_in outPortsPanel()

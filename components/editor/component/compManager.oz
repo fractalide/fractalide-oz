@@ -18,12 +18,27 @@ define
 				  {Out.output {Record.adjoin ep(comp:Comp.state.comp) IP}}
 			       [] endLink then
 				  {Out.output {Record.adjoin ep(comp:Comp.state.comp) IP}}
+			       [] newComp then NState in
+				  % Delete old port
+				  {Out.delete delete}
+				  % TODO : good delete
+				  NState = {IP.1 getState($)}
+				  % Add new port
+				  {Record.forAllInd NState.inPorts
+				   proc {$ I _}
+				      {Out.newInPort add({Atom.toString I})}
+				   end}
+				  {Record.forAllInd NState.outPorts
+				   proc {$ I _}
+				      {Out.newOutPort add({Atom.toString I})}
+				   end}
 			       end
 			    end)
 		      )
-		   outPorts(output)
+		   outPorts(output delete newInPort newOutPort)
 		   state(comp:_)
 		   )
       }
+      
    end
 end

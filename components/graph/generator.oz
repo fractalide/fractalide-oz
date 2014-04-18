@@ -22,7 +22,7 @@ define
 					 TheComp = nil
 				      end
 				   end
-				   if TheComp \= nil then {Out.output theComp(TheComp)} end
+				   if TheComp \= nil then {Out.output newComp(TheComp)} end
 				end)
 			  )
 		   outPorts(output)
