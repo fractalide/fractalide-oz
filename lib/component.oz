@@ -1,4 +1,6 @@
 functor
+import
+   System
 export
    new: NewStateComponent
    setProcedureInPort: SetProcedureInPort
@@ -358,13 +360,31 @@ define
 		NPort = Comp#Name | State.outPorts.OutPort
 		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
 		{Record.adjoinAt State outPorts NOutPorts}
-	     [] unBound(OutPort#Sub N) then NAPort NPort NOutPorts in
-		NAPort = {Record.subtract State.outPorts.OutPort.Sub N}
-		NPort = {Record.adjoinAt State.outPorts.OutPort Sub NAPort}
+	     [] unBound(OutPort#Sub Comp) then Name NAPort NPort NOutPorts in
+		Name = {Comp getState($)}.name
+		NAPort = {FoldL State.outPorts.OutPort.Sub
+			  fun {$ Acc P} N in
+			     N = ({P.1 getState($)}).name
+			     if Name == N then Acc else P|Acc end
+			  end
+			  nil
+			 }
+		if NAPort \= nil then
+		   NPort = {Record.adjoinAt State.outPorts.OutPort Sub NAPort}
+		else
+		   NPort = {Record.subtract State.outPorts.OutPort Sub}
+		end
 		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
 		{Record.adjoinAt State outPorts NOutPorts}
-	     [] unBound(OutPort N) then NPort NOutPorts in
-		NPort = {Record.subtract State.outPorts.OutPort N}
+	     [] unBound(OutPort Comp) then NPort NOutPorts Name in
+		Name = {Comp getState($)}.name
+		NPort = {FoldL State.outPorts.OutPort
+			 fun {$ Acc P} N in
+			    N = ({P.1 getState($)}).name
+			    if Name == N then Acc else P|Acc end
+			 end
+			 nil
+			}
 		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
 		{Record.adjoinAt State outPorts NOutPorts}
 	     end
