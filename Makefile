@@ -1,18 +1,18 @@
 all: library comp test
 
 comp:
-	cd components/ && ~/oz/bin/ozc -c *.oz && cd ..
-	cd components/ui && ~/oz/bin/ozc -c *.oz && cd ../..
-	cd components/gates && ~/oz/bin/ozc -c *.oz && cd ../..
-	cd components/calculator && ~/oz/bin/ozc -c *.oz && cd ../../
-	cd components/ui/canvas && ~/oz/bin/ozc -c *.oz && cd ../../
-	cd components/dnd/ && ~/oz/bin/ozc -c *.oz && cd ../../
+	cd components/ && $(OZHOME)/bin/ozc -c *.oz && cd ..
+	cd components/ui && $(OZHOME)/bin/ozc -c *.oz && cd ../..
+	cd components/gates && $(OZHOME)/bin/ozc -c *.oz && cd ../..
+	cd components/calculator && $(OZHOME)/bin/ozc -c *.oz && cd ../../
+	cd components/ui/canvas && $(OZHOME)/bin/ozc -c *.oz && cd ../../
+	cd components/dnd/ && $(OZHOME)/bin/ozc -c *.oz && cd ../../
 
 library:
-	cd lib/ && ~/oz/bin/ozc -c *.oz && cd ..
+	cd lib/ && $(OZHOME)/bin/ozc -c *.oz && cd ..
 
 test:
-	~/oz/bin/ozc -c *.oz
+	$(OZHOME)/bin/ozc -c *.oz
 
 clean:
 	rm -Rrf lib/*.ozf
