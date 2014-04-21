@@ -26,16 +26,29 @@ stopButton() actions_out -> actions_in awOut()
 lr() ui_out -> place#3 td()
 lr() actions_out -> actions_in td()
 "start(bg:white)" -> ui_in lr()
+% The size logic component
+create() rect -> input sizeLogic(editor/component/sizeLogic)
+
+% ---
+% Create the mouse logic
+rect() action#ButtonPress -> input mouseLogic(editor/component/mouseLogic)
+rect() action#ButtonRelease -> input mouseLogic()
+rect() action#Motion -> input mouseLogic()
 
 % ---
 % Drag&Drop
-rect() action#ButtonPress -> input dnd(dnd/dndLogic) move -> actions_in rect()
-rect() action#ButtonRelease -> input dnd()
-rect() action#Motion -> input dnd()
+mouseLogic() dnd -> input dnd(dnd/dndLogic) move -> actions_in rect()
 
 dnd() move -> actions_in inPortsPanel()
 dnd() move -> actions_in outPortsPanel()
 dnd() move -> actions_in winCanvas()
+
+% ---
+% The size logic modification
+dnd() move -> input sizeLogic()
+inPortsPanel() action#right -> input sizeLogic()
+outPortsPanel() action#left -> input sizeLogic()
+sizeLogic() newPos -> actions_in rect()
 
 % ---
 % The "real" component
@@ -47,6 +60,11 @@ outPortsPanel() action#beginLink -> input compManager() output -> actions_in awO
 outPortsPanel() action#endLink -> input compManager()
 inPortsPanel() action#beginLink -> input compManager()
 inPortsPanel() action#endLink -> input compManager()
+
+% ---
+% Show hide port panel
+mouseLogic() show -> actions_in inPortsPanel()
+mouseLogic() show -> actions_in outPortsPanel()
 
 % ---
 % select a new type of comp

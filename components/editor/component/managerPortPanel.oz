@@ -2,6 +2,7 @@ functor
 import
    Comp at '../../../lib/component.ozf'
    SubComp at '../../../lib/subcomponent.ozf'
+   System
 export
    new: CompNewGen
 define
@@ -20,6 +21,44 @@ define
    Inter = 5.0
    Height = 15.0
    Width = 75.0
+   proc {Hide Out Comp}
+      {System.show managerportpanel#hide}
+      for Port in Comp.state.list do Ack Ack2 in
+	 if Comp.options.side == left then
+	    {Port send(actions_in moveBegin(x:~Width y:0.0) Ack)}
+	 else
+	    {Port send(actions_in moveEnd(x:Width y:0.0) Ack)}
+	 end
+	 {Wait Ack}
+	 {Port send(actions_in set(state:hidden) Ack2)}
+	 {Wait Ack2}
+      end
+      if Comp.options.side == left then
+	 {Out.border left(width:0.0 height:0.0)}
+      else
+	 {Out.border right(width:0.0 height:0.0)}
+      end
+      Comp.state.show := false
+   end
+   proc {Show Out Comp} W in
+      {System.show managerportpanel#show}
+      for Port in Comp.state.list do Ack Ack2 in
+	 if Comp.options.side == left then
+	    {Port send(actions_in moveBegin(x:Width y:0.0) Ack)}
+	 else
+	    {Port send(actions_in moveEnd(x:~Width y:0.0) Ack)}
+	 end
+	 {Port send(actions_in set(state:normal) Ack2)}
+	 {Wait Ack2}
+      end
+      W = if {List.length Comp.state.list} > 0 then Width else 0.0 end
+      if Comp.options.side == left then
+	 {Out.border left(width:W height:({Int.toFloat {List.length Comp.state.list}}*(Height+Inter))-Inter)}
+      else
+	 {Out.border right(width:W height:({Int.toFloat {List.length Comp.state.list}}*(Height+Inter))-Inter)}
+      end
+      Comp.state.show := true
+   end
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:'components/editor/createComp'
@@ -43,7 +82,7 @@ define
 				  X2 = if Comp.options.side == left then X+Width else X-Width end
 				  % Y = y + (-H/2) + (n * (H/2 + I/2))
 				  Y = Comp.state.y + ~(Height/2.0) + ({Int.toFloat {List.length Comp.state.list}}*((Height/2.0)+(Inter/2.0)))
-				  {C send(ui_in create(X Y X2 Y+Height fill:white name:IP.1) _)}
+				  {C send(ui_in create(X Y X2 Y+Height fill:white name:IP.1 state:hidden) _)}
 				  Comp.state.list := C | Comp.state.list
 			       [] move then DX DY in
 				  DX = {Int.toFloat IP.1}
@@ -54,7 +93,14 @@ define
 				  end
 				  Comp.state.x := Comp.state.x + DX
 				  Comp.state.y := Comp.state.y + DY
-			       else skip
+			       [] show then
+				  {System.show 'ButtonPress'}
+				  if Comp.state.show then
+				     {Hide Out Comp}
+				  else 
+				     {Show Out Comp}
+				  end
+			       else {System.show IP}
 			       end
 			    end)
 		      )
@@ -64,9 +110,9 @@ define
 				    Comp.state.y := Comp.options.y
 				 end
 			      end)
-		   outPorts(widget_out actions_out)
+		   outPorts(widget_out actions_out border)
 		   options(side:_ x:_ y:_ )
-		   state(list:nil x:_ y:_)
+		   state(list:nil x:_ y:_ show:false)
 						     
 		   )
       }

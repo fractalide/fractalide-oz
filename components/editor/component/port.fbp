@@ -19,6 +19,15 @@ awIn() action#move -> input moveLogic(editor/component/moveLogic) output -> acti
 awIn() action#move -> actions_in text()
 
 % ---
+% Hide and show
+awIn() action#set -> actions_in rect()
+awIn() action#set -> actions_in text()
+rect() action#Enter -> actions_in awOut()
+text() action#Enter -> actions_in awOut()
+%awIn() action#show -> actions_in rect()
+%awIn() action#show -> actions_in text()
+
+% ---
 % Leftclick : createLink out
 %             so getCoord, get EP of awIn and send create
 % getCoord

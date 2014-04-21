@@ -2,7 +2,7 @@
 % Creation
 canvas(ui/canvas) ui_out -> ui_in win(ui/window)
 canvas() actions_out -> actions_in win()
-win() actions_out -> input disp(display)
+%win() actions_out -> input disp(display)
 "set(glue:nswe bg:white)" -> ui_in canvas()
 "set(title:"Fractallang Editor")" -> actions_in win()
 
@@ -22,5 +22,5 @@ createLink() widget_out -> widget canvas()
 createLink() actions_out -> actions_in canvas()
 
 % Options
-"opt(pre:'default ')" -> options disp()
+%"opt(pre:'default ')" -> options disp()
 

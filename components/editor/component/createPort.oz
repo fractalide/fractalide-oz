@@ -15,7 +15,7 @@ define
 				  {Out.rect {Record.subtractList IP [name]}}
 				  X = (IP.1+IP.3)/2.0
 				  Y = (IP.2+IP.4)/2.0
-				  {Out.name create(X Y text:IP.name)}
+				  {Out.name create(X Y text:IP.name state:IP.state)}
 			       end
 			    end)
 		      )
