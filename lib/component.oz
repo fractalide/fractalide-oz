@@ -302,9 +302,11 @@ define
 	     [] exec then
 		if {CheckBuffers {Record.toList State.inPorts}} then {Exec State} else State end
 	     [] stop then
-		for T in State.threads do
-		   if {Thread.state T} \= terminated then
-		      {Thread.terminate T}
+		if {Record.width State.threads} > 0 then
+		   for T in State.threads do
+		      if {Thread.state T} \= terminated then
+			 {Thread.terminate T}
+		      end
 		   end
 		end
 		State
