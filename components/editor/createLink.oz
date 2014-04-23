@@ -5,6 +5,7 @@ import
 export
    new: CompNewGen
 define
+   Unique = {NewCell 0}
    fun {OutPortWrapper Out} 
       proc{$ send(N Msg Ack)}
 	 {Out.N Msg}
@@ -18,30 +19,26 @@ define
 		      input(proc{$ In Out Comp} IP in
 			       IP = {In.get}
 			       case IP
-			       of beginLink(entryPoint:BPoint x:X y:Y comp:OutComp name:Name) andthen {Not Comp.state.click} then L in
-				  L = {SubComp.new test type "./components/editor/link.fbp"}
+			       of beginLink(entryPoint:BPoint x:X y:Y comp:OutComp name:Name) andthen {Not Comp.state.click} then L CompName in
+				  CompName = {VirtualString.toAtom "link"#@Unique}
+				  Unique := @Unique + 1
+				  L = {SubComp.new CompName type "./components/editor/link.fbp"}
 				  Comp.state.link := L
 				  % Bind port and create it
 				  {L bind(ui_out {OutPortWrapper Out} widget_out)}
 				  {L bind(actions_out {OutPortWrapper Out} actions_out)}
-				  {L send(actions_in lower _)}
 				  % Set the initial position
 				  {L send(actions_in moveBegin(x:X y:Y) _)}
 				  {L send(actions_in moveEnd(x:X y:Y) _)}
+				  {L send(actions_in lower _)}
 				  {L start}
-				  {L send(ui_in startline(x:X y:Y outComp:OutComp outPortName:Name) _)}
-				  Comp.state.bPoint := BPoint
+				  {L send(ui_in startline(x:X y:Y outComp:OutComp outPortName:Name bPoint:BPoint subComp:L) _)}
 				  Comp.state.click := true
 			       [] endLink(entryPoint:EPoint x:X y:Y comp:InComp name:Name) andthen Comp.state.click then 
-				  % The port is binded to an input port
-				  % Bind for the message moveBegin and moveEnd
-				  {Comp.state.bPoint bind(action#moveBegin Comp.state.link actions_in)}
-				  {EPoint bind(action#moveEnd Comp.state.link actions_in)}
 				  {Comp.state.link send(actions_in moveEndMotion(x:X y:Y) _)}
 				  % send info about the "real" port
-				  {Comp.state.link send(actions_in inComp(comp:InComp name:Name) _)}
+				  {Comp.state.link send(actions_in inComp(comp:InComp name:Name ePoint:EPoint) _)}
 				  Comp.state.link := nil
-				  Comp.state.bPoint := nil
 				  Comp.state.click := false
 				  % TODO : ButtonRelease to discard the line
 				  % Issue : there is an ButtonRelease when createLink event is launched...
@@ -58,7 +55,7 @@ define
 			    end)
 		      )
 		   outPorts(widget_out actions_out)
-		   state(link:nil bPoint:nil click:false)
+		   state(link:nil click:false)
 		   )
       }
    end

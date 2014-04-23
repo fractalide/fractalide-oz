@@ -11,7 +11,8 @@ define
 		      input(proc{$ In Out Comp} Rec in
 			       Rec = {In.get}
 			       {Out.line start(Rec.x Rec.y Rec.x Rec.y arrow:last)}
-			       {Out.outComp outComp(comp:Rec.outComp name:Rec.outPortName)}
+			       {Out.line lower}
+			       {Out.outComp outComp(comp:Rec.outComp name:Rec.outPortName bPoint:Rec.bPoint subComp:Rec.subComp)}
 			    end)
 		      )
 		   outPorts(line outComp)

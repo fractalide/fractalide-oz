@@ -100,6 +100,11 @@ define
 				  else 
 				     {Show Out Comp}
 				  end
+			       [] delete then
+				  for Port in Comp.state.list do
+				     {Port send(actions_in delete _)}
+				  end
+				  Comp.state.list := nil
 			       else {System.show IP}
 			       end
 			    end)

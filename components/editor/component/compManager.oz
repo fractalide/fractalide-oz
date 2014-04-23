@@ -20,10 +20,12 @@ define
 			       [] endLink then
 				  {Out.output {Record.adjoin ep(comp:Comp.state.comp) IP}}
 			       [] newComp then NState in
-				  {System.show compmanager#IP}
 				  % Delete old port
-				  {Out.delete delete}
-				  % TODO : good delete
+				  {Out.newInPort delete}
+				  {Out.newOutPort delete}
+				  % Stop the old com
+				  {Comp.state.comp stop}
+				  % New one
 				  NState = {IP.1 getState($)}
 				  % Add new port
 				  {Record.forAllInd NState.inPorts

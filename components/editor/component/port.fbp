@@ -28,6 +28,12 @@ text() action#Enter -> actions_in awOut()
 %awIn() action#show -> actions_in text()
 
 % ---
+% delete
+awIn() action#delete -> actions_in rect()
+awIn() action#delete -> actions_in text()
+awIn() action#delete -> actions_in awOut()
+
+% ---
 % Leftclick : createLink out
 %             so getCoord, get EP of awIn and send create
 % getCoord

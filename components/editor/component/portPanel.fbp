@@ -12,7 +12,7 @@ manager() actions_out -> actions_in awOut()
 % ---
 % Add, remove, move
 awIn() action#add -> input manager()
-awIn() action#remove -> input manager() % Not yet useful
+awIn() action#delete -> input manager()
 awIn() action#move -> input manager()
 
 % ---
