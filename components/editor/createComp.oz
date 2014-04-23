@@ -8,8 +8,15 @@ define
    Unique = {NewCell 0}
    fun {OutPortWrapper Out} 
       proc{$ send(N Msg Ack)}
-	 {Out.N Msg}
+	 {SendOut Out Msg}
 	 Ack = ack
+      end
+   end
+   proc {SendOut OutPorts Event}
+      if {List.member {Label Event} {Arity OutPorts.action}} then
+	 {OutPorts.action.{Label Event} Event}
+      else
+	 {OutPorts.actions_out Event}
       end
    end
    fun {CompNewGen Name}
@@ -33,6 +40,7 @@ define
 			    end)
 		      )
 		   outPorts(widget_out actions_out)
+		   outArrayPorts(action)
 		   )
       }
    end

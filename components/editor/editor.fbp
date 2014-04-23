@@ -2,16 +2,33 @@
 % Creation
 canvas(ui/canvas) ui_out -> ui_in win(ui/window)
 canvas() actions_out -> actions_in win()
-%win() actions_out -> input disp(display)
+win() actions_out -> input disp(display)
 "set(glue:nswe bg:white)" -> ui_in canvas()
 "set(title:"Fractallang Editor")" -> actions_in win()
 
 % ---
+% Mouse Logic : ok only if not in a component
+canvas() action#ButtonPress -> input ml(editor/mouseLogic) 
+canvas() action#Motion -> input ml() 
+canvas() action#ButtonRelease -> input ml()
+createComp(editor/createComp) action#inComponent -> input ml()
+createComp() action#outComponent -> input ml()
+
+% ---
 % Double-click to add component
-canvas() action#ButtonPress -> input dclick(mouse/doubleclick)
-dclick() output -> input createComp(editor/createComp)
+ml() output -> input dclick(mouse/doubleclick)
+dclick() output -> input createComp()
 createComp() widget_out -> widget canvas()
 createComp() actions_out -> actions_in canvas()
+
+
+% ---
+% Canvas scanning
+ml() output ->  input scan(editor/scan)
+ml() output -> input scan()
+ml() output -> input scan()
+scan() canvas -> actions_in canvas()
+
 
 % ---
 % Create the links
@@ -22,5 +39,5 @@ createLink() widget_out -> widget canvas()
 createLink() actions_out -> actions_in canvas()
 
 % Options
-%"opt(pre:'default ')" -> options disp()
+"opt(pre:'default ')" -> options disp()
 

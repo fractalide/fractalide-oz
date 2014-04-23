@@ -4,6 +4,8 @@ canvas() actions_out -> actions_in td()
 td() actions_out -> input disp(display)
 "set(width:500 height:500)" -> ui_in canvas()
 "start" -> ui_in td()
+"scan(mark 0 0)" -> actions_in canvas()
+"scan(dragto 5 5)" -> actions_in canvas()
 % Arc
 arcItem(ui/canvas/arc) ui_out -> widget canvas()
 arcItem() actions_out -> actions_in canvas()

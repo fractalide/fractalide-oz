@@ -44,6 +44,14 @@ dnd() move -> actions_in outPortsPanel()
 dnd() move -> actions_in winCanvas()
 
 % ---
+% Grab when mouse over
+rect() action#Enter -> input ieEnter(ipEdit) out -> actions_in awOut()
+rect() action#Leave -> input ieLeave(ipEdit) out -> actions_in awOut()
+"opt(text:inComponent)" -> options ieEnter()
+"opt(text:outComponent)" -> options ieLeave()
+
+
+% ---
 % The size logic modification
 dnd() move -> input sizeLogic()
 inPortsPanel() action#right -> input sizeLogic()
