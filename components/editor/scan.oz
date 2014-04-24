@@ -17,7 +17,7 @@ define
 			       [] 'ButtonRelease' andthen IP.button == 1 then
 				  Comp.state.click := false
 			       [] 'Motion' andthen Comp.state.click then
-				  {Out.canvas scan(dragto IP.x IP.y)}
+				  {Out.canvas scan(dragto IP.x IP.y 1)}
 				  {Out.canvas scan(mark IP.x IP.y)}
 			       else
 				  skip
