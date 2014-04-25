@@ -7,7 +7,7 @@ export
 define
    Unique = {NewCell 0}
    fun {OutPortWrapper Out} 
-      proc{$ send(N Msg Ack)}
+      proc{$ send(_ Msg Ack)}
 	 {SendOut Out Msg}
 	 Ack = ack
       end

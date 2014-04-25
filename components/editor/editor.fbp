@@ -7,16 +7,23 @@ win() actions_out -> input disp(display)
 "set(title:"Fractallang Editor")" -> actions_in win()
 
 % ---
-% Mouse Logic : ok only if not in a component
-canvas() action#ButtonPress -> input ml(editor/mouseLogic) 
+% Mouse Logic
+% Get the canvas handle, just to transform mouse coordinate in canvas coordinate
+"getHandle(output:getHandleML)" -> actions_in canvas()
+canvas() action#getHandleML -> input ht(editor/handleTransform) output -> input d(display) output ->  options ml(editor/mouseLogic)
+% drag&drop only if not in a component
+canvas() action#ButtonPress -> input ml() 
 canvas() action#Motion -> input ml() 
 canvas() action#ButtonRelease -> input ml()
 createComp(editor/createComp) action#inComponent -> input ml()
 createComp() action#outComponent -> input ml()
+% Move link only if in [beginLink endLink]
+canvas() action#beginLink -> input ml()
+canvas() action#endLink -> input ml()
 
 % ---
 % Double-click to add component
-ml() output -> input dclick(mouse/doubleclick)
+ml() dclick -> input dclick(mouse/doubleclick)
 dclick() output -> input createComp()
 createComp() widget_out -> widget canvas()
 createComp() actions_out -> actions_in canvas()
@@ -24,9 +31,7 @@ createComp() actions_out -> actions_in canvas()
 
 % ---
 % Canvas scanning
-ml() output ->  input scan(editor/scan)
-ml() output -> input scan()
-ml() output -> input scan()
+ml() drag ->  input scan(editor/scan)
 scan() canvas -> actions_in canvas()
 
 
@@ -34,9 +39,10 @@ scan() canvas -> actions_in canvas()
 % Create the links
 canvas() action#beginLink -> input createLink(editor/createLink)
 canvas() action#endLink -> input createLink()
-canvas() action#Motion -> input createLink()
+ml() link -> input createLink()
 createLink() widget_out -> widget canvas()
 createLink() actions_out -> actions_in canvas()
+
 
 % Options
 "opt(pre:'default ')" -> options disp()

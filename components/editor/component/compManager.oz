@@ -1,7 +1,6 @@
 functor
 import
    CompLib at '../../../lib/component.ozf'
-   System
 export
    new: CompNewGen
 define

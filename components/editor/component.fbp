@@ -2,7 +2,7 @@
 % Creation
 % Rect (main box)
 ui_in => input create(editor/component/create) rect -> ui_in rect(ui/canvas/rectangle) ui_out => ui_out
-rect() actions_out => actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+rect() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
 actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in awOut()
 awOut() action => action
 % Ports panels
