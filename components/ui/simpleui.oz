@@ -25,15 +25,20 @@ define
 					R.1 = Comp.options.handle
 					{SendOut Out R} 
 				     else
-					if {HasFeature IP output} then Res Get L in
-					   Get = {Record.subtract IP output}
+					if {HasFeature IP output} then Res ResArg Get L in
+					   Get = {Record.subtractList IP [output set]}
 					   L = if {Record.width Get} == 0 then [1] else {Record.toList Get} end
 					   Res = {Record.make IP.output
 						  L
 						 }
+					   ResArg = if {HasFeature IP arg} then
+						       {Record.adjoin Res IP.arg}
+						    else
+						       Res
+						    end
 					   try
-					      {Comp.options.handle {Record.adjoin Res {Label IP}}}
-					      {SendOut Out Res}
+					      {Comp.options.handle {Record.adjoin ResArg {Label IP}}}
+					      {SendOut Out ResArg}
 					   catch _ then
 					      {SendOut Out IP}
 					   end
