@@ -1,6 +1,4 @@
 functor
-import
-   System
 export
    new: NewStateComponent
    setProcedureInPort: SetProcedureInPort
@@ -260,7 +258,11 @@ define
 					      end
 					      {SubThread proc{$}
 							    T = {Thread.this}
-							    {Port.p IPs Out State}
+							    try
+							       {Port.p IPs Out State}
+							    catch E then
+							       {Out.'ERROR' port_procedure(name:State.name type:State.type error:E)}
+							    end
 							 end
 					      }
 					      T|Acc
@@ -272,7 +274,11 @@ define
 					   fun {$ Acc Proc} T in
 					      {SubThread proc{$}
 							    T = {Thread.this}
-							    {State.procs.Proc Out State}
+							    try
+							       {State.procs.Proc Out State}
+							    catch E then
+							       {Out.'ERROR' independent_procedure(name:State.name type:State.type error:E)}
+							    end
 							 end
 					      }
 					      T|Acc
@@ -451,7 +457,7 @@ define
    fun {NewState GivenRecord}
       DefaultState NState in
       DefaultState = component(name:_ type:_ description:""
-			       inPorts:'in'() outPorts:out()
+			       inPorts:'in'() outPorts:out('ERROR':nil)
 			       procs:procs() var:var() state:{NewDictionary}
 			       threads:threads() options:opt()
 			      )
