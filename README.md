@@ -1,11 +1,7 @@
-Fractallang
-===========
 
-Fractallang is an implementation of Hypercard that swaps out Hypertalk for a Flow Based Programming language.
-
-It is the front end language for Fractalide a Content Centric Network browser.
-
-In other words, what Javascript is to a Channel Centric Browser (HTTP Browser), so Fractallang is to a Content Centric Browser.
+Who is this for?
+--------
+If you're the kind of person that likes total control over every aspect of your environment then Fractalide's AGPL v3-or-later codebase allows this freedom for everyone. Its even possible to modify the Hypercard editor from within the Hypercard editor. We use Mozart Oz to implement Flow Based Programming components, these in turn implement Hypercard. Thus by swapping out Hypertalk for a Flow Based Programming Language we allow maximum modularity, configurability and simplicity. Finally we're aiming to share all components over a Content Centric Network. If you resonate with this mindset of freedom please join the community and help out.
 
 Why?
 -----
