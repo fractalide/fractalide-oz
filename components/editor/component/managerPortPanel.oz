@@ -25,9 +25,9 @@ define
       {System.show managerportpanel#hide}
       for Port in Comp.state.list do Ack Ack2 in
 	 if Comp.options.side == left then
-	    {Port send(actions_in moveBegin(x:~Width y:0.0) Ack)}
+	    {Port send(actions_in moveBeginPos(x:Comp.state.x y:Comp.state.y) Ack)}
 	 else
-	    {Port send(actions_in moveEnd(x:Width y:0.0) Ack)}
+	    {Port send(actions_in moveEndPos(x:Comp.state.x y:Comp.state.y) Ack)}
 	 end
 	 {Wait Ack}
 	 {Port send(actions_in set(state:hidden) Ack2)}

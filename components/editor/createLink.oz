@@ -35,7 +35,7 @@ define
 				  {L send(ui_in startline(x:X y:Y outComp:OutComp outPortName:Name bPoint:BPoint subComp:L) _)}
 				  Comp.state.click := true
 			       [] endLink(entryPoint:EPoint x:X y:Y comp:InComp name:Name) andthen Comp.state.click then 
-				  {Comp.state.link send(actions_in moveEndMotion(x:X y:Y) _)}
+				  {Comp.state.link send(actions_in moveEndPos(x:X y:Y) _)}
 				  % send info about the "real" port
 				  {Comp.state.link send(actions_in inComp(comp:InComp name:Name ePoint:EPoint) _)}
 				  Comp.state.link := nil
@@ -48,7 +48,7 @@ define
 			       % 	  Comp.state.bPoint := nil
 			       % 	  Comp.state.click := false
 			       [] 'Motion'(state:_ x:X y:Y) andthen Comp.state.link \= nil andthen Comp.state.click then
-				  {Comp.state.link send(actions_in moveEndMotion(x:{Int.toFloat X} y:{Int.toFloat Y}) _)}
+				  {Comp.state.link send(actions_in moveEndPos(x:{Int.toFloat X} y:{Int.toFloat Y}) _)}
 			       else
 				  skip
 			       end

@@ -18,10 +18,19 @@ define
 					{Out.output setCoords(Comp.state.1 Comp.state.2 Comp.state.3+ IP.x Comp.state.4+IP.y)}
 					Comp.state.3 := Comp.state.3 + IP.x
 					Comp.state.4 := Comp.state.4 + IP.y
-				     [] moveEndMotion then
+				     % [] moveEndMotion then
+				     % 	{Out.output setCoords(Comp.state.1 Comp.state.2 IP.x IP.y)}
+				     % 	Comp.state.3 := IP.x
+				     % 	Comp.state.4 := IP.y
+				     [] moveBeginPos then
+					{Out.output setCoords(IP.x IP.y Comp.state.3 Comp.state.4)}
+					Comp.state.1 := IP.x
+					Comp.state.2 := IP.y
+				     [] moveEndPos then
 					{Out.output setCoords(Comp.state.1 Comp.state.2 IP.x IP.y)}
 					Comp.state.3 := IP.x
 					Comp.state.4 := IP.y
+					
 				     else
 					skip
 				     end

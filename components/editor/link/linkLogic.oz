@@ -24,6 +24,8 @@ define
 				  % bind for the line
 				  {Comp.state.bPoint bind(action#moveBegin Comp.state.subComp actions_in)}
 				  {IP.ePoint bind(action#moveEnd Comp.state.subComp actions_in)}
+				  {Comp.state.bPoint bind(action#moveBeginPos Comp.state.subComp actions_in)}
+				  {IP.ePoint bind(action#moveEndPos Comp.state.subComp actions_in)}
 				  {Comp.state.bPoint bind(action#delete Comp.state.subComp actions_in)}
 				  {IP.ePoint bind(action#delete Comp.state.subComp actions_in)}
 		      

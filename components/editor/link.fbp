@@ -23,4 +23,5 @@ aw() action#lower -> actions_in line()
 % moveBegin, moveEnd, moveEndMotion
 aw() action#moveBegin -> move moveL(editor/link/move) output -> actions_in line()
 aw() action#moveEnd -> move moveL()
-aw() action#moveEndMotion -> move moveL()
+aw() action#moveEndPos -> move moveL()
+aw() action#moveBeginPos -> move moveL()
