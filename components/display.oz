@@ -3,10 +3,12 @@ import
    %Browser
    System
    Comp at '../lib/component.ozf'
+   Property
 export
    new: CompNew
    newArgs: CompNewArgs
 define
+   {Property.put print foo(width:20 depth:20)}
    proc {FunPort1 IN Out Comp}
       IP = {IN.get}
    in
