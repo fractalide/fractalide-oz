@@ -35,6 +35,10 @@ define
 				   proc {$ I _}
 				      {Out.newOutPort add({Atom.toString I})}
 				   end}
+				  {Out.newInPort show}
+				  {Out.newInPort show}
+				  {Out.newOutPort show}
+				  {Out.newOutPort show}
 				  % Replace the entry point
 				  Comp.state.comp := IP.1
 			       [] start then
