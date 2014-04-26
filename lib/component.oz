@@ -457,7 +457,7 @@ define
       DefaultState = component(name:_ type:_ description:""
 			       inPorts:'in'() outPorts:out('ERROR':nil)
 			       procs:procs() var:var() state:{NewDictionary}
-			       threads:threads() options:opt()
+			       threads:nil options:opt()
 			       run:true entryPoint:_
 			      )
       NState = {Record.foldLInd GivenRecord

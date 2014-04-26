@@ -51,9 +51,9 @@ define
 		   {X.1 bind(X.2 Comp Name)}
 		end
 		State
-	     [] unbound(OutPort N) then
+	     [] unBound(OutPort N) then
 		for X in State.outPorts.OutPort do
-		   {X.1 unbound(X.2 N)}
+		   {X.1 unBound(X.2 N)}
 		end
 		State
 	     [] addinArrayPort(Port Index) then
