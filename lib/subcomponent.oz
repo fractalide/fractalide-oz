@@ -104,9 +104,16 @@ define
 		     end
 		  end
 		  outPorts
-		  }
+		 }
+      Error = {Record.foldL G.nodes
+	       fun {$ Acc Comp}
+		  Comp.comp#'ERROR'|Acc
+	       end
+	       nil
+	      }
+      OutPortsFinal = {Record.adjoinAt OutPorts 'ERROR' Error}
    in
-      subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPorts graph:G)
+      subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPortsFinal graph:G)
    end
    fun {Rename Rec OName NName} Temp in
       Temp = {Record.adjoinAt Rec NName Rec.OName}

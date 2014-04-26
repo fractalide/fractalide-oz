@@ -7,6 +7,7 @@ comp:
 	cd components/calculator && $(OZHOME)/bin/ozc -c *.oz && cd ../../
 	cd components/ui/canvas && $(OZHOME)/bin/ozc -c *.oz && cd ../../
 	cd components/dnd/ && $(OZHOME)/bin/ozc -c *.oz && cd ../../
+	cd components/failure/ && $(OZHOME)/bin/ozc -c *.oz && cd ../../
 
 editor:
 	cd components/editor && $(OZHOME)/bin/ozc -c *.oz && cd ../../
