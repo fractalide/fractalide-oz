@@ -7,8 +7,12 @@ export
 define
    Unique = {NewCell 0}
    fun {OutPortWrapper Out} 
-      proc{$ send(_ Msg Ack)}
-	 {SendOut Out Msg}
+      proc{$ send(N Msg Ack)}
+	 if N == actions_out then 
+	    {SendOut Out Msg}
+	 else
+	    {Out.N Msg}
+	 end
 	 Ack = ack
       end
    end
@@ -34,6 +38,7 @@ define
 			       {Wait C}
 			       % Bind the port of the new component and start it
 			       {C bind(ui_out {OutPortWrapper Out} widget_out)}
+			       {C bind('ERROR' {OutPortWrapper Out} 'ERROR')}
 			       {C bind(actions_out {OutPortWrapper Out} actions_out)}
 			       {C send(ui_in IPF _)}
 			       {C start}

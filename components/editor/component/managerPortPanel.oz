@@ -2,7 +2,6 @@ functor
 import
    Comp at '../../../lib/component.ozf'
    SubComp at '../../../lib/subcomponent.ozf'
-   System
 export
    new: CompNewGen
 define
@@ -22,7 +21,6 @@ define
    Height = 15.0
    Width = 75.0
    proc {Hide Out Comp}
-      {System.show managerportpanel#hide}
       for Port in Comp.state.list do Ack Ack2 in
 	 if Comp.options.side == left then
 	    {Port send(actions_in moveBeginPos(x:Comp.state.x y:Comp.state.y) Ack)}
@@ -40,13 +38,18 @@ define
       end
       Comp.state.show := false
    end
-   proc {Show Out Comp} W in
-      {System.show managerportpanel#show}
-      for Port in Comp.state.list do Ack Ack2 in
+   proc {Show Out Comp} W InitPoint N I in
+      % Y = N*(H/2+I/2) + I(H+I)
+      N = {Int.toFloat {List.length Comp.state.list}-1}
+      InitPoint = Comp.state.y - N * (Height/2.0 + Inter/2.0)
+      I = {NewCell 0.0}
+      for Port in {Reverse Comp.state.list} do Ack Ack2 Y in
+	 Y = InitPoint + @I * (Height + Inter)
+	 I := @I+1.0
 	 if Comp.options.side == left then
-	    {Port send(actions_in moveBegin(x:Width y:0.0) Ack)}
+	    {Port send(actions_in moveBeginPos(x:Comp.state.x+Width y:Y) Ack)}
 	 else
-	    {Port send(actions_in moveEnd(x:~Width y:0.0) Ack)}
+	    {Port send(actions_in moveEndPos(x:Comp.state.x-Width y:Y) Ack)}
 	 end
 	 {Port send(actions_in set(state:normal) Ack2)}
 	 {Wait Ack2}
@@ -94,7 +97,6 @@ define
 				  Comp.state.x := Comp.state.x + DX
 				  Comp.state.y := Comp.state.y + DY
 			       [] show then
-				  {System.show 'ButtonPress'}
 				  if Comp.state.show then
 				     {Hide Out Comp}
 				  else 
@@ -105,7 +107,7 @@ define
 				     {Port send(actions_in delete _)}
 				  end
 				  Comp.state.list := nil
-			       else {System.show IP}
+			       else skip
 			       end
 			    end)
 		      )

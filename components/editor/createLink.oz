@@ -27,6 +27,7 @@ define
 				  % Bind port and create it
 				  {L bind(ui_out {OutPortWrapper Out} widget_out)}
 				  {L bind(actions_out {OutPortWrapper Out} actions_out)}
+				  {L bind('ERROR' {OutPortWrapper Out} 'ERROR')}
 				  % Set the initial position
 				  {L send(actions_in moveBegin(x:X y:Y) _)}
 				  {L send(actions_in moveEnd(x:X y:Y) _)}
