@@ -225,7 +225,7 @@ define
 		   else {Rec Threads} end
 		end
 	     in
-		{CheckThread State.threads} andthen {CheckOpt State.options} andthen {CheckBuffers {Record.toList State.inPorts}}
+		{CheckThread State.threads} andthen {CheckOpt State.options} andthen {CheckBuffers {Record.toList State.inPorts}} andthen State.run
 	     end
 	     /*
 	     Exec -
@@ -261,7 +261,7 @@ define
 							    try
 							       {Port.p IPs Out State}
 							    catch E then
-							       {Out.'ERROR' port_procedure(name:State.name type:State.type error:E)}
+							       {Out.'ERROR' port_procedure(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
 							    end
 							 end
 					      }
@@ -277,7 +277,7 @@ define
 							    try
 							       {State.procs.Proc Out State}
 							    catch E then
-							       {Out.'ERROR' independent_procedure(name:State.name type:State.type error:E)}
+							       {Out.'ERROR' independent_procedure(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
 							    end
 							 end
 					      }
@@ -288,7 +288,7 @@ define
 				 end
 		       SubThread }
 		      if {Record.width State.inPorts} > 0 then
-			 {Send Point exec} %Restart
+			 {Send Point start} %Restart
 		      end
 		   end
 		   % Return the new state, with the new var record and the new inPorts record.
@@ -301,21 +301,16 @@ define
 	     % Operation on the component
 	     of getState(?R) then R=State State
 	     [] changeState(NState) then NState
-	     [] start then
-		if {Width State.inPorts} == 0 then
-		   {Exec State}
-		else
-		   State
-		end
-	     [] exec then
-		if {CheckBuffers {Record.toList State.inPorts}} then {Exec State} else State end
+	     [] start then NState in
+		NState = {Record.adjoinAt State run true}
+		{Exec NState}
 	     [] stop then
 		for T in State.threads do
 		   if {Thread.state T} \= terminated then
 		      {Thread.terminate T}
 		   end
 		end
-		State
+		{Record.adjoinAt State run false}
 	     [] getInPort(Port ?R) then
 		R=State.inPorts.Port
 		State
@@ -401,8 +396,11 @@ define
 	  _
 	 }
       end
+      P
    in
-      proc {$ Msg} {Send Point Msg} end
+      P = proc {$ Msg} {Send Point Msg} end
+      NewState.entryPoint = P
+      P
    end
    %% Functions to build a new component
    fun {InPorts In}
@@ -460,6 +458,7 @@ define
 			       inPorts:'in'() outPorts:out('ERROR':nil)
 			       procs:procs() var:var() state:{NewDictionary}
 			       threads:threads() options:opt()
+			       run:true entryPoint:_
 			      )
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
