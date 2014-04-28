@@ -15,8 +15,8 @@ canvas() action#getHandleML -> input ht(editor/handleTransform) output -> option
 canvas() action#ButtonPress -> input ml() 
 canvas() action#Motion -> input ml() 
 canvas() action#ButtonRelease -> input ml()
-createComp(editor/createComp) action#inComponent -> input ml()
-createComp() action#outComponent -> input ml()
+createComp(editor/createComp) action#inComponent -> input d(display) output -> input ml()
+createComp() action#outComponent -> input d(display) output -> input ml()
 % Move link only if in [beginLink endLink]
 canvas() action#beginLink -> input ml()
 canvas() action#endLink -> input ml()

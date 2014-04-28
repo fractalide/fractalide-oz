@@ -36,6 +36,7 @@ define
 				  end
 			       [] inComponent then
 				  Comp.state.outComp := false
+				  Comp.state.drag := false
 			       [] outComponent then
 				  Comp.state.outComp := true
 			       else

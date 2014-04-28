@@ -10,7 +10,7 @@ ui_in => ui_in create(editor/component/createPortArray) rect ->ui_in rect(ui/can
 rect() ui_out => ui_out
 rect() actions_out -> actions_in awOut()
 create() name -> ui_in text(ui/canvas/text) ui_out => ui_out
-text() actions_out => actions_in awOut()
+text() actions_out -> actions_in awOut()
 create() nameAtom -> options addName(editor/component/addName)
 create() nameAtom -> options addNameCreate(editor/component/addNameCreate)
 % ---

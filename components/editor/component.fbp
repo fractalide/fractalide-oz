@@ -45,10 +45,18 @@ dnd() move -> actions_in winCanvas()
 
 % ---
 % Grab when mouse over
-rect() action#Enter -> input ieEnter(ipEdit) out -> actions_in awOut()
-rect() action#Leave -> input ieLeave(ipEdit) out -> actions_in awOut()
+rect() action#Enter -> input ieEnter(ipEdit) out -> input icLogic(editor/component/inCompLogic)
+rect() action#Leave -> input ieLeave(ipEdit) out -> input icLogic()
+icLogic() output -> actions_in awOut()
 "opt(text:inComponent)" -> options ieEnter()
 "opt(text:outComponent)" -> options ieLeave()
+rect() action#ButtonPress -> input icLogic()
+rect() action#ButtonRelease -> input icLogic()
+inPortsPanel() action#Enter -> input ieEnter()
+inPortsPanel() action#Leave -> input ieLeave()
+outPortsPanel() action#Enter -> input ieEnter()
+outPortsPanel() action#Leave -> input ieLeave()
+inPortsPanel() action#ButtonPress -> input d(display) output -> input icLogic()
 
 
 % ---
