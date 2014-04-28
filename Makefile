@@ -9,6 +9,16 @@ comp:
 	cd components/dnd/ && $(OZHOME)/bin/ozc -c *.oz && cd ../../
 	cd components/failure/ && $(OZHOME)/bin/ozc -c *.oz && cd ../../
 
+editor:
+	cd components/editor && $(OZHOME)/bin/ozc -c *.oz && cd ../../
+	cd components/editor/link && $(OZHOME)/bin/ozc -c *.oz && cd ../../../
+	cd components/editor/component && $(OZHOME)/bin/ozc -c *.oz && cd ../../../
+	cd components/editor/labelentry && $(OZHOME)/bin/ozc -c *.oz && cd ../../../
+	cd components/graph && $(OZHOME)/bin/ozc -c *.oz && cd ../../
+	cd components/mouse && $(OZHOME)/bin/ozc -c *.oz && cd ../../
+
+
+
 library:
 	cd lib/ && $(OZHOME)/bin/ozc -c *.oz && cd ..
 

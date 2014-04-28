@@ -1,0 +1,100 @@
+% ---
+% Creation
+% Rect (main box)
+ui_in => input create(editor/component/create) rect -> ui_in rect(ui/canvas/rectangle) ui_out => ui_out
+rect() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in awOut()
+awOut() action => action
+% Ports panels
+create() inPorts -> ui_in inPortsPanel(editor/component/portPanel) widget_out => ui_out
+create() outPorts -> ui_in outPortsPanel(editor/component/portPanel) widget_out => ui_out
+inPortsPanel() actions_out -> actions_in awOut()
+outPortsPanel() actions_out -> actions_in awOut()
+% name
+create() name -> ui_in name(editor/labelentry) ui_out -> place#1 td(ui/td) ui_out -> window winCanvas(ui/canvas/window) ui_out => ui_out
+name() actions_out -> actions_in awOut()
+create() pos -> ui_in winCanvas()
+"start(bg:white)" -> ui_in td()
+% Reload button
+"start(text:"select" glue:ew)" -> ui_in selectButton(ui/button) ui_out -> place#2 td()
+selectButton() actions_out -> actions_in awOut()
+% Start Stop button
+"start(text:"start")" -> ui_in startButton(ui/button) ui_out -> place#1 lr(ui/lr)
+startButton() actions_out -> actions_in awOut()
+"start(text:"stop")" -> ui_in stopButton(ui/button) ui_out -> place#2 lr()
+stopButton() actions_out -> actions_in awOut()
+lr() ui_out -> place#3 td()
+lr() actions_out -> actions_in td()
+"start(bg:white)" -> ui_in lr()
+% The size logic component
+create() rect -> input sizeLogic(editor/component/sizeLogic)
+
+% ---
+% Create the mouse logic
+rect() action#ButtonPress -> input mouseLogic(editor/component/mouseLogic)
+rect() action#ButtonRelease -> input mouseLogic()
+rect() action#Motion -> input mouseLogic()
+
+% ---
+% Drag&Drop
+mouseLogic() dnd -> input dnd(dnd/dndLogic) move -> actions_in rect()
+
+dnd() move -> actions_in inPortsPanel()
+dnd() move -> actions_in outPortsPanel()
+dnd() move -> actions_in winCanvas()
+
+% ---
+% Grab when mouse over
+rect() action#Enter -> input ieEnter(ipEdit) out -> input icLogic(editor/component/inCompLogic)
+rect() action#Leave -> input ieLeave(ipEdit) out -> input icLogic()
+icLogic() output -> actions_in awOut()
+"opt(text:inComponent)" -> options ieEnter()
+"opt(text:outComponent)" -> options ieLeave()
+rect() action#ButtonPress -> input icLogic()
+rect() action#ButtonRelease -> input icLogic()
+inPortsPanel() action#Enter -> input ieEnter()
+inPortsPanel() action#Leave -> input ieLeave()
+outPortsPanel() action#Enter -> input ieEnter()
+outPortsPanel() action#Leave -> input ieLeave()
+inPortsPanel() action#ButtonPress -> input d(display) output -> input icLogic()
+
+
+% ---
+% The size logic modification
+dnd() move -> input sizeLogic()
+inPortsPanel() action#right -> input sizeLogic()
+outPortsPanel() action#left -> input sizeLogic()
+sizeLogic() newPos -> actions_in rect()
+
+% ---
+% The "real" component
+% The manager
+create() comp -> input compManager(editor/component/compManager)
+
+% At link creation, add the real comp entry point to the record
+outPortsPanel() action#beginLink -> input compManager() output -> actions_in awOut()
+outPortsPanel() action#endLink -> input compManager()
+inPortsPanel() action#beginLink -> input compManager()
+inPortsPanel() action#endLink -> input compManager()
+
+% ---
+% Show hide port panel
+mouseLogic() show -> actions_in inPortsPanel()
+mouseLogic() show -> actions_in outPortsPanel()
+
+% ---
+% addinArrayPort
+inPortsPanel() action#addinArrayPort -> input compManager()
+
+% ---
+% select a new type of comp
+selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input compManager()
+compManager() newInPort -> actions_in inPortsPanel()
+compManager() newOutPort -> actions_in outPortsPanel()
+
+% ---
+% Start Stop a comp
+startButton() action#button_clicked -> input ieStart(ipEdit) out -> input compManager()
+"opt(text:start bg:white)" -> options ieStart()
+stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input compManager()
+"opt(text:stop bg:white)" -> options ieStop()

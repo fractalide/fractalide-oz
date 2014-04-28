@@ -13,7 +13,7 @@ define
 					 {Out.output stop_component(IP)}
 				      elseif {HasFeature Comp.state.cache IP.name} then
 					 Comp.state.cache := {Record.adjoinAt Comp.state.cache IP.name Comp.state.cache.(IP.name)+1}
-					 {Out.outPut IP}
+					 {Out.output IP}
 				      else
 					 Comp.state.cache := {Record.adjoinAt Comp.state.cache IP.name 1}
 					 {Out.output IP}

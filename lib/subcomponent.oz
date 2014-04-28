@@ -51,9 +51,9 @@ define
 		   {X.1 bind(X.2 Comp Name)}
 		end
 		State
-	     [] unbound(OutPort N) then
+	     [] unBound(OutPort N) then
 		for X in State.outPorts.OutPort do
-		   {X.1 unbound(X.2 N)}
+		   {X.1 unBound(X.2 N)}
 		end
 		State
 	     [] addinArrayPort(Port Index) then
@@ -98,7 +98,7 @@ define
       OutPorts = {FoldL G.outLinks
 		  fun {$ Acc Name#CompName#PortName}
 		     if {List.member Name {Arity Acc}} then
-			{Record.adjoinAt Acc Name G.nodes.CompName.com#PortName|Acc.Name}
+			{Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|Acc.Name}
 		     else
 			{Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|nil}
 		     end

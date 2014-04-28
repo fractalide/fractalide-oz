@@ -22,14 +22,15 @@ define
 					 end
 				      [] 'Motion' then
 					 if Comp.state.click then
-					    {Out.output move(IP.x-Comp.state.lastX IP.y-Comp.state.lastY)}
+					    {Out.move move(IP.x-Comp.state.lastX IP.y-Comp.state.lastY)}
+					    {Out.position position(IP.x IP.y)}
 					    Comp.state.lastX := IP.x
 					    Comp.state.lastY := IP.y
 					 end
 				      end
 				   end)
 			    )
-		     outPorts(output)
+		     outPorts(move position)
 		     state(click:false x:0 y:0)
 		    )
       }

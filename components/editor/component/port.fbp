@@ -1,0 +1,64 @@
+% ---
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% ---
+% UI stream
+ui_in => ui_in create(editor/component/createPort) rect ->ui_in rect(ui/canvas/rectangle)
+rect() ui_out => ui_out
+rect() actions_out -> actions_in awOut()
+create() name -> ui_in text(ui/canvas/text) ui_out => ui_out
+text() actions_out => actions_in awOut()
+
+% ---
+% Move
+awIn() action#move -> actions_in rect()
+awIn() action#move -> input moveLogic(editor/component/moveLogic) output -> actions_in awOut()
+awIn() action#move -> actions_in text()
+
+% ---
+% setCoords
+awIn() action#setCoords -> input center(editor/component/center) rect -> actions_in rect()
+center() text -> actions_in text()
+
+% ---
+% Hide and show
+awIn() action#set -> actions_in rect()
+awIn() action#set -> actions_in text()
+rect() action#Enter -> actions_in awOut()
+text() action#Enter -> actions_in awOut()
+%awIn() action#show -> actions_in rect()
+%awIn() action#show -> actions_in text()
+
+% ---
+% delete
+awIn() action#delete -> actions_in rect()
+awIn() action#delete -> actions_in text()
+awIn() action#delete -> actions_in awOut()
+
+% ---
+% Leftclick : createLink out
+%             so getCoord, get EP of awIn and send create
+% getCoord
+rect() action#ButtonRelease -> input ieCoord(ipEdit) out -> actions_in rect()
+rect() action#getCoordLC -> coord lc(editor/component/leftClick)
+"opt(text:getCoords(output:getCoordLC))" -> options ieCoord()
+% getEntryPoint
+rect() action#ButtonRelease -> input ieEP(ipEdit) out -> actions_in awOut()
+awOut() action#getEntryPointLC -> ep lc()
+"opt(text:getEntryPoint(output:getEntryPointLC))" -> options ieEP()
+% getName
+rect() action#ButtonRelease -> input ieName(ipEdit) out -> actions_in text()
+text() action#getNameLC -> name lc()
+"opt(text:get(text output:getNameLC))" -> options ieName()
+% main stream
+rect() action#ButtonRelease -> input lc() output -> actions_in awOut()
+% Remove ButtonPress for upper level
+rect() action#ButtonPress -> input discard(discard)
+% Idem for text
+text() action#ButtonRelease -> input ieCoord()
+text() action#ButtonRelease -> input ieEP()
+text() action#ButtonRelease -> input lc()
+text() action#ButtonRelease -> input ieName()

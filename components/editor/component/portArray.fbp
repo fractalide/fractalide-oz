@@ -1,0 +1,51 @@
+% ---
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% ---
+% UI stream
+ui_in => ui_in create(editor/component/createPortArray) rect ->ui_in rect(ui/canvas/rectangle)
+rect() ui_out => ui_out
+rect() actions_out -> actions_in awOut()
+create() name -> ui_in text(ui/canvas/text) ui_out => ui_out
+text() actions_out -> actions_in awOut()
+create() nameAtom -> options addName(editor/component/addName)
+create() nameAtom -> options addNameCreate(editor/component/addNameCreate)
+% ---
+% Move
+awIn() action#move -> actions_in rect()
+awIn() action#move -> input moveLogic(editor/component/moveLogic) output -> actions_in awOut()
+awIn() action#move -> actions_in text()
+
+% ---
+% setCoords
+awIn() action#setCoords -> input center(editor/component/center) rect -> actions_in rect()
+center() text -> actions_in text()
+
+% ---
+% Hide and show
+awIn() action#set -> actions_in rect()
+awIn() action#set -> actions_in text()
+rect() action#Enter -> actions_in awOut()
+text() action#Enter -> actions_in awOut()
+%awIn() action#show -> actions_in rect()
+%awIn() action#show -> actions_in text()
+
+% ---
+% delete
+awIn() action#delete -> actions_in rect()
+awIn() action#delete -> actions_in text()
+awIn() action#delete -> actions_in awOut()
+
+% ---
+% When create link, add information
+awIn() action#createLink -> input addName() output -> actions_in awOut()
+
+% ---
+% Double click to add an sub-port
+rect() action#ButtonPress -> input dclick(mouse/doubleclick)
+text() action#ButtonPress -> input dclick()
+dclick() output -> input addNameCreate()
+addNameCreate() output -> actions_in awOut()
