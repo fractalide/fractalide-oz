@@ -29,7 +29,6 @@ define
 				  {Comp.state.bPoint bind(action#delete Comp.state.subComp actions_in)}
 				  {IP.ePoint bind(action#delete Comp.state.subComp actions_in)}
 		      
-				  % "real" comp
 				  {Comp.state.outComp bind(Comp.state.outPortName IP.comp IP.name)}
 			       [] delete then
 				  {System.show linklogic#Comp.state.subComp}

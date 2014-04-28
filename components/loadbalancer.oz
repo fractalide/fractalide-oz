@@ -5,10 +5,12 @@ export
    new: CompNew
 define
    proc {FunPort1 Buf Out Comp}
-      Num
+      Num IP P
    in
+      IP = {Buf.get}
       Num = (Comp.state.cpt mod {Record.width Out.output}) + 1
-      {Out.output.Num {Buf.get}}
+      P = {List.nth {Record.toList Out.output} Num}
+      {P IP}
       Comp.state.cpt := Num
    end
    fun {CompNew Name}

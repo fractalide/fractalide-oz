@@ -26,7 +26,7 @@ calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) 
 get1() out -> actions_in f2()
 "opt(text:get(output:getAdd))" -> options get1()
 % Field to logicAdd
-f1() action#getAdd -> input#1 add(add) output -> input setAdd(ipEdit) out -> actions_in fResult()
+f1() action#getAdd -> input#1 add(calculator/add) output -> input setAdd(ipEdit) out -> actions_in fResult()
 f2() action#getAdd -> input#2 add() 
 "opt(text:set(_))" -> options setAdd()
 % Button color

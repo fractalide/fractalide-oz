@@ -19,6 +19,11 @@ awIn() action#move -> input moveLogic(editor/component/moveLogic) output -> acti
 awIn() action#move -> actions_in text()
 
 % ---
+% setCoords
+awIn() action#setCoords -> input center(editor/component/center) rect -> actions_in rect()
+center() text -> actions_in text()
+
+% ---
 % Hide and show
 awIn() action#set -> actions_in rect()
 awIn() action#set -> actions_in text()

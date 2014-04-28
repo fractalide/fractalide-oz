@@ -6,16 +6,10 @@ export
 define
    fun {CompNewArgs Name}
       {Comp.new comp(name:Name type:add
-		     inArrayPorts(input(proc{$ IP Out Component}
-					    {Out.output {FoldL IP
-							 fun{$ Acc X} E I in
-							    E = {X.get}.1
-							    if {String.isInt E} then
-							       I = {String.toInt E}
-							    else
-							       I = 0
-							    end
-							    Acc+I
+		     inArrayPorts(input(proc{$ Ins Out Component}
+					    {Out.output {FoldL Ins
+							 fun{$ Acc In}
+							    Acc+{In.get}
 							 end
 							 0}}
 					end)

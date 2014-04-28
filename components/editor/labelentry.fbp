@@ -28,6 +28,7 @@ entry() action#FocusOut -> input qEntry()
 qEntry() change -> actions_in entry() action#getText -> input setText(editor/labelentry/setText)
 setText() output -> actions_in label()
 qEntry() esc -> actions_in label()
+setText() textchange -> actions_in awOut()
 
 % ---
 % Remove click for upper level

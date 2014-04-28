@@ -12,6 +12,8 @@ manager() actions_out -> actions_in awOut()
 % ---
 % Add, remove, move
 awIn() action#add -> input manager()
+awIn() action#addArrayPort -> input manager()
+awIn() action#addinArrayPort -> input manager()
 awIn() action#delete -> input manager()
 awIn() action#move -> input manager()
 

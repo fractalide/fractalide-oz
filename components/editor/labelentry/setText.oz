@@ -10,10 +10,11 @@ define
 		   inPorts(
 		      input(proc{$ In Out Comp}
 			       {Out.output set(text:{In.get}.1)}
-			       {Out.output display} 
+			       {Out.output display}
+			       {Out.textchange textChanged({In.get}.1)}
 			    end)
 		      )
-		   outPorts(output)
+		   outPorts(output textchange)
 		   )
       }
    end

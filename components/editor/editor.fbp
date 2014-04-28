@@ -2,7 +2,7 @@
 % Creation
 canvas(ui/canvas) ui_out -> ui_in win(ui/window)
 canvas() actions_out -> actions_in win()
-win() actions_out -> input disp(display)
+%win() actions_out -> input disp(display)
 "set(glue:nswe bg:white)" -> ui_in canvas()
 "set(title:"Fractallang Editor")" -> actions_in win()
 
@@ -10,7 +10,7 @@ win() actions_out -> input disp(display)
 % Mouse Logic
 % Get the canvas handle, just to transform mouse coordinate in canvas coordinate
 "getHandle(output:getHandleML)" -> actions_in canvas()
-canvas() action#getHandleML -> input ht(editor/handleTransform) output -> input d(display) output ->  options ml(editor/mouseLogic)
+canvas() action#getHandleML -> input ht(editor/handleTransform) output -> options ml(editor/mouseLogic)
 % drag&drop only if not in a component
 canvas() action#ButtonPress -> input ml() 
 canvas() action#Motion -> input ml() 
@@ -45,5 +45,5 @@ createLink() actions_out -> actions_in canvas()
 
 
 % Options
-"opt(pre:'default ')" -> options disp()
+%"opt(pre:'default ')" -> options disp()
 

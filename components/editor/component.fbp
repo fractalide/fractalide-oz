@@ -75,6 +75,10 @@ mouseLogic() show -> actions_in inPortsPanel()
 mouseLogic() show -> actions_in outPortsPanel()
 
 % ---
+% addinArrayPort
+inPortsPanel() action#addinArrayPort -> input compManager()
+
+% ---
 % select a new type of comp
 selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input compManager()
 compManager() newInPort -> actions_in inPortsPanel()

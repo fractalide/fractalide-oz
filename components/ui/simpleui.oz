@@ -1,7 +1,6 @@
 functor
 import
    Comp at '../../lib/component.ozf'
-   System
 export
    new: CompNewGen
 define
@@ -31,7 +30,6 @@ define
 				     else
 					if {HasFeature IP output} then Res ResArg Get L in
 					   Get = {Record.subtractList IP [output arg]}
-					   {System.show simpleui#Get}
 					   L = if {Record.width Get} == 0 then [1] else {Record.toList Get} end
 					   Res = {Record.make IP.output
 						  L
@@ -41,7 +39,6 @@ define
 						    else
 						       Res
 						    end
-					   {System.show simpelui#ResArg}
 					   try
 					      {Comp.options.handle {Record.adjoin ResArg {Label IP}}}
 					      {SendOut Out ResArg}
