@@ -28,22 +28,42 @@ define
 				  NState = {IP.1 getState($)}
 				  % Add new port
 				  {Record.forAllInd NState.inPorts
-				   proc {$ I P}
-				      if {Label P} \= arrayPort then
+				   proc {$ I P} IsArray in
+				      IsArray = if {Label NState} == component then
+						   if {Label P} \= arrayPort then false else true end
+						elseif {Label NState} == subcomponent andthen P \= nil then PortComp in 
+						   PortComp = {(P.1).1 getState($)}
+						   if {HasFeature PortComp.inPorts (P.1).2} andthen {Label PortComp.inPorts.((P.1).2)} == arrayPort then true
+						   else false end
+						else
+						   false
+						end
+				      if {Not IsArray} then 
 					 {Out.newInPort add({Atom.toString I})}
 				      else
 					 {Out.newInPort addArrayPort({Atom.toString I})}
 				      end
 				   end}
 				  {Record.forAllInd NState.outPorts
-				   proc {$ I P}
-				      if {Label P} \= arrayPort then
+				   proc {$ I P} IsArray in
+				      IsArray = if {Label NState} == component then
+						   if {Label P} \= arrayPort then false else true end
+						elseif {Label NState} == subcomponent andthen P \= nil then PortComp in 
+						   PortComp = {(P.1).1 getState($)}
+						   if {HasFeature PortComp.outPorts (P.1).2} andthen {Label PortComp.outPorts.((P.1).2)} == arrayPort then true
+						   else false end
+						else
+						   false
+						end
+				      if {Not IsArray} then 
 					 {Out.newOutPort add({Atom.toString I})}
 				      else
 					 {Out.newOutPort addArrayPort({Atom.toString I})}
 				      end
 				   end}
-
+				
+					    
+				     
 				  
 				  {Out.newInPort show}
 				  {Out.newInPort show}
