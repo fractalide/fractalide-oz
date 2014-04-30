@@ -54,7 +54,25 @@ define
        end
        0}
    end
+   % Compute the size of the portpanel : the borders
+   fun {ComputeBorder Comp}
+      if Comp.state.show then W in
+	 W = if {Record.width Comp.state.ports} > 0 then Width+10.0 else 0.0 end
+	 if Comp.options.side == left then
+	    left(width:W height:({Int.toFloat {SizePorts Comp.state.ports}}*(Height+Inter))-Inter)
+	 else
+	    right(width:W height:({Int.toFloat {SizePorts Comp.state.ports}}*(Height+Inter))-Inter)
+	 end
+      else
+	 if Comp.options.side == left then
+	    left(width:0.0 height:0.0)
+	 else
+	    right(width:0.0 height:0.0)
+	 end
+      end
+   end
    proc {Hide Out Comp}
+      Comp.state.show := false
       {ForAll2 Comp.state.ports
        proc{$ Port} Ack Ack2 in
 	  if Comp.options.side == left then
@@ -67,14 +85,10 @@ define
 	  {Wait Ack2}
        end
       }
-      if Comp.options.side == left then
-	 {Out.border left(width:0.0 height:0.0)}
-      else
-	 {Out.border right(width:0.0 height:0.0)}
-      end
-      Comp.state.show := false
+      {Out.border {ComputeBorder Comp}}
    end
-   proc {Show Out Comp} W InitPoint N I in
+   proc {Show Out Comp} InitPoint N I in
+      Comp.state.show := true
       % Y = N*(H/2+I/2) + I(H+I)
       N = {Int.toFloat {SizePorts Comp.state.ports}-1}
       InitPoint = Comp.state.y - N * (Height/2.0 + Inter/2.0)
@@ -109,15 +123,9 @@ define
 	  end
        end
       }
-      W = if {Record.width Comp.state.ports} > 0 then Width+10.0 else 0.0 end
-      if Comp.options.side == left then
-	 {Out.border left(width:W height:({Int.toFloat {SizePorts Comp.state.ports}}*(Height+Inter))-Inter)}
-      else
-	 {Out.border right(width:W height:({Int.toFloat {SizePorts Comp.state.ports}}*(Height+Inter))-Inter)}
-      end
-      Comp.state.show := true
+      {Out.border {ComputeBorder Comp}}
    end
-   proc {Draw Comp} InitPoint I in
+   proc {Draw Out Comp} InitPoint I in
       InitPoint = Comp.state.y + ~(Height/2.0) - {Int.toFloat ({SizePorts Comp.state.ports}-1)} * (Height/2.0 + Inter/2.0)
       I = {NewCell 0.0}
       {Record.forAll Comp.state.ports
@@ -167,6 +175,7 @@ define
 	      end}
 	  end
        end}
+      {Out.border {ComputeBorder Comp}}
    end
    fun {CompNewGen Name} A in
       A = {Comp.new comp(
@@ -188,7 +197,7 @@ define
 				  % Add it in the record
 				      N = {Record.width Comp.state.ports}
 				      Comp.state.ports := {Record.adjoinAt Comp.state.ports N+1 C}
-				      {Draw Comp}
+				      {Draw Out Comp}
 				   [] addArrayPort then C in % It's an array port
 				  % Create the new port
 				      C = {SubComp.new IP.1 "editor/component/port" "./components/editor/component/portArray.fbp"}
@@ -201,7 +210,7 @@ define
 				      {C send(ui_in create(0.0 0.0 0.0 0.0 outline:red fill:white name:IP.1 state:hidden) _)}
 				  % Add it in the record
 				      Comp.state.ports := {Record.adjoinAt Comp.state.ports {VirtualString.toAtom IP.1} array(arrayPort:C)}
-				      {Draw Comp}
+				      {Draw Out Comp}
 				   [] addinArrayPort then C NAP in
 				  % Create the new port
 				      C = {SubComp.new IP.2 "editor/component/port" "./components/editor/component/port.fbp"}
@@ -216,7 +225,7 @@ define
 				      NAP = {Record.adjoinAt Comp.state.ports.(IP.1) {VirtualString.toAtom IP.2} C}
 				      Comp.state.ports := {Record.adjoinAt Comp.state.ports (IP.1) NAP}
 				      
-				      {Draw Comp}
+				      {Draw Out Comp}
 				      % Send to the component manager, if it's an input array port
 				      if Comp.options.side == right then
 					 {Out.border addinArrayPort(IP.1 {VirtualString.toAtom IP.2})}

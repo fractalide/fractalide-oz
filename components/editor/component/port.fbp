@@ -39,6 +39,12 @@ awIn() action#delete -> actions_in text()
 awIn() action#delete -> actions_in awOut()
 
 % ---
+% Don't send the moveBegin and moveEnd action outside
+awOut() action#moveBegin -> input discard(discard)
+awOut() action#moveEnd -> input discard()
+
+
+% ---
 % Leftclick : createLink out
 %             so getCoord, get EP of awIn and send create
 % getCoord

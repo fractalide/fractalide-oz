@@ -49,3 +49,8 @@ rect() action#ButtonPress -> input dclick(mouse/doubleclick)
 text() action#ButtonPress -> input dclick()
 dclick() output -> input addNameCreate()
 addNameCreate() output -> actions_in awOut()
+
+% ---
+% Don't send the moveBegin and moveEnd action outside
+awOut() action#moveBegin -> input discard(discard)
+awOut() action#moveEnd -> input discard()
