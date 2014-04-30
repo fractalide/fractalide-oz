@@ -1,48 +1,10 @@
 % ---
 % Creation
-canvas(ui/canvas) ui_out -> ui_in win(ui/window)
-canvas() actions_out -> actions_in win()
+graphPanel(editor/graphPanel) ui_out -> ui_in win(ui/window)
+graphPanel() actions_out -> actions_in win()
 %win() actions_out -> input disp(display)
-"set(glue:nswe bg:white)" -> ui_in canvas()
+"set(glue:nswe bg:white)" -> ui_in graphPanel()
 "set(title:"Fractallang Editor")" -> actions_in win()
-
-% ---
-% Mouse Logic
-% Get the canvas handle, just to transform mouse coordinate in canvas coordinate
-"getHandle(output:getHandleML)" -> actions_in canvas()
-canvas() action#getHandleML -> input ht(editor/handleTransform) output -> options ml(editor/mouseLogic)
-% drag&drop only if not in a component
-canvas() action#ButtonPress -> input ml() 
-canvas() action#Motion -> input ml() 
-canvas() action#ButtonRelease -> input ml()
-createComp(editor/createComp) action#inComponent -> input ml()
-createComp() action#outComponent -> input ml()
-% Move link only if in [beginLink endLink]
-canvas() action#beginLink -> input ml()
-canvas() action#endLink -> input ml()
-
-% ---
-% Double-click to add component
-ml() dclick -> input dclick(mouse/doubleclick)
-dclick() output -> input createComp()
-createComp() widget_out -> widget canvas()
-createComp() actions_out -> actions_in canvas()
-
-
-% ---
-% Canvas scanning
-ml() drag ->  input scan(editor/scan)
-scan() canvas -> actions_in canvas()
-
-
-% ---
-% Create the links
-canvas() action#beginLink -> input createLink(editor/createLink)
-canvas() action#endLink -> input createLink()
-ml() link -> input createLink()
-createLink() widget_out -> widget canvas()
-createLink() actions_out -> actions_in canvas()
-
 
 % Options
 %"opt(pre:'default ')" -> options disp()
