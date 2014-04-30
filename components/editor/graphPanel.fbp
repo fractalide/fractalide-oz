@@ -46,6 +46,10 @@ ml() link -> input createLink()
 createLink() widget_out -> widget canvas()
 createLink() actions_out -> actions_in canvas()
 
+% ---
+% New comp from outside
+awIn() action#newComp -> input ieCreate(ipEdit) out -> input createComp()
+"opt(text:createComp(button:1 x:10 y:10))" -> options ieCreate()
 
 % Options
 %"opt(pre:'default ')" -> options disp()

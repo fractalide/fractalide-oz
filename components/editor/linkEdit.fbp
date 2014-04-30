@@ -1,0 +1,23 @@
+% ---
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% ---
+% UI stream
+ui_in => ui_in td(ui/td) ui_out => ui_out
+td() actions_out -> input d(display) output -> actions_in awOut()
+
+% ---
+% Switch to linkEdit
+awIn() action#displayLink -> input disp(editor/linkEdit/display) disp -> actions_in td()
+disp() output -> actions_in awOut()
+
+% ---
+% add simple component button
+addButton(ui/button) ui_out -> place#1 td()
+addButton() actions_out -> actions_in td()
+"create(text:"delete")" -> ui_in addButton()
+addButton() action#button_clicked -> input ieAdd(ipEdit) out -> input disp()
+"opt(text:delete)" -> options ieAdd()
