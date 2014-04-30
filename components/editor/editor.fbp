@@ -1,10 +1,21 @@
 % ---
-% Creation
-graphPanel(editor/graphPanel) ui_out -> ui_in win(ui/window)
-graphPanel() actions_out -> actions_in win()
-%win() actions_out -> input disp(display)
+% Creation : windows, graphPanel and editPanel
+lr(ui/lr) ui_out -> ui_in win(ui/window)
+lr() actions_out -> actions_in win()
+"create(glue:nswe bg:white)" -> ui_in lr()
+win() actions_out -> input disp(display)
+"set(title:"Fractallide")" -> actions_in win()
+
+% editPanel
+editPanel(editor/graphPanel) ui_out -> place#1 lr()
+editPanel() actions_out -> actions_in lr()
+"set(glue:nswe bg:red width:1.0)" -> ui_in editPanel()
+
+% graphPanel
+graphPanel(editor/graphPanel) ui_out -> place#2 lr()
+graphPanel() actions_out -> actions_in lr()
 "set(glue:nswe bg:white)" -> ui_in graphPanel()
-"set(title:"Fractallang Editor")" -> actions_in win()
+
 
 % Options
 %"opt(pre:'default ')" -> options disp()
