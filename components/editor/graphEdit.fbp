@@ -1,0 +1,23 @@
+% ---
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% ---
+% UI stream
+ui_in => ui_in td(ui/td) ui_out => ui_out
+td() actions_out -> actions_in awOut()
+
+% ---
+% Display the graph
+awIn() action#displayGraph -> input ieDispGraph(ipEdit) out -> actions_in td()
+"opt(text:display)" -> options ieDispGraph()
+
+% ---
+% add simple component button
+addButton(ui/button) ui_out -> place#1 td()
+addButton() actions_out -> actions_in td()
+"create(text:"new Comp")" -> ui_in addButton()
+addButton() action#button_clicked -> input ieAdd(ipEdit) out -> actions_in awOut()
+"opt(text:newComp)" -> options ieAdd()

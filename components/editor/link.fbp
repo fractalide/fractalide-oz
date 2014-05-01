@@ -1,7 +1,7 @@
 % ---
 % Creation
 ui_in => input create(editor/link/create) line -> ui_in line(ui/canvas/line) ui_out => ui_out
-line() actions_out => actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+line() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
 awOut() action => action
 actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in awOut()
 create() outComp -> input linkLogic(editor/link/linkLogic)
@@ -25,3 +25,8 @@ aw() action#moveBegin -> move moveL(editor/link/move) output -> actions_in line(
 aw() action#moveEnd -> move moveL()
 aw() action#moveEndPos -> move moveL()
 aw() action#moveBeginPos -> move moveL()
+
+% ---
+% Line clicked
+line() action#ButtonPress -> input ieGetAwIn(ipEdit) out -> actions_in aw()
+"opt(text:getEntryPoint(output:displayLink))" -> options ieGetAwIn()

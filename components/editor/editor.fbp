@@ -1,11 +1,50 @@
 % ---
-% Creation
-graphPanel(editor/graphPanel) ui_out -> ui_in win(ui/window)
-graphPanel() actions_out -> actions_in win()
-%win() actions_out -> input disp(display)
+% Creation : windows, graphPanel and editPanel
+lr(ui/lr) ui_out -> ui_in win(ui/window)
+lr() actions_out -> actions_in win()
+"create(glue:nswe bg:white borderwidth:3)" -> ui_in lr()
+win() actions_out -> input disp(display)
+"set(title:"Fractallide")" -> actions_in win()
+
+% ---
+% editPanel
+editPanel(ui/placeholder) ui_out -> place#1 lr()
+editPanel() actions_out -> actions_in lr()
+"set(glue:ns bg:white)" -> ui_in editPanel()
+
+% ---
+% graphPanel
+graphPanel(editor/graphPanel) ui_out -> place#2 lr()
+graphPanel() actions_out -> actions_in lr()
 "set(glue:nswe bg:white)" -> ui_in graphPanel()
-"set(title:"Fractallang Editor")" -> actions_in win()
 
+% ---
+% graphEdit
+"set(glue:nswe bg:white)" -> ui_in graphEdit(editor/graphEdit) ui_out -> place#3 editPanel()
+graphEdit() actions_out -> actions_in editPanel()
+graphEdit() action#newComp -> actions_in graphPanel()
 % Options
-%"opt(pre:'default ')" -> options disp()
+"opt(pre:'default ')" -> options disp()
+% from graph to graph
+graphPanel() action#displayGraph -> actions_in graphEdit()
 
+% ---
+% linkEdit
+% creation
+"set(glue:nswe bg:white)" -> ui_in linkEdit(editor/linkEdit) ui_out -> place#2 editPanel()
+linkEdit() actions_out -> actions_in editPanel()
+% from graph to link
+graphPanel() action#displayLink -> actions_in linkEdit()
+% From link to graphedit
+linkEdit() action#displayGraph -> actions_in graphEdit()
+
+
+% ---
+% CompEdit
+% creation
+"set(glue:nswe bg:white)" -> ui_in compEdit(editor/compEdit) ui_out -> place#1 editPanel()
+compEdit() actions_out -> actions_in editPanel()
+% grom graph to comp
+graphPanel() action#displayComp -> actions_in compEdit()
+% From link to graphedit
+compEdit() action#displayGraph -> actions_in graphEdit()
