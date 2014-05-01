@@ -24,6 +24,10 @@ createComp() action#outComponent -> input ml()
 canvas() action#beginLink -> input ml()
 canvas() action#endLink -> input ml()
 
+% Click to get back to graphEdit
+canvas() action#ButtonPress -> input ieGraphEdit(ipEdit) out -> actions_in awOut()
+"set(text:displayGraph)" -> options ieGraphEdit()
+
 % ---
 % Double-click to add component
 ml() dclick -> input dclick(mouse/doubleclick)

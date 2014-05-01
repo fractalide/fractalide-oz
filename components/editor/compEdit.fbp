@@ -1,0 +1,42 @@
+% ---
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% ---
+% UI stream
+ui_in => ui_in td(ui/td) ui_out => ui_out
+td() actions_out -> input d(display) output -> actions_in awOut()
+
+% ---
+% Creation of buttons
+% select
+selectButton(ui/button) ui_out -> place#1 td()
+selectButton() actions_out -> actions_in td()
+"create(text:"select" glue:sew)" -> ui_in selectButton()
+% start and stop
+"start(text:"start" glue:en)" -> ui_in startButton(ui/button) ui_out -> place#1 lr(ui/lr)
+startButton() actions_out -> actions_in awOut()
+"start(text:"stop" glue:wn)" -> ui_in stopButton(ui/button) ui_out -> place#2 lr()
+stopButton() actions_out -> actions_in awOut()
+lr() ui_out -> place# td()
+lr() actions_out -> actions_in td()
+"start(bg:white)" -> ui_in lr()
+
+% ---
+% Switch to linkEdit
+awIn() action#displayComp -> input disp(editor/editPanel/displayComp) disp -> actions_in td()
+disp() output -> actions_in awOut()
+
+% ---
+% select logic
+selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input disp()
+
+% ---
+% start stop logic
+startButton() action#button_clicked -> input ieStart(ipEdit) out -> input disp()
+"opt(text:start)" -> options ieStart()
+stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input disp()
+"opt(text:stop)" -> options ieStop()
+

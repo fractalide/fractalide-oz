@@ -25,15 +25,26 @@ graphEdit() actions_out -> actions_in editPanel()
 graphEdit() action#newComp -> actions_in graphPanel()
 % Options
 "opt(pre:'default ')" -> options disp()
+% from graph to graph
+graphPanel() action#displayGraph -> actions_in graphEdit()
 
 % ---
 % linkEdit
 % creation
 "set(glue:nswe bg:white)" -> ui_in linkEdit(editor/linkEdit) ui_out -> place#2 editPanel()
-linkEdit() actions_out -> input d(display) output -> actions_in editPanel()
+linkEdit() actions_out -> actions_in editPanel()
 % from graph to link
 graphPanel() action#displayLink -> actions_in linkEdit()
 % From link to graphedit
 linkEdit() action#displayGraph -> actions_in graphEdit()
 
 
+% ---
+% CompEdit
+% creation
+"set(glue:nswe bg:white)" -> ui_in compEdit(editor/compEdit) ui_out -> place#1 editPanel()
+compEdit() actions_out -> actions_in editPanel()
+% grom graph to comp
+graphPanel() action#displayComp -> actions_in compEdit()
+% From link to graphedit
+compEdit() action#displayGraph -> actions_in graphEdit()

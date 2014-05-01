@@ -11,7 +11,7 @@ td() actions_out -> input d(display) output -> actions_in awOut()
 
 % ---
 % Switch to linkEdit
-awIn() action#displayLink -> input disp(editor/linkEdit/display) disp -> actions_in td()
+awIn() action#displayLink -> input disp(editor/editPanel/displayLink) disp -> actions_in td()
 disp() output -> actions_in awOut()
 
 % ---

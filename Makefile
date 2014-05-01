@@ -16,7 +16,7 @@ editor:
 	cd components/editor/labelentry && $(OZHOME)/bin/ozc -c *.oz && cd ../../../
 	cd components/graph && $(OZHOME)/bin/ozc -c *.oz && cd ../../
 	cd components/mouse && $(OZHOME)/bin/ozc -c *.oz && cd ../../
-	cd components/editor/linkEdit && $(OZHOME)/bin/ozc -c *.oz && cd ../../../
+	cd components/editor/editPanel && $(OZHOME)/bin/ozc -c *.oz && cd ../../../
 
 
 library:

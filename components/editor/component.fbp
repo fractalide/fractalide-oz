@@ -87,6 +87,12 @@ mouseLogic() show -> actions_in outPortsPanel()
 inPortsPanel() action#addinArrayPort -> input compManager()
 
 % ---
+% Events from compEdit
+aw() action#start -> input compManager()
+aw() action#stop -> input compManager()
+aw() action#newComp -> input compManager()
+
+% ---
 % select a new type of comp
 selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input compManager()
 compManager() newInPort -> actions_in inPortsPanel()
@@ -98,3 +104,8 @@ startButton() action#button_clicked -> input ieStart(ipEdit) out -> input compMa
 "opt(text:start bg:white)" -> options ieStart()
 stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input compManager()
 "opt(text:stop bg:white)" -> options ieStop()
+
+% ---
+% Click for the compEdit in editPanel (in conflict with show hide...)
+mouseLogic() show -> input ieCompEdit(ipEdit) out -> actions_in aw()
+"opt(text:getEntryPoint(output:displayComp))" -> options ieCompEdit()
