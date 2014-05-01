@@ -15,17 +15,6 @@ create() name -> ui_in name(editor/labelentry) ui_out -> place#1 td(ui/td) ui_ou
 name() actions_out -> actions_in awOut()
 create() pos -> ui_in winCanvas()
 "start(bg:white)" -> ui_in td()
-% Reload button
-"start(text:"select" glue:ew)" -> ui_in selectButton(ui/button) ui_out -> place#2 td()
-selectButton() actions_out -> actions_in awOut()
-% Start Stop button
-"start(text:"start")" -> ui_in startButton(ui/button) ui_out -> place#1 lr(ui/lr)
-startButton() actions_out -> actions_in awOut()
-"start(text:"stop")" -> ui_in stopButton(ui/button) ui_out -> place#2 lr()
-stopButton() actions_out -> actions_in awOut()
-lr() ui_out -> place#3 td()
-lr() actions_out -> actions_in td()
-"start(bg:white)" -> ui_in lr()
 % The size logic component
 create() rect -> input sizeLogic(editor/component/sizeLogic)
 
@@ -94,16 +83,8 @@ aw() action#newComp -> input compManager()
 
 % ---
 % select a new type of comp
-selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input compManager()
 compManager() newInPort -> actions_in inPortsPanel()
 compManager() newOutPort -> actions_in outPortsPanel()
-
-% ---
-% Start Stop a comp
-startButton() action#button_clicked -> input ieStart(ipEdit) out -> input compManager()
-"opt(text:start bg:white)" -> options ieStart()
-stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input compManager()
-"opt(text:stop bg:white)" -> options ieStop()
 
 % ---
 % Click for the compEdit in editPanel (in conflict with show hide...)

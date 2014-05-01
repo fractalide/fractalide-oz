@@ -29,14 +29,6 @@ canvas() action#ButtonPress -> input ieGraphEdit(ipEdit) out -> actions_in awOut
 "set(text:displayGraph)" -> options ieGraphEdit()
 
 % ---
-% Double-click to add component
-ml() dclick -> input dclick(mouse/doubleclick)
-dclick() output -> input createComp()
-createComp() widget_out -> widget canvas()
-createComp() actions_out -> actions_in canvas()
-
-
-% ---
 % Canvas scanning
 ml() drag ->  input scan(editor/scan)
 scan() canvas -> actions_in canvas()
@@ -54,7 +46,5 @@ createLink() actions_out -> actions_in canvas()
 % New comp from outside
 awIn() action#newComp -> input ieCreate(ipEdit) out -> input createComp()
 "opt(text:createComp(button:1 x:10 y:10))" -> options ieCreate()
-
-% Options
-%"opt(pre:'default ')" -> options disp()
-
+createComp() widget_out -> widget canvas()
+createComp() actions_out -> actions_in canvas()
