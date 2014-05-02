@@ -67,11 +67,15 @@ inPortsPanel() action#beginLink -> input compManager()
 inPortsPanel() action#endLink -> input compManager()
 
 % ---
-% Show hide port panel
+% Show hide port panel and color the rect
 aw() action#openPorts -> actions_in inPortsPanel()
 aw() action#openPorts -> actions_in outPortsPanel()
 aw() action#closePorts -> actions_in inPortsPanel()
 aw() action#closePorts -> actions_in outPortsPanel()
+aw() action#openPorts -> input ieColorBlue(ipEdit) out -> actions_in rect()
+aw() action#closePorts -> input ieColorBlack(ipEdit) out -> actions_in rect()
+"opt(text:set(outline:blue))" -> options ieColorBlue()
+"opt(text:set(outline:black))" -> options ieColorBlack()
 
 % ---
 % addinArrayPort
