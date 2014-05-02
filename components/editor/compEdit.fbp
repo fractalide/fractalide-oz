@@ -53,4 +53,3 @@ deleteButton() action#button_clicked -> input ieDelete(ipEdit) out -> input disp
 % ---
 % Cancel : displayGraph
 awIn() action#displayGraph -> input disp()
-

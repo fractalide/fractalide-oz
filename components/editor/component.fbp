@@ -78,6 +78,13 @@ aw() action#closePorts -> input ieColorBlack(ipEdit) out -> actions_in rect()
 "opt(text:set(outline:black))" -> options ieColorBlack()
 
 % ---
+% Show and hide from ports panel to port panel
+inPortsPanel() action#openPorts -> actions_in inPortsPanel()
+inPortsPanel() action#closePorts -> actions_in inPortsPanel()
+outPortsPanel() action#openPorts -> actions_in outPortsPanel()
+outPortsPanel() action#closePorts -> actions_in outPortsPanel()
+
+% ---
 % addinArrayPort
 inPortsPanel() action#addinArrayPort -> input compManager()
 
