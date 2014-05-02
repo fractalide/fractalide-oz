@@ -241,12 +241,10 @@ define
 				      }
 				      Comp.state.x := Comp.state.x + DX
 				      Comp.state.y := Comp.state.y + DY
-				   [] show then
-				      if Comp.state.show then
-					 {Hide Out Comp}
-				      else 
-					 {Show Out Comp}
-				      end
+				   [] openPorts then
+				      {Show Out Comp}
+				   [] closePorts then
+				      {Hide Out Comp}
 				   [] delete then
 				      {ForAll2 Comp.state.ports
 				       proc{$ Port} 

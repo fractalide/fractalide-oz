@@ -28,5 +28,5 @@ aw() action#moveBeginPos -> move moveL()
 
 % ---
 % Line clicked
-line() action#ButtonPress -> input ieGetAwIn(ipEdit) out -> actions_in aw()
+line() action#ButtonRelease -> input ieGetAwIn(ipEdit) out -> actions_in aw()
 "opt(text:getEntryPoint(output:displayLink))" -> options ieGetAwIn()
