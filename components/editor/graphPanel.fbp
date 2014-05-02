@@ -26,7 +26,7 @@ canvas() action#endLink -> input ml()
 
 % ---
 % Click to get back to graphEdit
-canvas() action#ButtonPress -> input ieGraphEdit(ipEdit) out -> actions_in awOut()
+ml() click -> input ieGraphEdit(ipEdit) out -> actions_in awOut()
 "set(text:displayGraph)" -> options ieGraphEdit()
 
 % ---

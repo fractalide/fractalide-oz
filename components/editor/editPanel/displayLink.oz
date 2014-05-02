@@ -19,6 +19,8 @@ define
 				  {Wait Ack}
 				  Comp.state.link := nil
 				  {Out.output displayGraph}
+			       [] displayGraph then
+				  Comp.state.link := nil
 			       end
 			    end)
 		      )

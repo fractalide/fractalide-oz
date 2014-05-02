@@ -48,3 +48,9 @@ compEdit() actions_out -> actions_in editPanel()
 graphPanel() action#displayComp -> actions_in compEdit()
 % From link to graphedit
 compEdit() action#displayGraph -> actions_in graphEdit()
+
+% ---
+% graphEdit show cancel linkEdit and compEdit
+graphPanel() action#displayGraph -> actions_in linkEdit()
+graphPanel() action#displayGraph -> actions_in compEdit()
+

@@ -23,8 +23,8 @@ awIn() action#position -> input manager()
 
 % ---
 % Hide and show logic
-awIn() action#show -> input manager()
-%awIn() action#show -> input manager()
+awIn() action#openPorts -> input manager()
+awIn() action#closePorts -> input manager()
 manager() border -> actions_in awOut()
 
 % ---

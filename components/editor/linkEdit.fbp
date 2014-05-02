@@ -21,3 +21,7 @@ addButton() actions_out -> actions_in td()
 "create(text:"delete")" -> ui_in addButton()
 addButton() action#button_clicked -> input ieAdd(ipEdit) out -> input disp()
 "opt(text:delete)" -> options ieAdd()
+
+% ---
+% cancel : displayGraph
+awIn() action#displayGraph -> input disp()

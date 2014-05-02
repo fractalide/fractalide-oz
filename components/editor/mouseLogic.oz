@@ -21,6 +21,7 @@ define
 			       [] 'ButtonRelease' andthen Comp.state.drag andthen Comp.state.outComp then
 				  Comp.state.drag := false
 				  {Out.drag IP}
+				  {Out.click IP}
 			       [] beginLink then
 				  Comp.state.link := true
 			       [] endLink then
@@ -44,7 +45,7 @@ define
 			       end
 			    end)
 		      )
-		   outPorts(dclick drag link)
+		   outPorts(dclick drag link click)
 		   options(canvas:_)
 		   state(outComp:true drag:false link:false)
 		   )

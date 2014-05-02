@@ -68,8 +68,10 @@ inPortsPanel() action#endLink -> input compManager()
 
 % ---
 % Show hide port panel
-mouseLogic() show -> actions_in inPortsPanel()
-mouseLogic() show -> actions_in outPortsPanel()
+aw() action#openPorts -> actions_in inPortsPanel()
+aw() action#openPorts -> actions_in outPortsPanel()
+aw() action#closePorts -> actions_in inPortsPanel()
+aw() action#closePorts -> actions_in outPortsPanel()
 
 % ---
 % addinArrayPort

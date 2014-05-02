@@ -40,3 +40,7 @@ startButton() action#button_clicked -> input ieStart(ipEdit) out -> input disp()
 stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input disp()
 "opt(text:stop)" -> options ieStop()
 
+% ---
+% Cancel : displayGraph
+awIn() action#displayGraph -> input disp()
+
