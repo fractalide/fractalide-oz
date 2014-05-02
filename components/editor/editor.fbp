@@ -35,7 +35,7 @@ graphPanel() action#displayGraph -> actions_in graphEdit()
 linkEdit() actions_out -> actions_in editPanel()
 % from graph to link
 graphPanel() action#displayLink -> actions_in linkEdit()
-% From link to graphedit
+% Cancel link edit
 linkEdit() action#displayGraph -> actions_in graphEdit()
 
 

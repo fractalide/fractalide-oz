@@ -70,6 +70,8 @@ define
 				  {Comp.state.comp stop}
 			       [] addinArrayPort then
 				  {Comp.state.comp addinArrayPort(IP.1 IP.2)}
+			       [] delete then
+				  Comp.state.comp := nil
 			       end
 			    end)
 		      )

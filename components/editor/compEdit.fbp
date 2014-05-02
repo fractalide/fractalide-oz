@@ -16,13 +16,17 @@ selectButton(ui/button) ui_out -> place#1 td()
 selectButton() actions_out -> actions_in td()
 "create(text:"select" glue:sew)" -> ui_in selectButton()
 % start and stop
-"start(text:"start" glue:en)" -> ui_in startButton(ui/button) ui_out -> place#1 lr(ui/lr)
+"start(text:"start" glue:ens)" -> ui_in startButton(ui/button) ui_out -> place#1 lr(ui/lr)
 startButton() actions_out -> actions_in awOut()
-"start(text:"stop" glue:wn)" -> ui_in stopButton(ui/button) ui_out -> place#2 lr()
+"start(text:"stop" glue:wns)" -> ui_in stopButton(ui/button) ui_out -> place#2 lr()
 stopButton() actions_out -> actions_in awOut()
-lr() ui_out -> place# td()
+lr() ui_out -> place#2 td()
 lr() actions_out -> actions_in td()
 "start(bg:white)" -> ui_in lr()
+% delete
+deleteButton(ui/button) ui_out -> place#3 td()
+deleteButton() actions_out -> actions_in td()
+"create(text:"delete" glue:new)" -> ui_in deleteButton()
 
 % ---
 % Switch to linkEdit
@@ -41,6 +45,11 @@ stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input disp()
 "opt(text:stop)" -> options ieStop()
 
 % ---
+% delete logic
+deleteButton() action#button_clicked -> input ieDelete(ipEdit) out -> input disp()
+"opt(text:delete)" -> options ieDelete()
+
+
+% ---
 % Cancel : displayGraph
 awIn() action#displayGraph -> input disp()
-

@@ -67,11 +67,22 @@ inPortsPanel() action#beginLink -> input compManager()
 inPortsPanel() action#endLink -> input compManager()
 
 % ---
-% Show hide port panel
+% Show hide port panel and color the rect
 aw() action#openPorts -> actions_in inPortsPanel()
 aw() action#openPorts -> actions_in outPortsPanel()
 aw() action#closePorts -> actions_in inPortsPanel()
 aw() action#closePorts -> actions_in outPortsPanel()
+aw() action#openPorts -> input ieColorBlue(ipEdit) out -> actions_in rect()
+aw() action#closePorts -> input ieColorBlack(ipEdit) out -> actions_in rect()
+"opt(text:set(outline:blue))" -> options ieColorBlue()
+"opt(text:set(outline:black))" -> options ieColorBlack()
+
+% ---
+% Show and hide from ports panel to port panel
+inPortsPanel() action#openPorts -> actions_in inPortsPanel()
+inPortsPanel() action#closePorts -> actions_in inPortsPanel()
+outPortsPanel() action#openPorts -> actions_in outPortsPanel()
+outPortsPanel() action#closePorts -> actions_in outPortsPanel()
 
 % ---
 % addinArrayPort
@@ -79,10 +90,19 @@ inPortsPanel() action#addinArrayPort -> input compManager()
 
 % ---
 % Events from compEdit
+% start stop
 aw() action#start -> input compManager()
 aw() action#stop -> input compManager()
+% new comp
 aw() action#newComp -> input compManager()
-
+% delete
+aw() action#delete -> input compManager()
+aw() action#delete -> actions_in inPortsPanel()
+aw() action#delete -> actions_in outPortsPanel()
+aw() action#delete -> actions_in rect()
+aw() action#delete -> actions_in name()
+aw() action#delete -> actions_in td()
+aw() action#delete -> actions_in winCanvas()
 % ---
 % select a new type of comp
 compManager() newInPort -> actions_in inPortsPanel()

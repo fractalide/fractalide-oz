@@ -43,7 +43,17 @@ define
 				  {Comp.state.ePoint unBound(action#moveEnd Comp.state.subComp)}
 				  % "real" comp
 				  {Comp.state.outComp unBound(Comp.state.outPortName Comp.state.inComp)}
-			       else skip end
+			       [] open then Ack Ack2 in
+				  {Comp.state.bPoint send(actions_in openPorts Ack)}
+				  {Wait Ack}
+				  {Comp.state.ePoint send(actions_in openPorts Ack2)}
+				  {Wait Ack2}
+			       [] close then Ack Ack2 in
+				  {Comp.state.bPoint send(actions_in closePorts Ack)}
+				  {Wait Ack}
+				  {Comp.state.ePoint send(actions_in closePorts Ack2)}
+				  {Wait Ack2}
+			       end
 			    end)
 		      )
 		   state(outComp:nil outPortName:nil
