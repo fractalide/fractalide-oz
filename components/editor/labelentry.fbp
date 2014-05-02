@@ -33,3 +33,9 @@ setText() textchange -> actions_in awOut()
 % ---
 % Remove click for upper level
 awOut() action#ButtonPress -> input d(discard)
+
+% ---
+% delete
+awIn() action#delete -> actions_in label()
+awIn() action#delete -> actions_in entry()
+awIn() action#delete -> actions_in ph()

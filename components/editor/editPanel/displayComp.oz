@@ -35,6 +35,11 @@ define
 				     {Wait Ack}
 				  end
 				  Comp.state.comp := nil
+			       [] delete then Ack in
+				  {Comp.state.comp send(actions_in delete Ack)}
+				  {Wait Ack}
+				  Comp.state.comp := nil
+				  {Out.output displayGraph}
 			       end
 			    end)
 		      )

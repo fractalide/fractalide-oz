@@ -79,10 +79,19 @@ inPortsPanel() action#addinArrayPort -> input compManager()
 
 % ---
 % Events from compEdit
+% start stop
 aw() action#start -> input compManager()
 aw() action#stop -> input compManager()
+% new comp
 aw() action#newComp -> input compManager()
-
+% delete
+aw() action#delete -> input compManager()
+aw() action#delete -> actions_in inPortsPanel()
+aw() action#delete -> actions_in outPortsPanel()
+aw() action#delete -> actions_in rect()
+aw() action#delete -> actions_in name()
+aw() action#delete -> actions_in td()
+aw() action#delete -> actions_in winCanvas()
 % ---
 % select a new type of comp
 compManager() newInPort -> actions_in inPortsPanel()
