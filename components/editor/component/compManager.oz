@@ -72,6 +72,11 @@ define
 				  {Comp.state.comp addinArrayPort(IP.1 IP.2)}
 			       [] delete then
 				  Comp.state.comp := nil
+			       [] displayComp then
+				  {Out.output {Record.adjoinAt IP 2 Comp.state.comp}}
+			       [] options then Ack in
+				  {Comp.state.comp send(options IP Ack)}
+				  {Wait Ack}
 			       end
 			    end)
 		      )

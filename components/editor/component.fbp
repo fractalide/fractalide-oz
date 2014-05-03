@@ -105,12 +105,15 @@ aw() action#delete -> actions_in rect()
 aw() action#delete -> actions_in name()
 aw() action#delete -> actions_in td()
 aw() action#delete -> actions_in winCanvas()
-% ---
 % select a new type of comp
 compManager() newInPort -> actions_in inPortsPanel()
 compManager() newOutPort -> actions_in outPortsPanel()
+% Options
+aw() action#options -> input compManager()
+
 
 % ---
 % Click for the compEdit in editPanel
 mouseLogic() show -> input ieCompEdit(ipEdit) out -> actions_in aw()
 "opt(text:getEntryPoint(output:displayComp))" -> options ieCompEdit()
+aw() action#displayComp -> input compManager()

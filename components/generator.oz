@@ -4,24 +4,20 @@ import
 export
    new: New
 define
-   proc {Proc Out Comp}
-      proc {Rec}
-	 {Delay 1000}
-	 {Out.output Comp.state.cpt}
-	 Comp.state.cpt := Comp.state.cpt + 1
-	 {Rec}
-      end
-   in
-      {Rec}
-   end
    fun {New Name} Generator in
       Generator = {Comp.new component(
 			       name: Name type:generator
+			       inPorts(input(proc{$ In Out Comp} IP in
+						IP = {In.get}
+						{Out.output IP+1}
+						{Delay Comp.options.delay}
+					     end)
+				       )
 			       outPorts(output)
-			       procedures(Proc)
-			       state(cpt:1)
+			       options(delay:1000)
 			       )
 		  }
+      {Generator bind(output Generator input)}
       Generator
    end
 end

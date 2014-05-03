@@ -1,0 +1,15 @@
+% ---
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% ---
+% UI stream
+ui_in => input create(editor/editPanel/createEditValue) value -> ui_in labelEntry(editor/labelentry) ui_out => ui_out
+labelEntry() actions_out -> actions_in awOut()
+create() label -> options addLabel(editor/editPanel/addLabel)
+
+% ---
+% Add label when value is changed
+labelEntry() action#textChanged -> input addLabel() output -> actions_in awOut()
