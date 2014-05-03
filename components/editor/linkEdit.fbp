@@ -7,7 +7,7 @@ awOut() action => action
 % ---
 % UI stream
 ui_in => ui_in td(ui/td) ui_out => ui_out
-td() actions_out -> input d(display) output -> actions_in awOut()
+td() actions_out -> actions_in awOut()
 
 % ---
 % Switch to linkEdit
@@ -25,3 +25,4 @@ addButton() action#button_clicked -> input ieAdd(ipEdit) out -> input disp()
 % ---
 % cancel : displayGraph
 awIn() action#displayGraph -> input disp()
+awIn() action#displayComp -> input disp()

@@ -33,6 +33,12 @@ define
 				     {Wait Ack}
 				  end
 				  Comp.state.link := nil
+			       [] displayComp then
+				  if Comp.state.link \= nil then Ack in
+				     {Comp.state.link send(actions_in close(comp:IP.1) Ack)}
+				     {Wait Ack}
+				  end
+				  Comp.state.link := nil
 			       end
 			    end)
 		      )

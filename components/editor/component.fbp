@@ -45,7 +45,7 @@ inPortsPanel() action#Enter -> input ieEnter()
 inPortsPanel() action#Leave -> input ieLeave()
 outPortsPanel() action#Enter -> input ieEnter()
 outPortsPanel() action#Leave -> input ieLeave()
-inPortsPanel() action#ButtonPress -> input d(display) output -> input icLogic()
+inPortsPanel() action#ButtonPress -> input icLogic()
 
 
 % ---
@@ -80,9 +80,11 @@ aw() action#closePorts -> input ieColorBlack(ipEdit) out -> actions_in rect()
 % ---
 % Show and hide from ports panel to port panel
 inPortsPanel() action#openPorts -> actions_in inPortsPanel()
-inPortsPanel() action#closePorts -> actions_in inPortsPanel()
 outPortsPanel() action#openPorts -> actions_in outPortsPanel()
-outPortsPanel() action#closePorts -> actions_in outPortsPanel()
+% filter closePorts if close for display the same component
+inPortsPanel() action#closePorts -> input filter(editor/component/filterClose) output -> actions_in inPortsPanel()
+outPortsPanel() action#closePorts -> input filter(editor/component/filterClose) output -> actions_in outPortsPanel()
+"getEntryPoint(output:getEPFilter)" -> actions_in aw() action#getEPFilter -> input filter()
 
 % ---
 % addinArrayPort
@@ -109,6 +111,6 @@ compManager() newInPort -> actions_in inPortsPanel()
 compManager() newOutPort -> actions_in outPortsPanel()
 
 % ---
-% Click for the compEdit in editPanel (in conflict with show hide...)
+% Click for the compEdit in editPanel
 mouseLogic() show -> input ieCompEdit(ipEdit) out -> actions_in aw()
 "opt(text:getEntryPoint(output:displayComp))" -> options ieCompEdit()

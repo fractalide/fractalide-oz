@@ -1,7 +1,6 @@
 functor
 import
    Comp at '../../../lib/component.ozf'
-   System
 export
    new: CompNewGen
 define
@@ -37,7 +36,6 @@ define
 				  
 				  {Comp.state.outComp bind(Comp.state.outPortName IP.comp IP.name)}
 			       [] delete then
-				  {System.show linklogic#Comp.state.subComp}
 				  % unbound for the line
 				  {Comp.state.bPoint unBound(action#moveBegin Comp.state.subComp)}
 				  {Comp.state.ePoint unBound(action#moveEnd Comp.state.subComp)}
@@ -47,6 +45,11 @@ define
 				  {Comp.state.bPoint send(actions_in openPorts Ack)}
 				  {Wait Ack}
 				  {Comp.state.ePoint send(actions_in openPorts Ack2)}
+				  {Wait Ack2}
+			       [] close andthen {HasFeature IP comp} then Ack Ack2 in
+				  {Comp.state.bPoint send(actions_in closePorts(comp:IP.comp) Ack)}
+				  {Wait Ack}
+				  {Comp.state.ePoint send(actions_in closePorts(comp:IP.comp) Ack2)}
 				  {Wait Ack2}
 			       [] close then Ack Ack2 in
 				  {Comp.state.bPoint send(actions_in closePorts Ack)}
