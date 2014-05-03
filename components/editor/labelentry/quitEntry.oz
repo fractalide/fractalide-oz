@@ -10,7 +10,7 @@ define
 		   inPorts(
 		      input(proc{$ In Out Comp} IP in
 			       IP = {In.get}
-			       if {Label IP} == 'FocusOut' orelse ({Label IP} == 'KeyPress' andthen IP.key == 36) then
+			       if {Label IP} == 'KeyPress' andthen IP.key == 36 then
 				  {Out.change get(output:getText)}
 			       elseif {Label IP} == 'KeyPress' andthen IP.key == 9 then
 				  {Out.esc display}

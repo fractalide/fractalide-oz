@@ -1,0 +1,16 @@
+% ---
+% Logic stream
+actions_in => actions_in awIn(ui/actionsWrapper)
+awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+awOut() action => action
+
+% ---
+% UI stream
+ui_in =>  ui_in ph(ui/placeholder) ui_out => ui_out
+ph() actions_out -> actions_in awOut()
+"label(text:"no options")" -> place#1 ph()
+% ---
+% newComp
+awIn() action#options -> input displayOE(editor/editPanel/displayOptionsEdit)
+displayOE() actions_out -> actions_in awOut()
+displayOE() ph -> actions_in ph()

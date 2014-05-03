@@ -1,6 +1,7 @@
 functor
 import
    Comp at '../../../lib/component.ozf'
+   Compiler
 export
    new: CompNewGen
 define
@@ -11,7 +12,7 @@ define
 		      input(proc{$ In Out Comp} IP in
 			       IP = {In.get}
 			       case {Label IP}
-			       of displayComp then Ack in
+			       of displayComp then Ack S in
 				  {Out.disp display}
 				  if Comp.state.comp \= nil then A in
 				     {Comp.state.comp send(actions_in closePorts A)}
@@ -19,6 +20,8 @@ define
 				  end
 				  Comp.state.comp := IP.1
 				  {IP.1 send(actions_in openPorts Ack)}
+				  S = {(IP.2) getState($)}
+				  {Out.options {Record.adjoin S.options options}}
 				  {Wait Ack}
 			       [] start then Ack in
 				  {Comp.state.comp send(actions_in start Ack)}
@@ -26,9 +29,11 @@ define
 			       [] stop then Ack in
 				  {Comp.state.comp send(actions_in stop Ack)}
 				  {Wait Ack}
-			       [] newComp then Ack in
+			       [] newComp then Ack S in
 				  {Comp.state.comp send(actions_in IP Ack)}
 				  {Wait Ack}
+				  S = {(IP.1) getState($)}
+				  {Out.options {Record.adjoin S.options options}}
 			       [] displayGraph then
 				  if Comp.state.comp \= nil then Ack in 
 				     {Comp.state.comp send(actions_in closePorts Ack)}
@@ -40,10 +45,17 @@ define
 				  {Wait Ack}
 				  Comp.state.comp := nil
 				  {Out.output displayGraph}
+			       [] change then L V Ack S in
+				  L = {VirtualString.toAtom IP.label}
+				  V = {Compiler.virtualStringToValue IP.value}
+				  {Comp.state.comp send(actions_in options(L:V) Ack)}
+				  {Wait Ack}
+				  S = {Comp.state.comp getState($)}
+				  {Wait S}
 			       end
 			    end)
 		      )
-		   outPorts(disp output)
+		   outPorts(disp output options)
 		   state(comp:nil)
 		   )
       }

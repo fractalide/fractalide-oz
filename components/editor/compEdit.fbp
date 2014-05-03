@@ -29,9 +29,15 @@ deleteButton() actions_out -> actions_in td()
 "create(text:"delete" glue:new)" -> ui_in deleteButton()
 
 % ---
-% Switch to linkEdit
+% creation of options panel
+"start(bg:white glue:new)" -> ui_in optionsEdit(editor/editPanel/optionsEdit) ui_out -> place#4 td()
+optionsEdit() actions_out -> actions_in td()
+
+% ---
+% Switch to compEdit
 awIn() action#displayComp -> input disp(editor/editPanel/displayComp) disp -> actions_in td()
 disp() output -> actions_in awOut()
+disp() options -> actions_in optionsEdit()
 
 % ---
 % select logic
@@ -49,6 +55,9 @@ stopButton() action#button_clicked -> input ieStop(ipEdit) out -> input disp()
 deleteButton() action#button_clicked -> input ieDelete(ipEdit) out -> input disp()
 "opt(text:delete)" -> options ieDelete()
 
+% ---
+% optionsEdit logic
+optionsEdit() action#change -> input disp()
 
 % ---
 % Cancel : displayGraph
