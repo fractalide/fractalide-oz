@@ -30,7 +30,7 @@ aw() action#moveBeginPos -> move moveL()
 % Line clicked
 line() action#ButtonRelease -> input ieGetAwIn(ipEdit) out -> actions_in aw()
 "opt(text:getEntryPoint(output:displayLink))" -> options ieGetAwIn()
-line() action#ButtonRelease -> input ieSetWidth(ipEdit) out -> input d(display) output -> actions_in line()
+line() action#ButtonRelease -> input ieSetWidth(ipEdit) out -> actions_in line()
 "opt(text:set(width:2))" -> options ieSetWidth()
 
 % ---

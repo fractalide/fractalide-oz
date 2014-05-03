@@ -3,7 +3,8 @@
 lr(ui/lr) ui_out -> ui_in win(ui/window)
 lr() actions_out -> actions_in win()
 "create(glue:nswe bg:white borderwidth:3)" -> ui_in lr()
-win() actions_out -> input disp(display)
+%win() actions_out -> input disp(display)
+%"opt(pre:'default ')" -> options disp()
 "set(title:"Fractallide")" -> actions_in win()
 
 % ---
@@ -23,8 +24,6 @@ graphPanel() actions_out -> actions_in lr()
 "set(glue:nswe bg:white)" -> ui_in graphEdit(editor/graphEdit) ui_out -> place#3 editPanel()
 graphEdit() actions_out -> actions_in editPanel()
 graphEdit() action#newComp -> actions_in graphPanel()
-% Options
-"opt(pre:'default ')" -> options disp()
 % from graph to graph
 graphPanel() action#displayGraph -> actions_in graphEdit()
 
@@ -35,6 +34,7 @@ graphPanel() action#displayGraph -> actions_in graphEdit()
 linkEdit() actions_out -> actions_in editPanel()
 % from graph to link
 graphPanel() action#displayLink -> actions_in linkEdit()
+graphPanel() action#displayComp -> actions_in linkEdit()
 % Cancel link edit
 linkEdit() action#displayGraph -> actions_in graphEdit()
 
