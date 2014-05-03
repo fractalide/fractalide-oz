@@ -288,7 +288,7 @@ define
 				 end
 		       SubThread }
 		      if {Record.width State.inPorts} > 0 then
-			 {Send Point start} %Restart
+			 {Send Point exec} %Restart
 		      end
 		   end
 		   % Return the new state, with the new var record and the new inPorts record.
@@ -304,6 +304,8 @@ define
 	     [] start then NState in
 		NState = {Record.adjoinAt State run true}
 		{Exec NState}
+	     [] exec then
+		{Exec State}
 	     [] stop then
 		for T in State.threads do
 		   if {Thread.state T} \= terminated then
