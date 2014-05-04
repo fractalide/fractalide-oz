@@ -11,6 +11,6 @@ ph() actions_out -> actions_in awOut()
 "label(text:"no options")" -> place#1 ph()
 % ---
 % newComp
-awIn() action#options -> input displayOE(editor/editPanel/displayOptionsEdit)
+awIn() action#state -> input displayOE(editor/editPanel/displayOptionsEdit)
 displayOE() actions_out -> actions_in awOut()
 displayOE() ph -> actions_in ph()

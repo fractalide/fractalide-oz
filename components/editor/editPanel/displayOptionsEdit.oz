@@ -42,30 +42,34 @@ define
 			       % send to grid#1 to initialize the grid
 			       {Grid send(grid#1 label(text:"no option" bg:white) A3)}
 			       {Wait A3}
-			       {Grid send(actions_in configure(label(text:"options:" bg:white) column:1 columnspan:3 row:1 sticky:we) A2)}
-			       {Wait A2}
+			       % If there is options :
+			       if {Label IP.1} == component andthen {Record.width IP.1.options} > 0 then Opt in
+				  Opt = IP.1.options 
+				  {Grid send(actions_in configure(label(text:"options:" bg:white) column:1 columnspan:3 row:1 sticky:we) A2)}
+				  {Wait A2}
                                % The options of the comp
-			       {Record.foldLInd IP
-				fun{$ Ind Acc Val} EV Ack Ack2 Ack3 I V in
+				  {Record.foldLInd Opt
+				   fun{$ Ind Acc Val} EV Ack Ack2 Ack3 I V in
 			       	   % Create the editValue widget
-				   EV = {SubComp.new value "editor/editPanel/editValue" "./components/editor/editPanel/editValue.fbp"}
-				   {EV bind(ui_out {OutPortGrid Grid Acc} nil)}
-				   {EV bind(actions_out {OutPortActions Out} nil)}
-				   {EV start}
-				   I = {Value.toVirtualString Ind 50 50}
-				   V = {Value.toVirtualString Val 50 50}
-				   {EV send(ui_in I#V Ack)}
-				   {Wait Ack}
+				      EV = {SubComp.new value "editor/editPanel/editValue" "./components/editor/editPanel/editValue.fbp"}
+				      {EV bind(ui_out {OutPortGrid Grid Acc} nil)}
+				      {EV bind(actions_out {OutPortActions Out} nil)}
+				      {EV start}
+				      I = {Value.toVirtualString Ind 50 50}
+				      V = {Value.toVirtualString Val 50 50}
+				      {EV send(ui_in I#V Ack)}
+				      {Wait Ack}
 			       	   % Send out the label
-				   {Grid send(actions_in configure(label(text:{Atom.toString Ind} bg:white) column:1 row:Acc) Ack2)}
-				   {Wait Ack2}
-				   {Grid send(actions_in configure(label(text:":" bg:white) column:2 row:Acc) Ack3)}
-				   {Wait Ack3}
-				   Acc+1
-				end
-				2
-				_
-			       }
+				      {Grid send(actions_in configure(label(text:{Atom.toString Ind} bg:white) column:1 row:Acc) Ack2)}
+				      {Wait Ack2}
+				      {Grid send(actions_in configure(label(text:":" bg:white) column:2 row:Acc) Ack3)}
+				      {Wait Ack3}
+				      Acc+1
+				   end
+				   2
+				   _
+				  }
+			       end
 			    end)
 		      )
 		   outPorts(ph actions_out)
