@@ -21,7 +21,7 @@ define
 				  Comp.state.comp := IP.1
 				  {IP.1 send(actions_in openPorts Ack)}
 				  S = {(IP.2) getState($)}
-				  {Out.options {Record.adjoin S.options options}}
+				  {Out.options state(S)}
 				  {Wait Ack}
 			       [] start then Ack in
 				  {Comp.state.comp send(actions_in start Ack)}
@@ -33,7 +33,7 @@ define
 				  {Comp.state.comp send(actions_in IP Ack)}
 				  {Wait Ack}
 				  S = {(IP.1) getState($)}
-				  {Out.options {Record.adjoin S.options options}}
+				  {Out.options state(S)}
 			       [] displayGraph then
 				  if Comp.state.comp \= nil then Ack in 
 				     {Comp.state.comp send(actions_in closePorts Ack)}
