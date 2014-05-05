@@ -9,7 +9,7 @@ define
       if {List.member {Label Event} {Arity OutPorts.action}} then
 	 {OutPorts.action.{Label Event} Event}
       else
-	 {OutPorts.actions_out Event}
+	 {OutPorts.out Event}
       end
    end
    proc {ManageIP IP Out Comp}

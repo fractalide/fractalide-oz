@@ -9,7 +9,7 @@ define
       {Comp.new comp(
 		   name:Name type:'QTk/checkbutton'
 		   inPorts(
-		      actions_in(proc{$ In Out Comp} IP in
+		      'in'(proc{$ In Out Comp} IP in
 				    IP = {In.get}
 				    case {Label IP}
 				    of create then H B in
@@ -18,7 +18,7 @@ define
 									     {QTkHelper.sendOut Out check({H get($)})}
 									   end
 								   )}
-				       {Out.actions_out create(B)}
+				       {Out.out create(B)}
 				       {Wait H}
 				       {QTkHelper.bindEvents H Out}
 				       Comp.state.handle := H
@@ -28,7 +28,7 @@ define
 				    end
 				 end)
 		      )
-		   outPorts(actions_out)
+		   outPorts(out)
 		   outArrayPorts(action)
 		   state(handle:_ buffer:nil)
 		   )}

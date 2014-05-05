@@ -9,7 +9,7 @@ define
       {Comp.new comp(
 		   name:Name type:'QTk/dropdownlistbox'
 		   asynchInPorts(
-		      actions_in(proc{$ In Out Comp} IP in
+		      'in'(proc{$ In Out Comp} IP in
 				    IP = {In.get}
 				    case {Label IP}
 				    of create then H B in
@@ -20,7 +20,7 @@ define
 										       {QTkHelper.sendOut Out select(firstselection:F element:E)}
 									   end
 								   )}
-				       {Out.actions_out create(B)}
+				       {Out.out create(B)}
 				       {Wait H}
 				       {QTkHelper.bindEvents H Out}
 				       Comp.state.handle := H
@@ -34,7 +34,7 @@ define
 			      {QTkHelper.manageIP set(IP) Out Comp}
 			   end)
 		      )
-		   outPorts(actions_out)
+		   outPorts(out)
 		   outArrayPorts(action)
 		   state(handle:_ buffer:nil)
 		   )}

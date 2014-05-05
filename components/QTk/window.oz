@@ -10,7 +10,7 @@ define
       {Comp.new comp(
 		   name:Name type:'QTk/window'
 		   inPorts(
-		      actions_in(proc{$ In Out Comp} IP in
+		      'in'(proc{$ In Out Comp} IP in
 				    IP = {In.get}
 				    case {Label IP}
 				    of create then
@@ -29,7 +29,7 @@ define
 				    end
 				 end)
 		      )
-		   outPorts(actions_out)
+		   outPorts(out)
 		   outArrayPorts(action)
 		   state(handle:_ phHandle:_ buffer:nil)
 		   )}

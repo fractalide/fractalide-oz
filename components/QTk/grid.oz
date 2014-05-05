@@ -26,12 +26,12 @@ define
       {Comp.new comp(
 		   name:Name type:'QTk/grid'
 		   asynchInArrayPorts(
-		      actions_in(proc{$ Sub Ins Out Comp} IP in
+		      'in'(proc{$ Sub Ins Out Comp} IP in
 				    IP = {Ins.Sub.get}
 				    case {Label IP}
 				    of create andthen Sub == grid then H B in
 				       B = {Record.adjoin IP grid(handle:H)}
-				       {Out.actions_out create(B)}
+				       {Out.out create(B)}
 				       {Wait H}
 				       {QTkHelper.bindEvents H Out}
 				       Comp.state.handle := H
@@ -40,7 +40,7 @@ define
 				       C = {Split Sub "x"}
 				       NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
 				       {QTkHelper.manageIP NIP Out Comp}
-				    [] configure then C NIP in
+				    [] configure andthen Sub \= grid then C NIP in
 				       C = {Split Sub "x"}
 				       NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
 				       {QTkHelper.manageIP NIP Out Comp}
@@ -49,7 +49,7 @@ define
 				    end
 				 end)
 		      )
-		   outPorts(actions_out)
+		   outPorts(out)
 		   outArrayPorts(action)
 		   state(handle:_ buffer:nil)
 		   )}

@@ -9,12 +9,12 @@ define
       {Comp.new comp(
 		   name:Name type:'QTk/td'
 		   asynchInArrayPorts(
-		      actions_in(proc{$ Sub Ins Out Comp} IP in
+		      'in'(proc{$ Sub Ins Out Comp} IP in
 				    IP = {Ins.Sub.get}
 				    case {Label IP}
 				    of create andthen Sub == td then H B in
 				       B = {Record.adjoin IP grid(handle:H)}
-				       {Out.actions_out create(B)}
+				       {Out.out create(B)}
 				       {Wait H}
 				       {QTkHelper.bindEvents H Out}
 				       Comp.state.handle := H
@@ -29,7 +29,7 @@ define
 				    end
 				 end)
 		      )
-		   outPorts(actions_out)
+		   outPorts(out)
 		   outArrayPorts(action)
 		   state(handle:_ buffer:nil)
 		   )}
