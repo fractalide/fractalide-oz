@@ -1,31 +1,31 @@
 % First step : two fields
-"create" -> actions_in#lr lr(QTk/lr)
-f1(QTk/entry) actions_out -> actions_in#1 lr()
-f2(QTk/entry) actions_out -> actions_in#2 lr()
-"create(init:[48])" -> actions_in f1()
-"create(init:[48])" -> actions_in f2()
+"create" -> in#lr lr(QTk/lr)
+f1(QTk/entry) out -> in#1 lr()
+f2(QTk/entry) out -> in#2 lr()
+"create(init:[48])" -> in f1()
+"create(init:[48])" -> in f2()
 
 
 % Second step : lr, button and result field
-lr() actions_out -> actions_in#1 td(QTk/td)
-calcButton(QTk/button) actions_out -> actions_in#2 td()
-fResult(QTk/entry) actions_out -> actions_in#3 td()
-"create(text:"calc")" -> actions_in calcButton()
-"create" -> actions_in fResult()
-"create" -> actions_in#td td()
+lr() out -> in#1 td(QTk/td)
+calcButton(QTk/button) out -> in#2 td()
+fResult(QTk/entry) out -> in#3 td()
+"create(text:"calc")" -> in calcButton()
+"create" -> in fResult()
+"create" -> in#td td()
 
 % Logic
 % From button
 % Button to get
-calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(ipEdit) out -> actions_in f1()
-get1() out -> actions_in f2()
+calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(ipEdit) out -> in f1()
+get1() out -> in f2()
 "opt(text:get(output:getAdd))" -> options get1()
 % Field to logicAdd
-f1() action#getAdd -> input#1 add(calculator/add) output -> input setAdd(ipEdit) out -> actions_in fResult()
+f1() action#getAdd -> input#1 add(calculator/add) output -> input setAdd(ipEdit) out -> in fResult()
 f2() action#getAdd -> input#2 add() 
 "opt(text:set(_))" -> options setAdd()
 % Button color
-buttonLogic() color -> actions_in calcButton()
+buttonLogic() color -> in calcButton()
 
 % From TD
 td() action#KeyPress -> input buttonLogic()
@@ -37,14 +37,14 @@ f1() action#Enter -> input dispSpecific(display)
 "opt(pre:'specific ')" -> options dispSpecific()
 
 % size of field
-"set(width:15)" -> actions_in fResult()
-"set(width:15)" -> actions_in f1()
-"set(width:15)" -> actions_in f2()
+"set(width:15)" -> in fResult()
+"set(width:15)" -> in f1()
+"set(width:15)" -> in f2()
 
 % Some options
-"set(title:'Calculator')" -> actions_in#td td()
+"set(title:'Calculator')" -> in#td td()
 
 
 %OutLinks
-td() actions_out => actions_out
-actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in td()
+td() out => out
+in => actions_in aw(ui/actionsWrapper) actions_out -> in td()

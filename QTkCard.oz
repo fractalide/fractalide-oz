@@ -18,9 +18,9 @@ define
 
    % Manage the window
    Win = {Window.new w}
-   {G bind(actions_out Win actions_in)}
+   {G bind(out Win 'in')}
    D2 = {Disp.new display2}
-   {Win bind(actions_out D2 input)}
+   {Win bind(out D2 input)}
    {D2 send(options opt(pre:default) _)}
 
    
