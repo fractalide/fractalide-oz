@@ -319,18 +319,28 @@ define
 	     [] getOutPort(Port ?R) then
 		R=State.outPorts.Port
 		State
-	     [] addinArrayPort(Port Index) then NPort NInPorts in
-		NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}}
-		NInPorts = {Record.adjoinAt State.inPorts Port NPort}
-		{Record.adjoinAt State inPorts NInPorts}
+	     [] addinArrayPort(Port Index) then
+		if {HasFeature State.inPorts Port} then NPort NInPorts in
+		   NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}}
+		   NInPorts = {Record.adjoinAt State.inPorts Port NPort}
+		   {Record.adjoinAt State inPorts NInPorts}
+		else
+		   State
+		end
 	     [] changeProcPort(Port Proc) then NPort NInPorts in
 		NPort = {Record.adjoinAt State.inPorts.Port p Proc}
 		NInPorts = {Record.adjoinAt State.inPorts Port NPort}
 		{Record.adjoinAt State inPorts NInPorts}
 	     % Interact with the component
 	     [] send(InPort#N Msg Ack) then
-		{State.inPorts.InPort.qs.N.put Msg Ack}
-		{Exec State}
+		if {HasFeature State.asynchInArrayPorts InPort} then
+		   {State.asynchInArrayPorts.InPort.p N Msg {PrepareOut State.outPorts} State}
+		   Ack = ack
+		   State
+		else
+		   {State.inPorts.InPort.qs.N.put Msg Ack}
+		   {Exec State}
+		end
 	     [] send('START' _ Ack) then
 		Ack = ack
 		{Exec State}
@@ -348,8 +358,14 @@ define
 		NState = {Record.adjoinAt State options NOptions}
 		if {CheckBuffers {Record.toList NState.inPorts}} then {Exec NState} else NState end
 	     [] send(InPort Msg Ack) then
-		{State.inPorts.InPort.q.put Msg Ack}
-		{Exec State}
+		if {HasFeature State.asynchInPorts InPort} then
+		   {State.asynchInPorts.InPort.p Msg {PrepareOut State.outPorts} State}
+		   Ack = ack
+		   State
+		else
+		   {State.inPorts.InPort.q.put Msg Ack}
+		   {Exec State}
+		end
 	     [] bind(OutPort#N Comp Name) then NAPort NPort NOutPorts in
 		try
 		   NAPort = Comp#Name | State.outPorts.OutPort.N
@@ -423,6 +439,22 @@ define
        'arrayIn'()
       }
    end
+   fun {AsynchInPorts In}
+      {Record.foldL In
+       fun {$ Acc P}
+	  {Record.adjoinAt Acc {Label P} asynchPort(p:P.1)}
+       end
+       asynchIn()
+      }
+   end
+   fun {AsynchInArrayPorts In}
+      {Record.foldL In
+       fun {$ Acc P}
+	  {Record.adjoinAt Acc {Label P} asynchPort(p:P.1)}
+       end
+       asynchInArray()
+      }
+   end
    fun {OutPorts Out}
       {Record.foldL Out
        fun {$ Acc E}
@@ -461,6 +493,7 @@ define
 			       procs:procs() var:var() state:{NewDictionary}
 			       threads:nil options:opt()
 			       run:true entryPoint:_
+			       asynchInPorts:aIn() asynchInArrayPorts:aInArray()
 			      )
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
@@ -473,6 +506,8 @@ define
 		   [] var then {Record.adjoinAt S var {Var Rec}}
 		   [] state then {Record.adjoinAt S state {BuildNState Rec}}
 		   [] options then {Record.adjoinAt S options Rec}
+		   [] asynchInPorts then {Record.adjoinAt S asynchInPorts {AsynchInPorts Rec}}
+		   [] asynchInArrayPorts then {Record.adjoinAt S asynchInArrayPorts {AsynchInArrayPorts Rec}}
 		   else
 		      if Ind == name then {Record.adjoinAt S name Rec}
 		      elseif Ind == type then {Record.adjoinAt S type Rec}
