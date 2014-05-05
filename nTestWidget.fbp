@@ -1,0 +1,22 @@
+td(QTk/td) actions_out -> actions_in w(QTk/window) actions_out -> input d(display)
+"opt(pre:default)" -> options d()
+"create" -> actions_in#td td()
+
+b(QTk/button) actions_out -> actions_in#1 td()
+"create(text:"Test" glue:ew)" -> actions_in b()
+
+checkbutton(QTk/checkbutton) actions_out -> actions_in#2 td()
+"create" -> actions_in checkbutton()
+
+dropdownlistbox(QTk/dropdownlistbox) actions_out -> actions_in#3 td()
+"create" -> actions_in dropdownlistbox()
+"["choice1" "choice2" "choice3"]" -> list dropdownlistbox()
+
+grid(QTk/grid) actions_out -> actions_in#4 td()
+"create" -> actions_in#grid grid()
+"create(label(text:"hello"))" -> actions_in#1x1 grid()
+"create(label(text:"world"))" -> actions_in#2x2 grid()
+"create(label(text:"helloworld") columnspan:2)" -> actions_in#1x3 grid()
+
+entry(QTk/entry) actions_out -> actions_in#5 td()
+"create(init:"here")" -> actions_in entry()
