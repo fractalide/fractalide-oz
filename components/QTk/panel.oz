@@ -2,7 +2,6 @@ functor
 import
    Comp at '../../lib/component.ozf'
    QTkHelper
-   System
 export
    new: CompNewArgs
 define
@@ -50,7 +49,6 @@ define
 				       {Wait IP.1.handle}
 				       Comp.state.list := {Record.adjoinAt Comp.state.list Sub IP.1.handle}
 				    [] delete then NIP in
-				       {System.show delete}
 				       NIP = deletePanel(Comp.state.list.Sub)
 				       {QTkHelper.manageIP NIP Out Comp}
 				       Comp.state.list := {Record.subtract Comp.state.list Sub}
