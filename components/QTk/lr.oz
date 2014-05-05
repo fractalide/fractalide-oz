@@ -9,7 +9,8 @@ define
       {Comp.new comp(
 		   name:Name type:'QTk/lr'
 		   asynchInArrayPorts(
-		      actions_in(proc{$ Sub IP Out Comp}
+		      actions_in(proc{$ Sub Ins Out Comp} IP in
+				    IP = {Ins.Sub.get}
 				    case {Label IP}
 				    of create andthen Sub == lr then H B in
 				       B = {Record.adjoin IP grid(handle:H)}
