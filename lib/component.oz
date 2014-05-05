@@ -189,6 +189,39 @@ define
       in
 	 {RecCB Bufs}
       end
+      proc {ExecAsynch State}
+	 proc {RecSimple Port} S in
+	    S = {Port.q.size} 
+	    if S == 0 then skip
+	    else
+	       {Port.p Port.q {PrepareOut State.outPorts} State}
+	       {RecSimple Port}
+	    end
+	 end
+	 proc {RecArray Port Sub} S in
+	    S = {Port.qs.Sub.size}
+	    if S == 0 then skip
+	    else
+	       {Port.p Sub Port.qs {PrepareOut State.outPorts} State}
+	       {RecArray Port Sub}
+	    end
+	 end
+      in
+	 {Record.forAll State.asynchInPorts
+	  proc{$ P}
+	     {RecSimple P}
+	  end
+	 }
+	 {Record.forAll State.asynchInArrayPorts
+	  proc{$ P}
+	     {Record.forAllInd P.qs
+	      proc {$ Ind _}
+		 {RecArray P Ind}
+	      end
+	     }
+	  end
+	 }
+      end
       thread
 	 %Every messages send to the component is deal in this FoldL
 	 {FoldL Stream
@@ -303,6 +336,7 @@ define
 	     [] changeState(NState) then NState
 	     [] start then NState in
 		NState = {Record.adjoinAt State run true}
+		{ExecAsynch NState}
 		{Exec NState}
 	     [] exec then
 		{Exec State}
@@ -333,10 +367,19 @@ define
 		{Record.adjoinAt State inPorts NInPorts}
 	     % Interact with the component
 	     [] send(InPort#N Msg Ack) then
-		if {HasFeature State.asynchInArrayPorts InPort} then
-		   {State.asynchInArrayPorts.InPort.p N Msg {PrepareOut State.outPorts} State}
-		   Ack = ack
-		   State
+		if {HasFeature State.asynchInArrayPorts InPort} then NP NQs NPort in
+		   NP = if {Not {HasFeature State.asynchInArrayPorts.InPort.qs N}} then
+			   {Record.adjoinAt State.asynchInArrayPorts.InPort.qs N {NewQueue State.asynchInArrayPorts.InPort.size}}
+			else
+			   State.asynchInArrayPorts.InPort.qs
+			end
+		   {NP.N.put Msg Ack}
+		   if State.run then
+		      {State.asynchInArrayPorts.InPort.p N NP {PrepareOut State.outPorts} State}
+		   end
+		   NQs = {Record.adjoinAt State.asynchInArrayPorts.InPort qs NP}
+		   NPort = {Record.adjoinAt State.asynchInArrayPorts InPort NQs}
+		   {Record.adjoinAt State asynchInArrayPorts NPort}
 		else
 		   {State.inPorts.InPort.qs.N.put Msg Ack}
 		   {Exec State}
@@ -359,8 +402,10 @@ define
 		if {CheckBuffers {Record.toList NState.inPorts}} then {Exec NState} else NState end
 	     [] send(InPort Msg Ack) then
 		if {HasFeature State.asynchInPorts InPort} then
-		   {State.asynchInPorts.InPort.p Msg {PrepareOut State.outPorts} State}
-		   Ack = ack
+		   {State.asynchInPorts.InPort.q.put Msg Ack}
+		   if State.run then
+		      {State.asynchInPorts.InPort.p State.asynchInPorts.InPort.q {PrepareOut State.outPorts} State}
+		   end
 		   State
 		else
 		   {State.inPorts.InPort.q.put Msg Ack}
@@ -441,16 +486,18 @@ define
    end
    fun {AsynchInPorts In}
       {Record.foldL In
-       fun {$ Acc P}
-	  {Record.adjoinAt Acc {Label P} asynchPort(p:P.1)}
+       fun {$ Acc P} Size in
+	  Size = if {HasFeature P size} then P.size else 25 end
+	  {Record.adjoinAt Acc {Label P} asynchPort(p:P.1 q:{NewQueue Size})}
        end
        asynchIn()
       }
    end
    fun {AsynchInArrayPorts In}
       {Record.foldL In
-       fun {$ Acc P}
-	  {Record.adjoinAt Acc {Label P} asynchPort(p:P.1)}
+       fun {$ Acc P} Size in
+	  Size = if {HasFeature P size} then P.size else 25 end
+	  {Record.adjoinAt Acc {Label P} asynchPort(p:P.1 qs:queues() size:Size)}
        end
        asynchInArray()
       }
