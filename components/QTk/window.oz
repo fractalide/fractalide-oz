@@ -16,7 +16,7 @@ define
 				    of create then
 				       % Create the window once
 				       if {Not {IsDet Comp.state.handle}} then Desc TopLevel PhHandle in
-					  Desc = td(placeholder(handle:PhHandle))
+					  Desc = td(placeholder(glue:nsew handle:PhHandle))
 					  TopLevel = {QTk.build Desc}
 					  {TopLevel show}
 					  Comp.state.phHandle := PhHandle

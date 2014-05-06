@@ -1,4 +1,5 @@
-td(QTk/td) out -> in w(QTk/window) out -> input d(display)
+td(QTk/td) out -> frame scrollframe(QTk/scrollframe) out -> in w(QTk/window) out -> input d(display)
+"create(tdscrollbar:true glue:nswe)" -> in scrollframe()
 "opt(pre:default)" -> options d()
 "create" -> in#td td()
 
