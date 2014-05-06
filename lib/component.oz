@@ -375,7 +375,12 @@ define
 			end
 		   {NP.N.put Msg Ack}
 		   if State.run then
-		      {State.asynchInArrayPorts.InPort.p N NP {PrepareOut State.outPorts} State}
+		      try
+			 {State.asynchInArrayPorts.InPort.p N NP {PrepareOut State.outPorts} State}
+		      catch E then Out in
+			 Out = {PrepareOut State.outPorts}
+			 {Out.'ERROR' async_array_port_procedure(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
+		      end
 		   end
 		   NQs = {Record.adjoinAt State.asynchInArrayPorts.InPort qs NP}
 		   NPort = {Record.adjoinAt State.asynchInArrayPorts InPort NQs}
@@ -404,7 +409,12 @@ define
 		if {HasFeature State.asynchInPorts InPort} then
 		   {State.asynchInPorts.InPort.q.put Msg Ack}
 		   if State.run then
-		      {State.asynchInPorts.InPort.p State.asynchInPorts.InPort.q {PrepareOut State.outPorts} State}
+		      try
+			 {State.asynchInPorts.InPort.p State.asynchInPorts.InPort.q {PrepareOut State.outPorts} State}
+		      catch E then Out in
+			 Out = {PrepareOut State.outPorts}
+			 {Out.'ERROR' async_simple_port_procedure(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
+		      end
 		   end
 		   State
 		else
