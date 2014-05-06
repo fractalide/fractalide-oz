@@ -61,3 +61,10 @@ b() action#button_clicked -> input ipDisplay(ipEdit) out -> in lph2()
 "create(text:"choice 2" group:r1)" -> in rb2(QTk/radiobutton) out -> in#2 lrradio()
 "create(text:"choice 3" group:r2)" -> in rb3(QTk/radiobutton) out -> in#3 lrradio()
 "create(text:"choice 4" group:r2)" -> in rb4(QTk/radiobutton) out -> in#4 lrradio()
+
+text(QTk/text) out -> in#12 td()
+"create()" -> in text()
+
+canvas(QTk/canvas) out -> in#13 td()
+"create(width:500 height:500 bg:red)" -> in canvas()
+"create(10 10 100 100)" -> in arc(QTk/canvas/arc) out -> widget canvas()

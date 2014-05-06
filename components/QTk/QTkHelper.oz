@@ -4,6 +4,8 @@ export
    SendOut
    FeedBuffer
    BindEvents
+   BindBasicEvents
+   RecordIncInd
 define
    proc {SendOut OutPorts Event}
       if {List.member {Label Event} {Arity OutPorts.action}} then
@@ -65,23 +67,7 @@ define
 	 end
       end
    end
-   proc {BindEvents Handle Out} Events in
-      Events = ['Activate'
-		'Deactivate'
-		'FocusIn'
-		'FocusOut'
-	       ]
-      for E in Events do
-	 {Handle bind(event:"<"#{Atom.toString E}#">"
-		      action: proc{$} {SendOut Out E} end
-		     )}
-      end
-      for E in ['KeyPress' 'KeyRelease'] do
-	 {Handle bind(event:"<"#{Atom.toString E}#">"
-		      args:[int(k) int(x) int(y) string(s) string('A') string('T') string('W') string('K') int('X') int('Y')]
-		      action: proc {$ K X Y S A T W TK XR YR} {SendOut Out E(key:K x:X y:Y state:S ascii:A type:T path:W textual_string:TK x_root:XR y_root:YR)} end
-		     )}
-      end
+   proc {BindBasicEvents Handle Out}
       for E in ['ButtonPress' 'ButtonRelease'] do
 	 {Handle bind(event:"<"#{Atom.toString E}#">"
 		      args:[int(b) int(x) int(y)]
@@ -98,5 +84,38 @@ define
 		      action: proc{$ D F M X Y S} {SendOut Out E(detail:D focus:F mode:M x:X y:Y state:S)} end
 		     )}
       end
+      for E in ['KeyPress' 'KeyRelease'] do
+	 {Handle bind(event:"<"#{Atom.toString E}#">"
+		      args:[int(k) int(x) int(y) string(s) string('A') string('T') string('W') string('K') int('X') int('Y')]
+		      action: proc {$ K X Y S A T W TK XR YR} {SendOut Out E(key:K x:X y:Y state:S ascii:A type:T path:W textual_string:TK x_root:XR y_root:YR)} end
+		     )}
+      end
+   end
+   proc {BindEvents Handle Out} Events in
+      Events = ['Activate'
+		'Deactivate'
+		'FocusIn'
+		'FocusOut'
+	       ]
+      for E in Events do
+	 {Handle bind(event:"<"#{Atom.toString E}#">"
+		      action: proc{$} {SendOut Out E} end
+		     )}
+      end
+      {BindBasicEvents Handle Out}
+   end
+   fun {RecordIncInd Rec} NRec in
+      NRec = {Record.make create
+	      {List.map {Record.toListInd Rec}
+	       fun {$ Ind#_} if {Int.is Ind} then Ind+1 else Ind end end}
+	     }
+      for I in {Arity NRec} do
+	 if {Int.is I} then
+	    NRec.I = Rec.(I-1)
+	 else
+	    NRec.I = Rec.I
+	 end
+      end
+      NRec
    end
 end

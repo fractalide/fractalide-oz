@@ -3,6 +3,7 @@ all: library comp test
 comp:
 	cd components/ && $(OZHOME)/bin/ozc -c *.oz && cd ..
 	cd components/QTk && $(OZHOME)/bin/ozc -c *.oz && cd ../..
+	cd components/QTk/canvas && $(OZHOME)/bin/ozc -c *.oz && cd ../..
 	cd components/ui && $(OZHOME)/bin/ozc -c *.oz && cd ../..
 	cd components/gates && $(OZHOME)/bin/ozc -c *.oz && cd ../..
 	cd components/calculator && $(OZHOME)/bin/ozc -c *.oz && cd ../../
