@@ -6,15 +6,17 @@ export
    new: CompNewArgs
 define
    proc {Create Out Comp}
-      if Comp.state.frame \= nil andthen Comp.state.init \= nil then H B in 
-	 B = {Record.adjoin Comp.state.init scrollframe(Comp.state.frame handle:H)}
+      if Comp.state.frame \= nil andthen Comp.state.init \= nil then RevI RevF H B in
+	 RevI = {Reverse Comp.state.init}
+	 RevF = {Reverse Comp.state.frame}
+	 B = {Record.adjoin RevI.1 scrollframe(RevF.1 handle:H)}
 	 {Out.out create(B)}
 	 {Wait H}
 	 {QTkHelper.bindEvents H Out}
 	 Comp.state.handle := H
 	 {QTkHelper.feedBuffer Out Comp}
-	 Comp.state.frame := nil
-	 Comp.state.init := nil
+	 Comp.state.init := {Reverse RevI.2}
+	 Comp.state.frame := {Reverse RevF.2}
       end
    end
    fun {CompNewArgs Name}
@@ -25,7 +27,7 @@ define
 			      IP = {In.get}
 			      case {Label IP}
 			      of create then
-				 Comp.state.init := IP
+				 Comp.state.init := IP | Comp.state.init
 				 {Create Out Comp}
 			      else
 				 {QTkHelper.manageIP IP Out Comp}
@@ -35,7 +37,7 @@ define
 			       IP = {In.get}
 			       case {Label IP}
 			       of create then
-				  Comp.state.frame := IP.1
+				  Comp.state.frame := IP.1 | Comp.state.frame
 				  {Create Out Comp}
 			       else
 				  {QTkHelper.manageIP IP Out Comp}
