@@ -39,6 +39,11 @@ define
 				       Comp.state.handle := H
 				       {QTkHelper.feedBuffer Out Comp}
 				    [] create then NIP After Before in
+				       % delete if exists
+				       if {HasFeature Comp.state.list Sub} then
+					  {Comp.state.handle deletePanel(Comp.state.list.Sub)}
+				       end
+				       % create new one
 				       After#Before = {GetNext Comp.state.list Sub}
 				       NIP = if After \= nil then
 						{Record.adjoin IP addPanel(after:After before:Before)}
@@ -49,9 +54,13 @@ define
 				       {Wait IP.1.handle}
 				       Comp.state.list := {Record.adjoinAt Comp.state.list Sub IP.1.handle}
 				    [] delete then NIP in
-				       NIP = deletePanel(Comp.state.list.Sub)
-				       {QTkHelper.manageIP NIP Out Comp}
-				       Comp.state.list := {Record.subtract Comp.state.list Sub}
+				       if {HasFeature Comp.state.list Sub} then
+					  NIP = deletePanel(Comp.state.list.Sub)
+					  {QTkHelper.manageIP NIP Out Comp}
+					  Comp.state.list := {Record.subtract Comp.state.list Sub}
+				       else
+					  raise panel_not_exists(Sub) end
+				       end
 				    else
 				       {QTkHelper.manageIP IP Out Comp}
 				    end
