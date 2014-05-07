@@ -1,8 +1,8 @@
 % First step
-canvas(QTk/canvas) out -> in#1 td(QTk/td) out -> in win(QTk/window)
+canvas(QTk/canvas) out -> place#1 td(QTk/td) out -> in win(QTk/window)
 win() out -> input disp(display)
 "create(width:500 height:500)" -> in canvas()
-"create" -> in#td td()
+"create" -> in td()
 "scan(mark 0 0)" -> in canvas()
 "scan(dragto 5 5)" -> in canvas()
 % Arc
@@ -36,9 +36,9 @@ text(QTk/canvas/text) out -> widget canvas()
 % Window
 winItem(QTk/canvas/window) out -> widget canvas()
 "create(250 350)" -> in winItem()
-"create(text:"button")" -> in b(QTk/button) out -> in#1 tdw(QTk/td)
-b2(calculator/calculator) out -> in#2 tdw() out -> window winItem()
-"create" -> in#td tdw()
+"create(text:"button")" -> in b(QTk/button) out -> place#1 tdw(QTk/td)
+b2(calculator/calculator) out -> place#2 tdw() out -> window winItem()
+"create" -> in tdw()
 % Options
 "opt(pre:'default ')" -> options disp()
 

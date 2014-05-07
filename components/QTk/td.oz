@@ -8,11 +8,11 @@ define
    fun {CompNewArgs Name}
       {Comp.new comp(
 		   name:Name type:'QTk/td'
-		   asynchInArrayPorts(
-		      'in'(proc{$ Sub Ins Out Comp} IP in
-				    IP = {Ins.Sub.get}
+		   asynchInPorts(
+		      'in'(proc{$ In Out Comp} IP in
+				    IP = {In.get}
 				    case {Label IP}
-				    of create andthen Sub == td then H B in
+				    of create then H B in
 				       B = {Record.adjoin IP grid(handle:H)}
 				       {Out.out create(B)}
 				       {Wait H}
@@ -20,14 +20,20 @@ define
 				       Comp.state.handle := H
 				       {QTkHelper.feedBuffer Out Comp}
 				    else
-				       if {Label IP} == create then NIP in
-					  NIP = configure(IP.1 column:1 row:Sub)
-					  {QTkHelper.manageIP NIP Out Comp}
-				       else
-					  {QTkHelper.manageIP IP Out Comp}
-				       end
+				      {QTkHelper.manageIP IP Out Comp}
 				    end
-				 end)
+			   end)
+		      )
+		   asynchInArrayPorts(
+		      place(proc{$ Sub Ins Out Comp} IP in
+			       IP = {Ins.Sub.get}
+			        if {Label IP} == create then NIP in
+				   NIP = configure(IP.1 column:1 row:Sub)
+				   {QTkHelper.manageIP NIP Out Comp}
+				else
+				   {QTkHelper.manageIP IP Out Comp}
+				end
+			    end)
 		      )
 		   outPorts(out)
 		   outArrayPorts(action)

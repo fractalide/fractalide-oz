@@ -1,18 +1,17 @@
 % First step : two fields
-"create" -> in#lr lr(QTk/lr)
-f1(QTk/entry) out -> in#1 lr()
-f2(QTk/entry) out -> in#2 lr()
+"create" -> in lr(QTk/lr)
+f1(QTk/entry) out -> place#1 lr()
+f2(QTk/entry) out -> place#2 lr()
 "create(init:[48])" -> in f1()
 "create(init:[48])" -> in f2()
 
-
 % Second step : lr, button and result field
-lr() out -> in#1 td(QTk/td)
-calcButton(QTk/button) out -> in#2 td()
-fResult(QTk/entry) out -> in#3 td()
+lr() out -> place#1 td(QTk/td)
+calcButton(QTk/button) out -> place#2 td()
+fResult(QTk/entry) out -> place#3 td()
 "create(text:"calc")" -> in calcButton()
 "create" -> in fResult()
-"create" -> in#td td()
+"create" -> in td()
 
 % Logic
 % From button
@@ -42,9 +41,8 @@ f1() action#Enter -> input dispSpecific(display)
 "set(width:15)" -> in f2()
 
 % Some options
-"set(title:'Calculator')" -> in#td td()
-
+"set(title:'Calculator')" -> in td()
 
 %OutLinks
 td() out => out
-in => actions_in aw(ui/actionsWrapper) actions_out -> in#td td()
+in => actions_in aw(ui/actionsWrapper) actions_out -> in td()

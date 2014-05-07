@@ -1,13 +1,13 @@
 % First step : two calculator in ph
-test1(calculator/calculator) out -> place ph(QTk/placeholder) out -> in#1 td(QTk/td) out -> in win(QTk/window)
+test1(calculator/calculator) out -> place ph(QTk/placeholder) out -> place#1 td(QTk/td) out -> in win(QTk/window)
 test2(calculator/calculator) out -> place ph()
 win() out -> input disp(display)
 "create()" -> in ph()
 % Second step : a button to switch
-button(QTk/button) out -> in#2 td()
+button(QTk/button) out -> place#2 td()
 button() action#button_clicked -> input st(ipEdit) out -> input lb(loadbalancer) output#1 -> in test1()
 lb() output#2 -> in test2()
 "opt(text:display)" -> options st()
 "create(text:"next calculator")" -> in button()
 "opt(pre:'default ')" -> options disp()
-"create" -> in#td td()
+"create" -> in td()
