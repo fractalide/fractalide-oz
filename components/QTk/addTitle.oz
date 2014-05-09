@@ -6,11 +6,12 @@ export
 define
    fun {CompNewArgs Name}
       {Comp.new comp(name:Name type:'QTk/addTitle'
-		     inPorts(input(proc{$ In Out Comp} IP in
-				      IP = {In.get}
-				      {Out.output create({Record.adjoinAt IP.1 title Comp.options.title})}
-				   end))
+		     inPorts(input)
 		     outPorts(output)
+		     procedure(proc{$ Ins Out Comp} IP in
+				  IP = {Ins.input.get}
+				  {Out.output create({Record.adjoinAt IP.1 title Comp.options.title})}
+			       end)
 		     options(title:_)
 		    )
       }

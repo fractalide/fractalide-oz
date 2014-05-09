@@ -4,10 +4,10 @@ import
 export
    new: CompNew
 define
-   proc {FunPort1 Buf Out Comp}
+   proc {FunPort1 Bufs Out Comp}
       Num IP P
    in
-      IP = {Buf.get}
+      IP = {Bufs.input.get}
       Num = (Comp.state.cpt mod {Record.width Out.output}) + 1
       P = {List.nth {Record.toList Out.output} Num}
       {P IP}
@@ -16,8 +16,9 @@ define
    fun {CompNew Name}
       {Comp.new comp(
 		   name:Name type:loadbalancer
-		   inPorts(input(FunPort1))
+		   inPorts(input)
 		   outArrayPorts(output)
+		   procedure(FunPort1)
 		   state(cpt:0)
 		   )
       }

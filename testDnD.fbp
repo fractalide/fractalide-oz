@@ -5,7 +5,7 @@ win() out -> input disp(display)
 "set(title:"Fractallang")" -> in win()
 % Image
 imItem(QTk/canvas/image) out -> widget canvas()
-"photo(file:"logo.gif")" -> input im(ui/image) output -> image imItem()
+"photo(file:"logo.gif")" -> input im(QTk/image) output -> image imItem()
 "create(100 100)" -> in imItem()
 
 % Drag and drop image

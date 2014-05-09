@@ -7,13 +7,13 @@ define
    fun {New Name} Generator in
       Generator = {Comp.new component(
 			       name: Name type:generator
-			       inPorts(input(proc{$ In Out Comp} IP in
-						IP = {In.get}
-						{Out.output IP+1}
-						{Delay Comp.options.delay}
-					     end)
-				       )
+			       inPorts(input)
 			       outPorts(output)
+			       procedure(proc{$ Ins Out Comp} IP in
+					    IP = {Ins.input.get}
+					    {Out.output IP+1}
+					    {Delay Comp.options.delay}
+					 end)
 			       options(delay:1000)
 			       )
 		  }

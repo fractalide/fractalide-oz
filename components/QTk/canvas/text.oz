@@ -8,9 +8,11 @@ define
    fun {CompNewArgs Name}
       {Comp.new comp(
 		   name:Name type:'QTk/canvas/text'
-		   inPorts(
-		      'in'(proc{$ In Out Comp} IP in
-				    IP = {In.get}
+		   inPorts('in')
+		   outPorts(out)
+		   outArrayPorts(action)
+		   procedure(proc{$ Ins Out Comp} IP in
+				    IP = {Ins.'in'.get}
 				    case {Label IP}
 				    of create then H B in
 				       B = {Record.adjoin {QTkHelper.recordIncInd IP} create(text handle:H)}
@@ -23,9 +25,6 @@ define
 				       {QTkHelper.manageIP IP Out Comp}
 				    end
 			   end)
-		      )
-		   outPorts(out)
-		   outArrayPorts(action)
 		   state(handle:_ buffer:nil)
 		   )}
    end

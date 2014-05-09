@@ -13,7 +13,7 @@ bitmap(QTk/canvas/bitmap) out -> widget canvas()
 "create(10 10 bitmap:warning)" -> in bitmap()
 % Image
 imItem(QTk/canvas/image) out -> widget canvas()
-"photo(file:"logo.gif")" -> input im(ui/image) output -> image imItem()
+"photo(file:"logo.gif")" -> input im(QTk/image) output -> image imItem()
 "create(350 150)" -> in imItem()
 % Line
 line(QTk/canvas/line) out -> widget canvas()

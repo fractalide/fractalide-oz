@@ -22,31 +22,34 @@ define
    fun {CompNewArgs Name}
       {Comp.new comp(
 		   name:Name type:'QTk/scrollframe'
-		   asynchInPorts(
-		      'in'(proc{$ In Out Comp} IP in
-			      IP = {In.get}
-			      case {Label IP}
-			      of create then
-				 Comp.state.init := IP | Comp.state.init
-				 {Create Out Comp}
-			      else
-				 {QTkHelper.manageIP IP Out Comp}
-			      end
-			   end)
-		      frame(proc{$ In Out Comp} IP in
-			       IP = {In.get}
-			       case {Label IP}
-			       of create then
-				  Comp.state.frame := IP.1 | Comp.state.frame
-				  {Create Out Comp}
-			       else
-				  {QTkHelper.manageIP IP Out Comp}
-			       end
-			    end)
-		      )
+		   inPorts('in' frame)
 		   outPorts(out)
 		   outArrayPorts(action)
+		   procedure(proc{$ Ins Out Comp}
+				if {Ins.'in'.size} > 0 then {InProc Ins.'in' Out Comp} end
+				if {Ins.frame.size} > 0 then {FrameProc Ins.frame Out Comp} end
+			     end)
 		   state(handle:_ buffer:nil init:nil frame:nil)
 		   )}
+   end
+   proc{InProc In Out Comp} IP in
+      IP = {In.get}
+      case {Label IP}
+      of create then
+	 Comp.state.init := IP | Comp.state.init
+	 {Create Out Comp}
+      else
+	 {QTkHelper.manageIP IP Out Comp}
+      end
+   end
+   proc{FrameProc In Out Comp} IP in
+      IP = {In.get}
+      case {Label IP}
+      of create then
+	 Comp.state.frame := IP.1 | Comp.state.frame
+	 {Create Out Comp}
+      else
+	 {QTkHelper.manageIP IP Out Comp}
+      end
    end
 end

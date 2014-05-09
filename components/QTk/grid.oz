@@ -25,42 +25,47 @@ define
    fun {CompNewArgs Name}
       {Comp.new comp(
 		   name:Name type:'QTk/grid'
-		   asynchInPorts(
-		      'in'(proc{$ In Out Comp} IP in
-				    IP = {In.get}
-				    case {Label IP}
-				    of create then H B in
-				       B = {Record.adjoin IP grid(handle:H)}
-				       {Out.out create(B)}
-				       {Wait H}
-				       {QTkHelper.bindEvents H Out}
-				       Comp.state.handle := H
-				       {QTkHelper.feedBuffer Out Comp}
-				    else
-				       {QTkHelper.manageIP IP Out Comp}
-				    end
-				 end)
-		      )
-		   asynchInArrayPorts(
-		      grid(proc{$ Sub Ins Out Comp} IP in
-			      IP = {Ins.Sub.get}
-			      case {Label IP}
-			      of create then C NIP in
-				 C = {Split Sub "x"}
-				 NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
-				 {QTkHelper.manageIP NIP Out Comp}
-			      [] configure andthen Sub \= grid then C NIP in
-				 C = {Split Sub "x"}
-				 NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
-				 {QTkHelper.manageIP NIP Out Comp}
-			      else
-				 {QTkHelper.manageIP IP Out Comp}
-			      end
-			   end)
-		      )
+		   inPorts('in')
+		   inArrayPorts(grid)
 		   outPorts(out)
 		   outArrayPorts(action)
+		   procedure(proc{$ Ins Out Comp}
+				if {Ins.'in'.size} > 0 then {InProc Ins.'in' Out Comp} end
+				{Record.forAllInd Ins.grid
+				 proc{$ Name In}
+				    if {In.size} > 0 then {GridProc Name Ins.grid Out Comp} end
+				 end}
+			     end)
 		   state(handle:_ buffer:nil)
 		   )}
    end
+   proc{InProc In Out Comp} IP in
+      IP = {In.get}
+      case {Label IP}
+      of create then H B in
+	 B = {Record.adjoin IP grid(handle:H)}
+	 {Out.out create(B)}
+	 {Wait H}
+	 {QTkHelper.bindEvents H Out}
+	 Comp.state.handle := H
+	 {QTkHelper.feedBuffer Out Comp}
+      else
+	 {QTkHelper.manageIP IP Out Comp}
+      end
+   end
+   proc{GridProc Sub Ins Out Comp} IP in
+       IP = {Ins.Sub.get}
+       case {Label IP}
+       of create then C NIP in
+	  C = {Split Sub "x"}
+	  NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
+	  {QTkHelper.manageIP NIP Out Comp}
+       [] configure andthen Sub \= grid then C NIP in
+	  C = {Split Sub "x"}
+	  NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
+	  {QTkHelper.manageIP NIP Out Comp}
+       else
+	  {QTkHelper.manageIP IP Out Comp}
+       end
+    end
 end
