@@ -176,14 +176,15 @@ define
 		  else {RecCB Br}
 		  end
 	       else
-		  if {CheckListB {Record.toList B.qs}} then true
+		  if {Record.width B.qs} == 0 orelse {CheckListB {Record.toList B.qs}} then true
 		  else {RecCB Br}
 		  end
 	       end
 	    end
 	 end
       in
-	 {RecCB Bufs}
+	 if {Record.width Bufs} == 0 then true
+	 else {RecCB Bufs} end
       end
       thread
 	 %Every messages send to the component is deal in this FoldL
@@ -244,11 +245,7 @@ define
 	     [] exec then
 		{Exec State}
 	     [] stop then
-		for T in State.threads do
-		   if {Thread.state T} \= terminated then
-		      {Thread.terminate T}
-		   end
-		end
+		if {Thread.state State.threads} \= terminated then {Thread.terminate State.threads} end
 		{Record.adjoinAt State run false}
 	     [] getInPort(Port ?R) then
 		R=State.inPorts.Port
@@ -273,11 +270,7 @@ define
 		{Exec State}
 	     [] send('STOP' _ Ack) then
 		Ack = ack
-		for T in State.threads do
-		   if {Thread.state T} \= terminated then
-		      {Thread.terminate T}
-		   end
-		end
+		if {Thread.state State.threads} \= terminated then {Thread.terminate State.threads} end
 		State
 	     [] send(options Msg Ack) then NOptions NState in
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
