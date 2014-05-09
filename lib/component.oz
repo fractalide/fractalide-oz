@@ -276,7 +276,7 @@ define
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
 		Ack = ack
 		NState = {Record.adjoinAt State options NOptions}
-		if {CheckBuffers {Record.toList NState.inPorts}} then {Exec NState} else NState end
+		if {Record.width State.inPorts} > 0 then {Exec NState} else NState end
 	     [] send(InPort Msg Ack) then
 		{State.inPorts.InPort.q.put Msg Ack}
 		{Exec State}
