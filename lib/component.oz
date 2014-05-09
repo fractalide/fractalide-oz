@@ -4,31 +4,7 @@ export
    setProcedureInPort: SetProcedureInPort
    resetInPort: ResetInPort
    setNameInPort: SetNameInPort
-define
-   /*
-   * NewThread - CTM p382
-   * Thread abstraction with termination detection
-    */
-   local
-      proc {ZeroExit N Is}
-	 case Is of I|Ir then
-	    if N+I \= 0 then {ZeroExit N+I Ir} end
-	 end
-      end
-   in
-      proc {NewThread P ?SubThread}
-	 Is Pt = {NewPort Is}
-      in
-	 proc {SubThread P}
-	    {Send Pt 1}
-	    thread
-	       {P} {Send Pt ~1}
-	    end
-	 end
-	 {SubThread P}
-	 {ZeroExit 0 Is}
-      end
-   end
+define 
    /*
    * NewQueue : return a bounded buffer, as presented in CTM book
    * There is a max size, which represent the size of the buffer.
@@ -81,21 +57,18 @@ define
 	       type: aType
 	       description: "the description and documentation of the component"
 	       inPorts:'in'(
-			  name:port(q:AQueue
-				    procedure:AProc
-				    )
-			  name2:arrayPort(q:queues(AQueue AnOtherQueue)
-					  procedure:Proc
+			  name:port(q:AQueue)
+			  name2:arrayPort(q:queues(a:AQueue b:AnOtherQueue)
+					  size:10
 					  )
 			  )
 	       outPorts:out(name:nil
 			    name2:arrayPort(1:nil
 					    2:[comp#port comp2#port2])
 			    ...)
-	       procs:procs(Proc1 Proc2)
-	       var:var(x:_ y:_ z:_)
+	       procedure:Proc
 	       state:{NewDictionary}
-	       threads:[Thread1 Thread2 Thread3]
+	       threads:Thread
 	       options:opt(pre:'x' post:'y'))
    
    */
@@ -137,6 +110,29 @@ define
 	 }
       end
       /*
+      PRE : InPorts is the inPorts field of the component record
+      POST : A new record, where the labels are the port's name, and the value its buffer. 
+      */
+      fun {PrepareIns InPorts}
+	 {Record.foldLInd InPorts
+	  fun {$ Name Acc Port}
+	     case Port
+	     of port(q:Queue) then
+		{Record.adjoinAt Acc Name Queue}
+	     [] arrayPort(qs:Queues size:_) then SubBuffer in
+		SubBuffer = {Record.foldLInd Queues
+			     fun{$ IndArray AccArray QueueArray}
+				{Record.adjoinAt AccArray IndArray QueueArray}
+			     end
+			     subInBuffers()
+			    }
+		{Record.adjoinAt Acc Name SubBuffer}
+	     end
+	  end
+	  inBuffers()
+	 }
+      end
+      /*
       PRE : Opt is a record that represent the options field of a component record.
       POST : Return true if all the elements of Opt are binded, else otherwise.
       */
@@ -154,17 +150,17 @@ define
 	 {Rec {Record.toList Opt}}
       end
       /*
-      PRE :
-      POST :
+      PRE : Receive all the input ports
+      POST : Return true if there is at least one IP in at least one buffer
       */
       fun {CheckBuffers Bufs}
 	 fun {CheckListB Buffers}
 	    fun {Rec Ls}
 	       case Ls
-	       of nil then true
+	       of nil then false
 	       [] L|Lr then
-		  if {L.size} > 0 then {Rec Lr}
-		  else false
+		  if {L.size} > 0 then true
+		  else {Rec Lr}
 		  end
 	       end
 	    end
@@ -173,15 +169,15 @@ define
 	 end
 	 fun {RecCB Bs}
 	    case Bs
-	    of nil then true
+	    of nil then false
 	    [] B|Br then
 	       if {Label B} == port then
-		  if {B.q.size} > 0 then {RecCB Br}
-		  else false
+		  if {B.q.size} > 0 then true
+		  else {RecCB Br}
 		  end
 	       else
-		  if {CheckListB {Record.toList B.qs}} then {RecCB Br}
-		  else false
+		  if {CheckListB {Record.toList B.qs}} then true
+		  else {RecCB Br}
 		  end
 	       end
 	    end
@@ -189,143 +185,51 @@ define
       in
 	 {RecCB Bufs}
       end
-      proc {ExecAsynch State}
-	 proc {RecSimple Port} S in
-	    S = {Port.q.size} 
-	    if S == 0 then skip
-	    else
-	       {Port.p Port.q {PrepareOut State.outPorts} State}
-	       {RecSimple Port}
-	    end
-	 end
-	 proc {RecArray Port Sub} S in
-	    S = {Port.qs.Sub.size}
-	    if S == 0 then skip
-	    else
-	       {Port.p Sub Port.qs {PrepareOut State.outPorts} State}
-	       {RecArray Port Sub}
-	    end
-	 end
-      in
-	 {Record.forAll State.asynchInPorts
-	  proc{$ P}
-	     {RecSimple P}
-	  end
-	 }
-	 {Record.forAll State.asynchInArrayPorts
-	  proc{$ P}
-	     {Record.forAllInd P.qs
-	      proc {$ Ind _}
-		 {RecArray P Ind}
-	      end
-	     }
-	  end
-	 }
-      end
       thread
 	 %Every messages send to the component is deal in this FoldL
 	 {FoldL Stream
 	  fun {$ State Msg}
 	     /*
 	     CheckSync - 
-	     Return true if all inPorts are synchronized.
-	     A port that is synchronized if a it's ready to receive the next IP (last execution is terminated).
-             At least one port must have an IP in its buffer.
-			    PRE : State is a record that represent a component
-			    POST : True if the component has terminate the last execution
-			           False otherwise.
+	     Return true if the component can start :
+	       - all options are defined
+	       - there is at least one IP in at least one port
+	       - the previous execution is ended
+	       - the run variable is true
 			    
 	     */
 	     fun {CheckSync State}
-		/*
-		PRE : Threads is a list corresponding to the threads field of a component record
-	        POST : Return true if all the thread are terminated, else otherwise
-		*/						       
-		fun {CheckThread Threads}
-		   fun {Rec Threads}
-		      case Threads
-		      of nil then true
-		      [] T|Ts then
-			 if {Thread.state T} == terminated then
-			    {CheckThread Ts}
-			 else
-			    false
-			 end
-		      end
-		   end
-		in
-		   if Threads == threads then true
-		   else {Rec Threads} end
-		end
-	     in
-		{CheckThread State.threads} andthen {CheckOpt State.options} andthen {CheckBuffers {Record.toList State.inPorts}} andthen State.run
+		(State.threads == nil orelse {Thread.state State.threads} == terminated) andthen {CheckOpt State.options} andthen {CheckBuffers {Record.toList State.inPorts}} andthen State.run
 	     end
 	     /*
 	     Exec -
-             Launch every procedures for the components : port procedures and independant procedures.
+             Launch the procedure for the components.
              PRE : State is record representing a component
              POST : Return a new state representing the same component, with the new value for the execution.
-		    If the ports are synchronized, The fields that change are the 's' field in inPorts field, the var field, the threads field.
-		    Else, the record is unchanged.
 	     */			      
 	     fun {Exec State} Sync in
 	        % Look for sync
 		Sync = {CheckSync State}
 		if {Not Sync} then
 		   State
-		else NVar Out Th1 Th2 SubThread in %All port can receive the next IP
-		   % Put at undefined the variables that are common to all procedures
-		   NVar = {Record.map State.var fun{$ _} _ end}
+		else Ins Out Th in 
+		   % Build a record with all the buffers of all input ports.
+		   Ins = {PrepareIns State.inPorts}
 		   % Build a procedure to send IP to the output ports. 
 		   Out = {PrepareOut State.outPorts}
 		   thread
-		      {NewThread proc {$} 
-		                 % Launch every ports procedures, keeping the thread.
-				    Th1 = {Record.foldL State.inPorts
-					   fun {$ Acc Port} IPs T in
-					      case Port
-					      of port(q:Queue p:_) then
-						 IPs = Queue
-					      [] arrayPort(qs:Qs p:_ size:_) then
-						 IPs = {Record.foldR Qs fun{$ E Acc} E|Acc end nil}
-					      end
-					      {SubThread proc{$}
-							    T = {Thread.this}
-							    try
-							       {Port.p IPs Out State}
-							    catch E then
-							       {Out.'ERROR' port_procedure(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
-							    end
-							 end
-					      }
-					      T|Acc
-					   end
-					   nil
-					  }
-		   % Launch every independant procedures, keeping the thread.
-				    Th2 = {FoldL {Arity State.procs}
-					   fun {$ Acc Proc} T in
-					      {SubThread proc{$}
-							    T = {Thread.this}
-							    try
-							       {State.procs.Proc Out State}
-							    catch E then
-							       {Out.'ERROR' independent_procedure(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
-							    end
-							 end
-					      }
-					      T|Acc
-					   end
-					   Th1
-					  }
-				 end
-		       SubThread }
+		      Th = {Thread.this}
+		      try
+			 {State.procedure Ins Out State}
+		      catch E then
+			 {Out.'ERROR' component_exception(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
+		      end
 		      if {Record.width State.inPorts} > 0 then
 			 {Send Point exec} %Restart
 		      end
 		   end
-		   % Return the new state, with the new var record and the new inPorts record.
-		   {Record.adjoinList State [var#NVar threads#Th2]}
+		   % Return the new state, with the thread
+		   {Record.adjoinList State [threads#Th]}
 		end
 	     end
 	  in
@@ -336,7 +240,6 @@ define
 	     [] changeState(NState) then NState
 	     [] start then NState in
 		NState = {Record.adjoinAt State run true}
-		{ExecAsynch NState}
 		{Exec NState}
 	     [] exec then
 		{Exec State}
@@ -361,34 +264,10 @@ define
 		else
 		   State
 		end
-	     [] changeProcPort(Port Proc) then NPort NInPorts in
-		NPort = {Record.adjoinAt State.inPorts.Port p Proc}
-		NInPorts = {Record.adjoinAt State.inPorts Port NPort}
-		{Record.adjoinAt State inPorts NInPorts}
 	     % Interact with the component
 	     [] send(InPort#N Msg Ack) then
-		if {HasFeature State.asynchInArrayPorts InPort} then NP NQs NPort in
-		   NP = if {Not {HasFeature State.asynchInArrayPorts.InPort.qs N}} then
-			   {Record.adjoinAt State.asynchInArrayPorts.InPort.qs N {NewQueue State.asynchInArrayPorts.InPort.size}}
-			else
-			   State.asynchInArrayPorts.InPort.qs
-			end
-		   {NP.N.put Msg Ack}
-		   if State.run then
-		      try
-			 {State.asynchInArrayPorts.InPort.p N NP {PrepareOut State.outPorts} State}
-		      catch E then Out in
-			 Out = {PrepareOut State.outPorts}
-			 {Out.'ERROR' async_array_port_procedure(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
-		      end
-		   end
-		   NQs = {Record.adjoinAt State.asynchInArrayPorts.InPort qs NP}
-		   NPort = {Record.adjoinAt State.asynchInArrayPorts InPort NQs}
-		   {Record.adjoinAt State asynchInArrayPorts NPort}
-		else
-		   {State.inPorts.InPort.qs.N.put Msg Ack}
-		   {Exec State}
-		end
+		{State.inPorts.InPort.qs.N.put Msg Ack}
+		{Exec State}
 	     [] send('START' _ Ack) then
 		Ack = ack
 		{Exec State}
@@ -406,21 +285,8 @@ define
 		NState = {Record.adjoinAt State options NOptions}
 		if {CheckBuffers {Record.toList NState.inPorts}} then {Exec NState} else NState end
 	     [] send(InPort Msg Ack) then
-		if {HasFeature State.asynchInPorts InPort} then
-		   {State.asynchInPorts.InPort.q.put Msg Ack}
-		   if State.run then
-		      try
-			 {State.asynchInPorts.InPort.p State.asynchInPorts.InPort.q {PrepareOut State.outPorts} State}
-		      catch E then Out in
-			 Out = {PrepareOut State.outPorts}
-			 {Out.'ERROR' async_simple_port_procedure(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
-		      end
-		   end
-		   State
-		else
-		   {State.inPorts.InPort.q.put Msg Ack}
-		   {Exec State}
-		end
+		{State.inPorts.InPort.q.put Msg Ack}
+		{Exec State}
 	     [] bind(OutPort#N Comp Name) then NAPort NPort NOutPorts in
 		try
 		   NAPort = Comp#Name | State.outPorts.OutPort.N
@@ -480,7 +346,7 @@ define
       {Record.foldL In
        fun {$ Acc P} Size in
 	  Size = if {HasFeature P size} then P.size else 25 end
-	  {Record.adjoinAt Acc {Label P} port(q:{NewQueue Size} p:P.1)}
+	  {Record.adjoinAt Acc {Label P} port(q:{NewQueue Size})}
        end
        'in'()
       }
@@ -489,27 +355,9 @@ define
       {Record.foldL In
        fun {$ Acc P} Size in
 	  Size = if {HasFeature P size} then P.size else 25 end
-	  {Record.adjoinAt Acc {Label P} arrayPort(qs:queues() p:P.1 size:Size)}
+	  {Record.adjoinAt Acc {Label P} arrayPort(qs:queues() size:Size)}
        end
        'arrayIn'()
-      }
-   end
-   fun {AsynchInPorts In}
-      {Record.foldL In
-       fun {$ Acc P} Size in
-	  Size = if {HasFeature P size} then P.size else 25 end
-	  {Record.adjoinAt Acc {Label P} asynchPort(p:P.1 q:{NewQueue Size})}
-       end
-       asynchIn()
-      }
-   end
-   fun {AsynchInArrayPorts In}
-      {Record.foldL In
-       fun {$ Acc P} Size in
-	  Size = if {HasFeature P size} then P.size else 25 end
-	  {Record.adjoinAt Acc {Label P} asynchPort(p:P.1 qs:queues() size:Size)}
-       end
-       asynchInArray()
       }
    end
    fun {OutPorts Out}
@@ -528,14 +376,6 @@ define
        arrayOut()
       }
    end
-   fun {Var Vars}
-      {Record.foldL Vars
-       fun {$ Acc E}
-	  {Record.adjoinAt Acc E _}
-       end
-       var()
-      }
-   end
    fun {BuildNState St} D in
       D = {NewDictionary}
       {Record.forAllInd St
@@ -547,10 +387,9 @@ define
       DefaultState NState in
       DefaultState = component(name:_ type:_ description:""
 			       inPorts:'in'() outPorts:out('ERROR':nil)
-			       procs:procs() var:var() state:{NewDictionary}
+			       procedure:nil state:{NewDictionary}
 			       threads:nil options:opt()
 			       run:true entryPoint:_
-			       asynchInPorts:aIn() asynchInArrayPorts:aInArray()
 			      )
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
@@ -559,12 +398,9 @@ define
 		   [] inArrayPorts then {Record.adjoinAt S inPorts {Record.adjoin S.inPorts {InArrayPorts Rec}}}
 		   [] outPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutPorts Rec}}}
 		   [] outArrayPorts then {Record.adjoinAt S outPorts {Record.adjoin S.outPorts {OutArrayPorts Rec}}}
-		   [] procedures then {Record.adjoinAt S procs Rec}
-		   [] var then {Record.adjoinAt S var {Var Rec}}
+		   [] procedure then {Record.adjoinAt S procedure Rec.1}
 		   [] state then {Record.adjoinAt S state {BuildNState Rec}}
 		   [] options then {Record.adjoinAt S options Rec}
-		   [] asynchInPorts then {Record.adjoinAt S asynchInPorts {AsynchInPorts Rec}}
-		   [] asynchInArrayPorts then {Record.adjoinAt S asynchInArrayPorts {AsynchInArrayPorts Rec}}
 		   else
 		      if Ind == name then {Record.adjoinAt S name Rec}
 		      elseif Ind == type then {Record.adjoinAt S type Rec}
