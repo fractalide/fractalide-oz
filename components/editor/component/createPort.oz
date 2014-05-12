@@ -7,9 +7,10 @@ define
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:'components/editor/component/createPort'
-		   inPorts(
-		      ui_in(proc{$ In Out Comp} IP in
-			       IP = {In.get}
+		   inPorts('in')
+		   outPorts(rect name)
+		   procedure(proc{$ Ins Out Comp} IP in
+				IP = {Ins.'in'.get}
 			       case {Label IP}
 			       of create then X Y in
 				  {Out.rect {Record.subtractList IP [name]}}
@@ -18,8 +19,6 @@ define
 				  {Out.name create(X Y text:IP.name state:IP.state)}
 			       end
 			    end)
-		      )
-		   outPorts(rect name)
 		   )
       }
    end

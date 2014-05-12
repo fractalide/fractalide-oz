@@ -58,7 +58,11 @@ define
        case {Label IP}
        of create then C NIP in
 	  C = {Split Sub "x"}
-	  NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
+	  NIP = if {HasFeature IP.1 glue} then
+		   {Record.adjoin create({Record.subtract IP.1 glue}) configure(row:C.row column:C.column sticky:IP.1.glue)}
+		else
+		   {Record.adjoin IP configure(row:C.row column:C.column)}
+		end
 	  {QTkHelper.manageIP NIP Out Comp}
        [] configure andthen Sub \= grid then C NIP in
 	  C = {Split Sub "x"}

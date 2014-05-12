@@ -1,20 +1,17 @@
 % ---
-% Creation
-% Rect (main box)
-ui_in => input create(editor/component/create) rect -> ui_in rect(ui/canvas/rectangle) ui_out => ui_out
-rect() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
-actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in awOut()
+% Action flow
+in => in awIn(QTk/actionsWrapper) out -> in awOut(QTk/actionsWrapper) out => out
 awOut() action => action
+
+% UI flow
+awIn() action#create -> input create(editor/component/create) rect -> in rect(QTk/canvas/rectangle) out -> in awOut()
 % Ports panels
-create() inPorts -> ui_in inPortsPanel(editor/component/portPanel) widget_out => ui_out
-create() outPorts -> ui_in outPortsPanel(editor/component/portPanel) widget_out => ui_out
-inPortsPanel() actions_out -> actions_in awOut()
-outPortsPanel() actions_out -> actions_in awOut()
+create() inPorts -> in inPortsPanel(editor/component/portPanel) out -> in awOut()
+create() outPorts -> in outPortsPanel(editor/component/portPanel) out -> in awOut()
 % name
-create() name -> ui_in name(editor/labelentry) ui_out -> place#1 td(ui/td) ui_out -> window winCanvas(ui/canvas/window) ui_out => ui_out
-name() actions_out -> actions_in awOut()
-create() pos -> ui_in winCanvas()
-"start(bg:white)" -> ui_in td()
+create() name -> in name(editor/labelentry) out -> place#1 td(QTk/td) out -> window winCanvas(QTk/canvas/window) out -> in awOut()
+create() pos -> in winCanvas()
+"create(bg:white)" -> in td()
 % The size logic component
 create() rect -> input sizeLogic(editor/component/sizeLogic)
 
@@ -26,17 +23,17 @@ rect() action#Motion -> input mouseLogic()
 
 % ---
 % Drag&Drop
-mouseLogic() dnd -> input dnd(dnd/dndLogic) move -> actions_in rect()
+mouseLogic() dnd -> input dnd(dnd/dndLogic) move -> in rect()
 
-dnd() move -> actions_in inPortsPanel()
-dnd() move -> actions_in outPortsPanel()
-dnd() move -> actions_in winCanvas()
+dnd() move -> in inPortsPanel()
+dnd() move -> in outPortsPanel()
+dnd() move -> in winCanvas()
 
 % ---
 % Grab when mouse over
 rect() action#Enter -> input ieEnter(ipEdit) out -> input icLogic(editor/component/inCompLogic)
 rect() action#Leave -> input ieLeave(ipEdit) out -> input icLogic()
-icLogic() output -> actions_in awOut()
+icLogic() output -> in awOut()
 "opt(text:inComponent)" -> options ieEnter()
 "opt(text:outComponent)" -> options ieLeave()
 rect() action#ButtonPress -> input icLogic()
@@ -53,7 +50,7 @@ inPortsPanel() action#ButtonPress -> input icLogic()
 dnd() move -> input sizeLogic()
 inPortsPanel() action#right -> input sizeLogic()
 outPortsPanel() action#left -> input sizeLogic()
-sizeLogic() newPos -> actions_in rect()
+sizeLogic() newPos -> in rect()
 
 % ---
 % The "real" component
@@ -61,30 +58,30 @@ sizeLogic() newPos -> actions_in rect()
 create() comp -> input compManager(editor/component/compManager)
 
 % At link creation, add the real comp entry point to the record
-outPortsPanel() action#beginLink -> input compManager() output -> actions_in awOut()
+outPortsPanel() action#beginLink -> input compManager() output -> in awOut()
 outPortsPanel() action#endLink -> input compManager()
 inPortsPanel() action#beginLink -> input compManager()
 inPortsPanel() action#endLink -> input compManager()
 
 % ---
 % Show hide port panel and color the rect
-aw() action#openPorts -> actions_in inPortsPanel()
-aw() action#openPorts -> actions_in outPortsPanel()
-aw() action#closePorts -> actions_in inPortsPanel()
-aw() action#closePorts -> actions_in outPortsPanel()
-aw() action#openPorts -> input ieColorBlue(ipEdit) out -> actions_in rect()
-aw() action#closePorts -> input ieColorBlack(ipEdit) out -> actions_in rect()
+awIn() action#openPorts -> in inPortsPanel()
+awIn() action#openPorts -> in outPortsPanel()
+awIn() action#closePorts -> in inPortsPanel()
+awIn() action#closePorts -> in outPortsPanel()
+awIn() action#openPorts -> input ieColorBlue(ipEdit) out -> in rect()
+awIn() action#closePorts -> input ieColorBlack(ipEdit) out -> in rect()
 "opt(text:set(outline:blue))" -> options ieColorBlue()
 "opt(text:set(outline:black))" -> options ieColorBlack()
 
 % ---
 % Show and hide from ports panel to port panel
-inPortsPanel() action#openPorts -> actions_in inPortsPanel()
-outPortsPanel() action#openPorts -> actions_in outPortsPanel()
+inPortsPanel() action#openPorts -> in inPortsPanel()
+outPortsPanel() action#openPorts -> in outPortsPanel()
 % filter closePorts if close for display the same component
-inPortsPanel() action#closePorts -> input filter(editor/component/filterClose) output -> actions_in inPortsPanel()
-outPortsPanel() action#closePorts -> input filter(editor/component/filterClose) output -> actions_in outPortsPanel()
-"getEntryPoint(output:getEPFilter)" -> actions_in aw() action#getEPFilter -> input filter()
+inPortsPanel() action#closePorts -> input filter(editor/component/filterClose) output -> in inPortsPanel()
+outPortsPanel() action#closePorts -> input filter(editor/component/filterClose) output -> in outPortsPanel()
+"getEntryPoint(output:getEPFilter)" -> in awIn() action#getEPFilter -> input filter()
 
 % ---
 % addinArrayPort
@@ -93,27 +90,27 @@ inPortsPanel() action#addinArrayPort -> input compManager()
 % ---
 % Events from compEdit
 % start stop
-aw() action#start -> input compManager()
-aw() action#stop -> input compManager()
+awIn() action#start -> input compManager()
+awIn() action#stop -> input compManager()
 % new comp
-aw() action#newComp -> input compManager()
+awIn() action#newComp -> input compManager()
 % delete
-aw() action#delete -> input compManager()
-aw() action#delete -> actions_in inPortsPanel()
-aw() action#delete -> actions_in outPortsPanel()
-aw() action#delete -> actions_in rect()
-aw() action#delete -> actions_in name()
-aw() action#delete -> actions_in td()
-aw() action#delete -> actions_in winCanvas()
+awIn() action#delete -> input compManager()
+awIn() action#delete -> in inPortsPanel()
+awIn() action#delete -> in outPortsPanel()
+awIn() action#delete -> in rect()
+awIn() action#delete -> in name()
+awIn() action#delete -> in td()
+awIn() action#delete -> in winCanvas()
 % select a new type of comp
-compManager() newInPort -> actions_in inPortsPanel()
-compManager() newOutPort -> actions_in outPortsPanel()
+compManager() newInPort -> in inPortsPanel()
+compManager() newOutPort -> in outPortsPanel()
 % Options
-aw() action#options -> input compManager()
+awIn() action#options -> input compManager()
 
 
 % ---
 % Click for the compEdit in editPanel
-mouseLogic() show -> input ieCompEdit(ipEdit) out -> actions_in aw()
+mouseLogic() show -> input ieCompEdit(ipEdit) out -> in awIn()
 "opt(text:getEntryPoint(output:displayComp))" -> options ieCompEdit()
-aw() action#displayComp -> input compManager()
+awIn() action#displayComp -> input compManager()

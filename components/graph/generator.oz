@@ -10,8 +10,10 @@ define
    fun {New Name}
       {Comp.new component(
 		   name: Name type:'graph/generator'
-		   inPorts(type(proc{$ In Out Comp} C Type Name TheComp in
-				   Name#Type = {In.get}
+		   inPorts(type)
+		   outPorts(output)
+		   procedure(proc{$ Ins Out Comp} C Type Name TheComp in
+				   Name#Type = {Ins.type.get}
 				   try
 				      [C] = {Module.link [Type]}
 				      {Wait C}
@@ -26,8 +28,6 @@ define
 				   end
 				   if TheComp \= nil then {Out.output newComp(TheComp)} end
 				end)
-			  )
-		   outPorts(output)
 		   )
       }
    end

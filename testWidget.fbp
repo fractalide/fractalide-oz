@@ -10,7 +10,7 @@ b() action#button_clicked -> input d2(display)
 
 
 "create" -> in lr(QTk/lr) out -> place#2 td()
-label(QTk/label) out -> place#1 lr()
+label(editor/labelentry) out -> place#1 lr()
 "create(init:"checkbox : ")" -> in label()
 checkbutton(QTk/checkbutton) out -> place#2 lr()
 "create" -> in checkbutton()

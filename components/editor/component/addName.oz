@@ -7,15 +7,14 @@ define
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:"editor/component/addName"
-		   inPorts(
-		      input(proc{$ In Out Comp} IP NewName in
-			       IP = {In.get}
-			       NewName = Comp.options.name#IP.name
-			       {Out.output {Record.adjoinAt IP
-					    name NewName}}
-			    end)
-		      )
+		   inPorts(input)
 		   outPorts(output)
+		   procedure(proc{$ Ins Out Comp} IP NewName in
+				IP = {Ins.input.get}
+				NewName = Comp.options.name#IP.name
+				{Out.output {Record.adjoinAt IP
+					     name NewName}}
+			     end)
 		   options(name:_)
 		   )
       }

@@ -7,18 +7,17 @@ export
 define
    fun {CompNewGen Name}
       {CompLib.new comp(
-		   name:Name type:'components/editor/component/compLoad'
-		   inPorts(
-		      input(proc{$ In Out Comp} Type in
-			       _ = {In.get}
-			       Type = {QTk.dialogbox load(initialdir:"." 
-							  title:"Which component?"
-							  $)}
-			       {Out.output dummyName#Type}
-			    end)
+		      name:Name type:'components/editor/component/compLoad'
+		      inPorts(input)
+		      outPorts(output)
+		      procedure(proc{$ Ins Out Comp} Type in
+				   _ = {Ins.input.get}
+				   Type = {QTk.dialogbox load(initialdir:"." 
+							      title:"Which component?"
+							      $)}
+				   {Out.output dummyName#Type}
+				end)
 		      )
-		   outPorts(output)
-		   )
       }
    end
 end

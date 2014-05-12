@@ -7,9 +7,10 @@ define
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:"editor/component/inCompLogic"
-		   inPorts(
-		      input(proc{$ In Out Comp} IP in
-			       IP = {In.get}
+		   inPorts(input)
+		   outPorts(output)
+		   procedure(proc{$ Ins Out Comp} IP in
+			       IP = {Ins.input.get}
 			       case  {Label IP}
 			       of inComponent then
 				  Comp.state.inside := true
@@ -26,8 +27,6 @@ define
 			       end
 				  
 			    end)
-		      )
-		   outPorts(output)
 		   state(inside:false click:false)
 		   )
       }

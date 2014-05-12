@@ -7,9 +7,10 @@ define
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:'components/editor/scan'
-		   inPorts(
-		      input(proc{$ In Out Comp} IP in
-			       IP = {In.get}
+		   inPorts(input)
+		   outPorts(canvas)
+		   procedure(proc{$ Ins Out Comp} IP in
+			       IP = {Ins.input.get}
 			       case {Label IP}
 			       of 'ButtonPress' andthen IP.button == 1 then
 				  {Out.canvas scan(mark IP.x IP.y)}
@@ -23,8 +24,6 @@ define
 				  skip
 			       end
 			    end)
-		      )
-		   outPorts(canvas)
 		   state(click:false)
 		   )
       }

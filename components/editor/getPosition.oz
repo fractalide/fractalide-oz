@@ -7,15 +7,14 @@ define
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:'components/editor/mouseLogic'
-		   inPorts(
-		      input(proc{$ In Out Comp} X Y in
-			       _ = {In.get}
-			       X = {Comp.options.canvas canvasx(100 $)}
-			       Y = {Comp.options.canvas canvasy(50 $)}
-			       {Out.output createComp(button:1 x:X y:Y)}
-			    end)
-		      )
+		   inPorts(input)
 		   outPorts(output)
+		   procedure(proc{$ Ins Out Comp} X Y in
+				_ = {Ins.input.get}
+				X = {Comp.options.canvas canvasx(100 $)}
+				Y = {Comp.options.canvas canvasy(50 $)}
+				{Out.output createComp(button:1 x:X y:Y)}
+			     end)
 		   options(canvas:_)
 		   )
       }

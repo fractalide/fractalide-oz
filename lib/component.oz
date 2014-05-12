@@ -210,14 +210,22 @@ define
 	     */			      
 	     fun {Exec State} Sync in
 	        % Look for sync
-		Sync = {CheckSync State}
+		try
+		   Sync = {CheckSync State}
+		catch E then
+		   raise cannot_sync(error:E state:State name:State.name type:State.type) end
+		end
 		if {Not Sync} then
 		   State
-		else Ins Out Th in 
+		else Ins Out Th in
+		   try
 		   % Build a record with all the buffers of all input ports.
-		   Ins = {PrepareIns State.inPorts}
+		      Ins = {PrepareIns State.inPorts}
 		   % Build a procedure to send IP to the output ports. 
-		   Out = {PrepareOut State.outPorts}
+		      Out = {PrepareOut State.outPorts}
+		   catch E then
+		      raise prepare_ins_out(error:E state:State name:State.name type:State.type) end
+		   end
 		   thread
 		      Th = {Thread.this}
 		      try
@@ -245,7 +253,7 @@ define
 	     [] exec then
 		{Exec State}
 	     [] stop then
-		if {Thread.state State.threads} \= terminated then {Thread.terminate State.threads} end
+		if State.threads \= nil andthen {Thread.state State.threads} \= terminated then {Thread.terminate State.threads} end
 		{Record.adjoinAt State run false}
 	     [] getInPort(Port ?R) then
 		R=State.inPorts.Port
@@ -254,23 +262,31 @@ define
 		R=State.outPorts.Port
 		State
 	     [] addinArrayPort(Port Index) then
-		if {HasFeature State.inPorts Port} then NPort NInPorts in
-		   NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}}
-		   NInPorts = {Record.adjoinAt State.inPorts Port NPort}
-		   {Record.adjoinAt State inPorts NInPorts}
-		else
-		   State
+		try
+		   if {HasFeature State.inPorts Port} then NPort NInPorts in
+		      NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}}
+		      NInPorts = {Record.adjoinAt State.inPorts Port NPort}
+		      {Record.adjoinAt State inPorts NInPorts}
+		   else
+		      State
+		   end
+		catch E then
+		   raise cannot_addinArrayPort(error:E state:State name:State.name type:State.type) end
 		end
 	     % Interact with the component
 	     [] send(InPort#N Msg Ack) then
-		{State.inPorts.InPort.qs.N.put Msg Ack}
+		try
+		   {State.inPorts.InPort.qs.N.put Msg Ack}
+		catch E then
+		   raise cannot_send(error:E dest:InPort#N state:State name:State.name type:State.type) end
+		end
 		{Exec State}
 	     [] send('START' _ Ack) then
 		Ack = ack
 		{Exec State}
 	     [] send('STOP' _ Ack) then
 		Ack = ack
-		if {Thread.state State.threads} \= terminated then {Thread.terminate State.threads} end
+		if State.threads \= nil andthen {Thread.state State.threads} \= terminated then {Thread.terminate State.threads} end
 		State
 	     [] send(options Msg Ack) then NOptions NState in
 		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}

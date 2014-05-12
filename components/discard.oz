@@ -6,9 +6,10 @@ export
 define
    fun {CompNewArgs Name}
       {Comp.new comp(name:Name type:discard
-		     inPorts(input(proc{$ In Out Comp}
-				      _ = {In.get}
-				   end))
+		     inPorts(input)
+		     procedure(proc{$ Ins Out Comp}
+				  _ = {Ins.input.get}
+			       end)
 		    )
       }
    end

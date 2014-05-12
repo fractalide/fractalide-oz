@@ -7,14 +7,13 @@ define
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:'components/editor/editPanel/addLabel'
-		   inPorts(
-		      input(proc{$ In Out Comp} IP in
-			       IP = {In.get}
-			       {Out.output change(label:Comp.options.label value:IP.1)}
-			    end)
-		      )
+		   inPorts(input)
 		   options(label:_)
 		   outPorts(output)
+		   procedure(proc{$ Ins Out Comp} IP in
+			       IP = {Ins.input.get}
+			       {Out.output change(label:Comp.options.label value:IP.1)}
+			    end)
 		   )
       }
    end
