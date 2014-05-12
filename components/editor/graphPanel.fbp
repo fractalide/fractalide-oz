@@ -1,18 +1,17 @@
 % ---
 % Logic stream
-actions_in => actions_in awIn(ui/actionsWrapper)
-awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+in => in awIn(QTk/actionsWrapper)
+awIn() out -> in awOut(QTk/actionsWrapper) out => out
 awOut() action => action
 
 % ---
 % UI stream
-ui_in => ui_in canvas(ui/canvas) ui_out => ui_out
-canvas() actions_out -> actions_in awOut()
+awIn() action#create -> in canvas(QTk/canvas) out -> in awOut()
 
 % ---
 % Mouse Logic
 % Get the canvas handle, just to transform mouse coordinate in canvas coordinate
-"getHandle(output:getHandleML)" -> actions_in canvas()
+"getHandle(output:getHandleML)" -> in canvas()
 canvas() action#getHandleML -> input ht(editor/handleTransform) output -> options ml(editor/mouseLogic)
 % drag&drop only if not in a component
 canvas() action#ButtonPress -> input ml() 
@@ -26,25 +25,23 @@ canvas() action#endLink -> input ml()
 
 % ---
 % Click to get back to graphEdit
-ml() click -> input ieGraphEdit(ipEdit) out -> actions_in awOut()
+ml() click -> input ieGraphEdit(ipEdit) out -> in awOut()
 "set(text:displayGraph)" -> options ieGraphEdit()
 
 % ---
 % Canvas scanning
 ml() drag ->  input scan(editor/scan)
-scan() canvas -> actions_in canvas()
+scan() canvas -> in canvas()
 
 % ---
 % Create the links
 canvas() action#beginLink -> input createLink(editor/createLink)
 canvas() action#endLink -> input createLink()
 ml() link -> input createLink()
-createLink() widget_out -> widget canvas()
-createLink() actions_out -> actions_in canvas()
+createLink() out -> widget canvas()
 
 % ---
 % New comp from outside
 awIn() action#newComp -> input getPos(editor/getPosition) output -> input createComp()
 canvas() action#getHandleML -> input ht(editor/handleTransform) output -> options getPos()
-createComp() widget_out -> widget canvas()
-createComp() actions_out -> actions_in canvas()
+createComp() out -> widget canvas()

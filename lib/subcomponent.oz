@@ -30,37 +30,61 @@ define
 		Resp = State
 		State
 	     [] send(InPort#N Msg Ack) then
-		for X in State.inPorts.InPort do
-		   {X.1 send(X.2#N Msg Ack)}
+		try
+		   for X in State.inPorts.InPort do
+		      {X.1 send(X.2#N Msg Ack)}
+		   end
+		   State
+		catch E then
+		   raise cannot_send_array(error:E state:State name:State.name type:State.type) end
 		end
-		State
 	     [] send(InPort Msg Ack) then
-		for X in State.inPorts.InPort do A=_ in
-		   {X.1 send(X.2 Msg A)}
-		   {Wait A}
+		try
+		   for X in State.inPorts.InPort do A=_ in
+		      {X.1 send(X.2 Msg A)}
+		      {Wait A}
+		   end
+		   Ack = ack
+		   State
+		catch E then
+		   raise cannot_send(error:E state:State name:State.name type:State.type) end
 		end
-		Ack = ack
-		State
 	     [] bind(OutPort#N Comp Name) then
-		for X in State.outPorts.OutPort do
-		   {X.1 bind(X.2#N Comp Name)}
+		try
+		   for X in State.outPorts.OutPort do
+		      {X.1 bind(X.2#N Comp Name)}
+		   end
+		   State
+		catch E then
+		   raise cannot_bind_array(error:E state:State name:State.name type:State.type) end
 		end
-		State
 	     [] bind(OutPort Comp Name) then
-		for X in State.outPorts.OutPort do
-		   {X.1 bind(X.2 Comp Name)}
+		try
+		   for X in State.outPorts.OutPort do
+		      {X.1 bind(X.2 Comp Name)}
+		   end
+		   State
+		catch E then
+		   raise cannot_bind(error:E state:State name:State.name type:State.type) end
 		end
-		State
 	     [] unBound(OutPort N) then
-		for X in State.outPorts.OutPort do
-		   {X.1 unBound(X.2 N)}
+		try
+		   for X in State.outPorts.OutPort do
+		      {X.1 unBound(X.2 N)}
+		   end
+		   State
+		catch E then
+		   raise cannot_unBound(error:E state:State name:State.name type:State.type) end
 		end
-		State
 	     [] addinArrayPort(Port Index) then
-		for X in State.inPorts.Port do
-		   {X.1 addinArrayPort(X.2 Index)}
+		try
+		   for X in State.inPorts.Port do
+		      {X.1 addinArrayPort(X.2 Index)}
+		   end
+		   State
+		catch E then
+		   raise cannot_addinArrayPort(error:E state:State name:State.name type:State.type) end
 		end
-		State
 	     [] start then
 		{GraphModule.start State.graph}
 		State

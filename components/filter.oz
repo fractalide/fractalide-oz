@@ -6,14 +6,15 @@ export
 define
    fun {CompNewArgs Name}
       {Comp.new comp(name:Name type:filter
-		     inPorts(input(proc{$ IP Out Comp}
-				      if {Comp.options.p IP} then
-					 {Out.output IP}
-				      end
-				   end)
-			    )
+		     inPorts(input)
 		     outPorts(output)
 		     options(p:_)
+		     procedure(proc{$ Ins Out Comp} IP in
+				  IP = {Ins.input.get}
+				  if {Comp.options.p IP} then
+				     {Out.output IP}
+				  end
+			       end)
 		    )}
    end
 end

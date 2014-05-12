@@ -9,7 +9,7 @@ define
       Options = {Record.adjoinList options(arg:'') {Record.toListInd Args}}
       {Comp.new comp(name:Name type:genopt
 		     outPorts(output)
-		     procedures(proc{$ Out Comp}
+		     procedure(proc{$ Ins Out Comp}
 				   {Out.output Comp.options.arg}
 				end)
 		     Options

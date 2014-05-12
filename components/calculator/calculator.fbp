@@ -1,36 +1,30 @@
 % First step : two fields
-l1(ui/label) ui_out -> place#1 lr(ui/lr)
-l1() actions_out -> actions_in lr()
-"set(init:"x: ")" -> ui_in l1()
-f1(ui/entry) ui_out -> place#2 lr()
-f1() actions_out -> actions_in lr()
-f2(ui/entry) ui_out -> place#3 lr()
-f2() actions_out -> actions_in lr()
-"set(init:[48])" -> ui_in f1()
-"set(init:[48])" -> ui_in f2()
-"start" -> ui_in lr()
+"create" -> in lr(QTk/lr)
+f1(QTk/entry) out -> place#1 lr()
+f2(QTk/entry) out -> place#2 lr()
+"create(init:[48])" -> in f1()
+"create(init:[48])" -> in f2()
 
 % Second step : lr, button and result field
-lr() ui_out -> place#1 td(ui/td)
-lr() actions_out -> actions_in td()
-calcButton(ui/button) ui_out -> place#2 td()
-calcButton() actions_out -> actions_in td()
-fResult(ui/entry) ui_out -> place#3 td()
-fResult() actions_out -> actions_in td()
-"start" -> ui_in td()
+lr() out -> place#1 td(QTk/td)
+calcButton(QTk/button) out -> place#2 td()
+fResult(QTk/entry) out -> place#3 td()
+"create(text:"calc")" -> in calcButton()
+"create" -> in fResult()
+"create" -> in td()
 
 % Logic
 % From button
 % Button to get
-calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(ipEdit) out -> actions_in f1()
-get1() out -> actions_in f2()
+calcButton() action#button_clicked -> input buttonLogic(calculator/buttonLogic) click -> input get1(ipEdit) out -> in f1()
+get1() out -> in f2()
 "opt(text:get(output:getAdd))" -> options get1()
 % Field to logicAdd
-f1() action#getAdd -> input#1 add(calculator/add) output -> input setAdd(ipEdit) out -> actions_in fResult()
+f1() action#getAdd -> input#1 add(calculator/add) output -> input setAdd(ipEdit) out -> in fResult()
 f2() action#getAdd -> input#2 add() 
 "opt(text:set(_))" -> options setAdd()
 % Button color
-buttonLogic() color -> actions_in calcButton()
+buttonLogic() color -> in calcButton()
 
 % From TD
 td() action#KeyPress -> input buttonLogic()
@@ -42,16 +36,13 @@ f1() action#Enter -> input dispSpecific(display)
 "opt(pre:'specific ')" -> options dispSpecific()
 
 % size of field
-"set(width:15)" -> ui_in fResult()
-"set(width:15)" -> actions_in f1()
-"set(width:15)" -> actions_in f2()
+"set(width:15)" -> in fResult()
+"set(width:15)" -> in f1()
+"set(width:15)" -> in f2()
 
 % Some options
-"set(text:calc)" -> ui_in calcButton()
-"set(title:'Calculator')" -> actions_in td()
-
+"set(title:'Calculator')" -> in td()
 
 %OutLinks
-td() ui_out => ui_out
-td() actions_out => actions_out
-actions_in => actions_in aw(ui/actionsWrapper) actions_out -> actions_in td()
+td() out => out
+in => in aw(QTk/actionsWrapper) out -> in td()

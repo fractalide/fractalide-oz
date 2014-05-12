@@ -12,8 +12,10 @@ export
 define
    fun {CompNew Name}
       {Comp.new comp(name:Name type:doubleclick
-		     inPorts(input(proc{$ In Out Comp}
-				      IP = {In.get}
+		     inPorts(input)
+		     outPorts(output)
+		     procedure(proc{$ Ins Out Comp}
+				      IP = {Ins.input.get}
 				   in
 				      case {Label IP}
 				      of 'ButtonPress' andthen IP.button == 1 then T in
@@ -29,8 +31,6 @@ define
 				      else skip
 				      end
 				   end)
-			    )
-		     outPorts(output)
 		     state(last:~1)
 		    )
       }

@@ -1,3 +1,0 @@
-test(calculator/calculator) ui_out -> ui_in win(ui/window)
-test() actions_out -> actions_in win() actions_out -> input dispDefault(display)
-"opt(pre:'default ')" -> options dispDefault()

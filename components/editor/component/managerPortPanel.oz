@@ -7,13 +7,11 @@ export
 define
    % Side filter event from input port panel or output port panel
    fun {OutPortWrapper Out Side}
-      proc{$ send(N Msg Ack)}
+      proc{$ send(_ Msg Ack)}
 	 if {Label Msg} == createLink then
-	    {Out.N {Record.adjoin r(side:Side) Msg}}
-	 elseif N == actions_out then
-	    {SendOut Out Msg}
+	    {SendOut Out {Record.adjoin r(side:Side) Msg}}
 	 else
-	    {Out.N Msg}
+	    {SendOut Out Msg}
 	 end
 	 Ack = ack
       end
@@ -22,7 +20,7 @@ define
       if {List.member {Label Event} {Arity OutPorts.action}} then
 	 {OutPorts.action.{Label Event} Event}
       else
-	 {OutPorts.actions_out Event}
+	 {OutPorts.out Event}
       end
    end
    % Size of a port
@@ -76,12 +74,12 @@ define
       {ForAll2 Comp.state.ports
        proc{$ Port} Ack Ack2 in
 	  if Comp.options.side == left then
-	     {Port send(actions_in moveBeginPos(x:Comp.state.x y:Comp.state.y) Ack)}
+	     {Port send('in' moveBeginPos(x:Comp.state.x y:Comp.state.y) Ack)}
 	  else
-	     {Port send(actions_in moveEndPos(x:Comp.state.x y:Comp.state.y) Ack)}
+	     {Port send('in' moveEndPos(x:Comp.state.x y:Comp.state.y) Ack)}
 	  end
 	  {Wait Ack}
-	  {Port send(actions_in set(state:hidden) Ack2)}
+	  {Port send('in' set(state:hidden) Ack2)}
 	  {Wait Ack2}
        end
       }
@@ -99,11 +97,11 @@ define
 	  I := @I+1.0
 	  if {Not {Record.is Port}} then % It's a simple port
 	     if Comp.options.side == left then
-		{Port send(actions_in moveBeginPos(x:Comp.state.x+Width y:Y) Ack)}
+		{Port send('in' moveBeginPos(x:Comp.state.x+Width y:Y) Ack)}
 	     else
-		{Port send(actions_in moveEndPos(x:Comp.state.x-Width y:Y) Ack)}
+		{Port send('in' moveEndPos(x:Comp.state.x-Width y:Y) Ack)}
 	     end
-	     {Port send(actions_in set(state:normal) Ack2)}
+	     {Port send('in' set(state:normal) Ack2)}
 	     {Wait Ack2}
 	  else Ack3 in% It's an array port
 	     {Record.forAll {Record.subtract Port arrayPort}
@@ -111,14 +109,14 @@ define
 		 Y2 = InitPoint + @I * (Height + Inter)
 		 I := @I + 1.0
 		 if Comp.options.side == left then
-		    {P send(actions_in moveBeginPos(x:Comp.state.x+Width+10.0 y:Y2) Ack)}
+		    {P send('in' moveBeginPos(x:Comp.state.x+Width+10.0 y:Y2) Ack)}
 		 else
-		    {P send(actions_in moveEndPos(x:Comp.state.x-Width-10.0 y:Y2) Ack)}
+		    {P send('in' moveEndPos(x:Comp.state.x-Width-10.0 y:Y2) Ack)}
 		 end
-		 {P send(actions_in set(state:normal) Ack2)}
+		 {P send('in' set(state:normal) Ack2)}
 		 {Wait Ack2}
 	      end}
-	     {Port.arrayPort send(actions_in set(state:normal) Ack3)}
+	     {Port.arrayPort send('in' set(state:normal) Ack3)}
 	     {Wait Ack3}
 	  end
        end
@@ -134,25 +132,25 @@ define
 	  if {Not {Record.is Port}} then Ack Ack2 in
 	     % Reposition
 	     Y = InitPoint + @I * (Height+Inter)
-	     {Port send(actions_in setCoords(X Y X+Width Y+Height) Ack)}
+	     {Port send('in' setCoords(X Y X+Width Y+Height) Ack)}
 	     {Wait Ack}
 	     I := @I + 1.0
 	     % Reset the state
 	     if Comp.state.show then
-		{Port send(actions_in set(state:normal) Ack2)}
+		{Port send('in' set(state:normal) Ack2)}
 	     else
-		{Port send(actions_in set(state:hidden) Ack2)}
+		{Port send('in' set(state:hidden) Ack2)}
 	     end
 	     {Wait Ack2}
 	  else Ack Ack2 X2 in
 	     % The name of the array port
 	     Y = InitPoint + @I * (Height+Inter)
-	     {Port.arrayPort send(actions_in setCoords(X Y X+Width Y+Height) Ack)}
+	     {Port.arrayPort send('in' setCoords(X Y X+Width Y+Height) Ack)}
 	     {Wait Ack}
 	     if Comp.state.show then
-		{Port.arrayPort send(actions_in set(state:normal) Ack2)}
+		{Port.arrayPort send('in' set(state:normal) Ack2)}
 	     else
-		{Port.arrayPort send(actions_in set(state:hidden) Ack2)}
+		{Port.arrayPort send('in' set(state:hidden) Ack2)}
 	     end
 	     {Wait Ack2}
 	     % The sub-ports 
@@ -161,15 +159,15 @@ define
 	     {Record.forAll {Record.subtract Port arrayPort}
 	      proc{$ P} Y2 Ack Ack2 in
 		 Y2 = InitPoint + @I * (Height+Inter)
-		 {P send(actions_in setCoords(X2 Y2 X2+Width Y2+Height) Ack)}
+		 {P send('in' setCoords(X2 Y2 X2+Width Y2+Height) Ack)}
 		 {Wait Ack}
 		 I := @I + 1.0
 
 
 		 if Comp.state.show then
-		    {P send(actions_in set(state:normal) Ack2)}
+		    {P send('in' set(state:normal) Ack2)}
 		 else
-		    {P send(actions_in set(state:hidden) Ack2)}
+		    {P send('in' set(state:hidden) Ack2)}
 		 end
 		 {Wait Ack2}
 	      end}
@@ -180,90 +178,15 @@ define
    fun {CompNewGen Name} A in
       A = {Comp.new comp(
 		       name:Name type:'components/editor/createComp'
-		       inPorts(
-			  input(proc{$ In Out Comp} IP in
-				   IP = {In.get}
-				   case {Label IP}
-				   of add then C N in % It's a normal port
-				  % Create the new port
-				      C = {SubComp.new IP.1 "editor/component/port" "./components/editor/component/port.fbp"}
-				      {Wait C}
-				      {C bind(ui_out {OutPortWrapper Out Comp.options.side} widget_out)}
-				      {C bind(actions_out {OutPortWrapper Out Comp.options.side} actions_out)}
-				      {C bind('ERROR' {OutPortWrapper Out Comp.options.side} 'ERROR')}
-				      {C start}
-				      
-				      {C send(ui_in create(0.0 0.0 0.0 0.0 fill:white name:IP.1 state:hidden) _)}
-				  % Add it in the record
-				      N = {Record.width Comp.state.ports}
-				      Comp.state.ports := {Record.adjoinAt Comp.state.ports N+1 C}
-				      {Draw Out Comp}
-				   [] addArrayPort then C in % It's an array port
-				  % Create the new port
-				      C = {SubComp.new IP.1 "editor/component/port" "./components/editor/component/portArray.fbp"}
-				      {Wait C}
-				      {C bind(ui_out {OutPortWrapper Out Comp.options.side} widget_out)}
-				      {C bind(actions_out {OutPortWrapper Out Comp.options.side} actions_out)}
-				      {C bind('ERROR' {OutPortWrapper Out Comp.options.side} 'ERROR')}
-				      {C start}
-				      
-				      {C send(ui_in create(0.0 0.0 0.0 0.0 outline:red fill:white name:IP.1 state:hidden) _)}
-				  % Add it in the record
-				      Comp.state.ports := {Record.adjoinAt Comp.state.ports {VirtualString.toAtom IP.1} array(arrayPort:C)}
-				      {Draw Out Comp}
-				   [] addinArrayPort then C NAP in
-				  % Create the new port
-				      C = {SubComp.new IP.2 "editor/component/port" "./components/editor/component/port.fbp"}
-				      {Wait C}
-				      {C bind(ui_out {OutPortWrapper Out Comp.options.side} widget_out)}
-				      {C bind(actions_out Comp.state.ports.(IP.1).arrayPort actions_in)}
-				      {C bind('ERROR' {OutPortWrapper Out Comp.options.side} 'ERROR')}
-				      {C start}
-				      
-				      {C send(ui_in create(0.0 0.0 0.0 0.0 fill:white name:IP.2 state:hidden) _)}
-				  % Add it in the record
-				      NAP = {Record.adjoinAt Comp.state.ports.(IP.1) {VirtualString.toAtom IP.2} C}
-				      Comp.state.ports := {Record.adjoinAt Comp.state.ports (IP.1) NAP}
-				      
-				      {Draw Out Comp}
-				      % Send to the component manager, if it's an input array port
-				      if Comp.options.side == right then
-					 {Out.border addinArrayPort(IP.1 {VirtualString.toAtom IP.2})}
-				      end
-				   [] move then DX DY in
-				      DX = {Int.toFloat IP.1}
-				      DY = {Int.toFloat IP.2}
-				      {ForAll2 Comp.state.ports
-				       proc{$ Port} Ack in
-					  {Port send(actions_in move(DX DY) Ack)}
-					  {Wait Ack}
-				       end
-				      }
-				      Comp.state.x := Comp.state.x + DX
-				      Comp.state.y := Comp.state.y + DY
-				   [] openPorts then
-				      {Show Out Comp}
-				   [] closePorts then
-				      {Hide Out Comp}
-				   [] delete then
-				      {ForAll2 Comp.state.ports
-				       proc{$ Port} 
-					  {Port send(actions_in delete _)}
-				       end
-				      }
-				      Comp.state.ports := ports()
-				   else
-				      skip
-				   end
-				end)
-			  )
-		       procedures(proc{$ Out Comp}
+		       inPorts(input)
+		       procedure(proc{$ Ins Out Comp}
 				     if {Not {IsDet Comp.state.x}} orelse {Not {IsDet Comp.state.y}} then
 					Comp.state.x := Comp.options.x
 					Comp.state.y := Comp.options.y
 				     end
+				     {InputProc Ins.input Out Comp}
 				  end)
-		       outPorts(widget_out actions_out border)
+		       outPorts(out border)
 		       outArrayPorts(action)
 		       options(side:_ x:_ y:_ )
 		       state(ports:ports x:_ y:_ show:false)
@@ -272,5 +195,78 @@ define
 	  }
       {A bind(action#addinArrayPort A input)}
       A
+   end
+   proc{InputProc In Out Comp} IP in
+      IP = {In.get}
+      case {Label IP}
+      of add then C N in % It's a normal port
+				  % Create the new port
+	 C = {SubComp.new IP.1 "editor/component/port" "./components/editor/component/port.fbp"}
+	 {Wait C}
+	 {C bind(out {OutPortWrapper Out Comp.options.side} out)}
+	 {C bind('ERROR' {OutPortWrapper Out Comp.options.side} 'ERROR')}
+	 {C start}
+				      
+	 {C send('in' create(0.0 0.0 0.0 0.0 fill:white name:IP.1 state:hidden) _)}
+				  % Add it in the record
+	 N = {Record.width Comp.state.ports}
+	 Comp.state.ports := {Record.adjoinAt Comp.state.ports N+1 C}
+	 {Draw Out Comp}
+      [] addArrayPort then C in % It's an array port
+				  % Create the new port
+	 C = {SubComp.new IP.1 "editor/component/port" "./components/editor/component/portArray.fbp"}
+	 {Wait C}
+	 {C bind(out {OutPortWrapper Out Comp.options.side} out)}
+	 {C bind('ERROR' {OutPortWrapper Out Comp.options.side} 'ERROR')}
+	 {C start}
+				      
+	 {C send('in' create(0.0 0.0 0.0 0.0 outline:red fill:white name:IP.1 state:hidden) _)}
+				  % Add it in the record
+	 Comp.state.ports := {Record.adjoinAt Comp.state.ports {VirtualString.toAtom IP.1} array(arrayPort:C)}
+	 {Draw Out Comp}
+      [] addinArrayPort then C NAP in
+				  % Create the new port
+	 C = {SubComp.new IP.2 "editor/component/port" "./components/editor/component/port.fbp"}
+	 {Wait C}
+	 {C bind(action#createLink Comp.state.ports.(IP.1).arrayPort 'in')}
+	 {C bind(out {OutPortWrapper Out Comp.options.side} nil)}
+	 {C bind('ERROR' {OutPortWrapper Out Comp.options.side} 'ERROR')}
+	 {C start}
+				      
+	 {C send('in' create(0.0 0.0 0.0 0.0 fill:white name:IP.2 state:hidden) _)}
+				  % Add it in the record
+	 NAP = {Record.adjoinAt Comp.state.ports.(IP.1) {VirtualString.toAtom IP.2} C}
+	 Comp.state.ports := {Record.adjoinAt Comp.state.ports (IP.1) NAP}
+				      
+	 {Draw Out Comp}
+				      % Send to the component manager, if it's an input array port
+	 if Comp.options.side == right then
+	    {Out.border addinArrayPort(IP.1 {VirtualString.toAtom IP.2})}
+	 end
+      [] move then DX DY in
+	 DX = {Int.toFloat IP.1}
+	 DY = {Int.toFloat IP.2}
+	 {ForAll2 Comp.state.ports
+	  proc{$ Port} Ack in
+	     {Port send('in' move(DX DY) Ack)}
+	     {Wait Ack}
+	  end
+	 }
+	 Comp.state.x := Comp.state.x + DX
+	 Comp.state.y := Comp.state.y + DY
+      [] openPorts then
+	 {Show Out Comp}
+      [] closePorts then
+	 {Hide Out Comp}
+      [] delete then
+	 {ForAll2 Comp.state.ports
+	  proc{$ Port} 
+	     {Port send('in' delete _)}
+	  end
+	 }
+	 Comp.state.ports := ports()
+      else
+	 skip
+      end
    end
 end

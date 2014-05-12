@@ -1,13 +1,12 @@
 % ---
 % Logic stream
-actions_in => actions_in awIn(ui/actionsWrapper)
-awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+in => in awIn(QTk/actionsWrapper)
+awIn() out -> in awOut(QTk/actionsWrapper) out => out
 awOut() action => action
 
 % ---
 % UI stream
-ui_in => options manager(editor/component/managerPortPanel) widget_out => widget_out
-manager() actions_out -> actions_in awOut()
+awIn() action#create -> options manager(editor/component/managerPortPanel) out -> in awOut()
 
 % ---
 % Add, remove, move
@@ -25,11 +24,11 @@ awIn() action#position -> input manager()
 % Hide and show logic
 awIn() action#openPorts -> input manager()
 awIn() action#closePorts -> input manager()
-manager() border -> actions_in awOut()
+manager() border -> in awOut()
 
 % ---
 % Wrap createLink to make beginLink/endLink and good x/y
-manager() actions_out -> input createLinkLogic(editor/component/createLinkLogic) output -> actions_in awOut()
+manager() action#createLink -> input createLinkLogic(editor/component/createLinkLogic) output -> in awOut()
 
 % ---
 % delete

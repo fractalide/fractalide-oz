@@ -6,11 +6,12 @@ export
 define
    fun {NewSplitter Name}
       {Comp.new comp(name:Name type:splitter
-		     inPorts(input(proc {$ Buffer Out Comp}
-				      {FoldL {Buffer.get} fun {$ Acc IP} {Out.out.Acc IP} Acc+1 end 1 _}
-				   end)
+		     inPorts(input
 			    )
 		     outArrayPorts(out)
+		     procedure(proc {$ Ins Out Comp}
+				      {FoldL {Ins.input.get} fun {$ Acc IP} {Out.out.Acc IP} Acc+1 end 1 _}
+				   end)
 		    )
       }
    end

@@ -1,7 +1,0 @@
-ui_in => ui_in ac(ui/canvas/windowCreate) ui_out -> ui_in sc(ui/canvas/itemsCreate) ui_out => ui_out
-window => window ac()
-sc() actions_out -> actions_in sui(ui/simpleui)
-sc() opt -> options sui()
-sui() actions_out => actions_out
-sui() action => action
-actions_in => actions_in sui()

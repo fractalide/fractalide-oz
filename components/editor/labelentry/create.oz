@@ -7,12 +7,11 @@ define
    fun {CompNewGen Name} 
       {Comp.new comp(
 		   name:Name type:'components/editor/labelentry/create'
-		   inPorts(
-		      ui_in(proc{$ In Out Comp}
-			       {Out.ui_out {Record.adjoin r(width:10 bg:white) {In.get}}}
+		   inPorts('in')
+		   outPorts(out)
+		   procedure(proc{$ Ins Out Comp}
+			       {Out.out {Record.adjoin create(width:10 bg:white) {Ins.'in'.get}}}
 			    end)
-		      )
-		   outPorts(ui_out)
 		   )
       }
    end

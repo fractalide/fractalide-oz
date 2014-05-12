@@ -9,20 +9,20 @@ export
    newArgs: CompNewArgs
 define
    {Property.put print foo(width:20 depth:20)}
-   proc {FunPort1 IN Out Comp}
-      IP = {IN.get}
-   in
-      %{Browser.browse Options.pre#IP#Options.post}
-      {System.show Comp.options.pre#IP#Comp.options.post}
-      {Out.output IP}
-   end
    fun {CompNewArgs Name Args} Options in
       Options = {Record.adjoinList options(pre:'' post:'') {Record.toListInd Args}}
       {Comp.new comp(description:"Display Option.pre#IP#Option.post and send the IP on the output port"
 		     name:Name type:display
-		     inPorts(input(FunPort1))
+		     inPorts(input)
 		     outPorts(output)
 		     Options
+		     procedure(
+			proc{$ Ins Out Comp} IP in
+			   IP = {Ins.input.get}
+			   {System.show Comp.options.pre#IP#Comp.options.post}
+			   {Out.output IP}
+			end
+			)
 		    )
       }
    end

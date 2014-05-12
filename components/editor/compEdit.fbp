@@ -1,43 +1,36 @@
 % ---
 % Logic stream
-actions_in => actions_in awIn(ui/actionsWrapper)
-awIn() actions_out -> actions_in awOut(ui/actionsWrapper) actions_out => actions_out
+in => in awIn(QTk/actionsWrapper)
+awIn() out -> in awOut(QTk/actionsWrapper) out => out
 awOut() action => action
 
 % ---
 % UI stream
-ui_in => ui_in td(ui/td) ui_out => ui_out
-td() actions_out -> actions_in awOut()
+awIn() action#create -> in td(QTk/td) out -> in awOut()
 
 % ---
 % Creation of buttons
 % select
-selectButton(ui/button) ui_out -> place#1 td()
-selectButton() actions_out -> actions_in td()
-"create(text:"select" glue:sew)" -> ui_in selectButton()
+selectButton(QTk/button) out -> place#1 td()
+"create(text:"select" glue:sew)" -> in selectButton()
 % start and stop
-"start(text:"start" glue:ens)" -> ui_in startButton(ui/button) ui_out -> place#1 lr(ui/lr)
-startButton() actions_out -> actions_in awOut()
-"start(text:"stop" glue:wns)" -> ui_in stopButton(ui/button) ui_out -> place#2 lr()
-stopButton() actions_out -> actions_in awOut()
-lr() ui_out -> place#2 td()
-lr() actions_out -> actions_in td()
-"start(bg:white)" -> ui_in lr()
+"create(text:"start" glue:ens)" -> in startButton(QTk/button) out -> place#1 lr(QTk/lr)
+"create(text:"stop" glue:wns)" -> in stopButton(QTk/button) out -> place#2 lr()
+lr() out -> place#2 td()
+"create(bg:white)" -> in lr()
 % delete
-deleteButton(ui/button) ui_out -> place#3 td()
-deleteButton() actions_out -> actions_in td()
-"create(text:"delete" glue:new)" -> ui_in deleteButton()
+deleteButton(QTk/button) out -> place#3 td()
+"create(text:"delete" glue:new)" -> in deleteButton()
 
 % ---
 % creation of options panel
-"start(bg:white glue:new)" -> ui_in optionsEdit(editor/editPanel/optionsEdit) ui_out -> place#4 td()
-optionsEdit() actions_out -> actions_in td()
+"create(bg:white glue:new)" -> in optionsEdit(editor/editPanel/optionsEdit) out -> place#4 td()
 
 % ---
 % Switch to compEdit
-awIn() action#displayComp -> input disp(editor/editPanel/displayComp) disp -> actions_in td()
-disp() output -> actions_in awOut()
-disp() options -> actions_in optionsEdit()
+awIn() action#displayComp -> input disp(editor/editPanel/displayComp) disp -> in td()
+disp() output -> in awOut()
+disp() options -> in optionsEdit()
 
 % ---
 % select logic
@@ -58,6 +51,7 @@ deleteButton() action#button_clicked -> input ieDelete(ipEdit) out -> input disp
 % ---
 % optionsEdit logic
 optionsEdit() action#change -> input disp()
+
 
 % ---
 % Cancel : displayGraph

@@ -1,56 +1,52 @@
 % ---
 % Creation : windows, graphPanel and editPanel
-lr(ui/lr) ui_out -> ui_in win(ui/window)
-lr() actions_out -> actions_in win()
-"create(glue:nswe bg:white borderwidth:3)" -> ui_in lr()
-%win() actions_out -> input disp(display)
+lr(QTk/grid) out -> in win(QTk/window)
+"create(glue:nswe bg:white borderwidth:3)" -> in lr()
+"columnconfigure(2 weight:1)" -> in lr()
+"rowconfigure(1 weight:1)" -> in lr()
+%win() out -> input disp(display)
 %"opt(pre:'default ')" -> options disp()
-"set(title:"Fractallide")" -> actions_in win()
+"set(title:"Fractallide")" -> in win()
 
 % ---
 % editPanel
-editPanel(ui/placeholder) ui_out -> place#1 lr()
-editPanel() actions_out -> actions_in lr()
-"set(glue:ns bg:white)" -> ui_in editPanel()
+editPanel(QTk/placeholder) out -> grid#1x1 lr()
+"create(glue:nsw bg:white)" -> in editPanel()
 
 % ---
 % graphPanel
-graphPanel(editor/graphPanel) ui_out -> place#2 lr()
-graphPanel() actions_out -> actions_in lr()
-"set(glue:nswe bg:white)" -> ui_in graphPanel()
+graphPanel(editor/graphPanel) out -> grid#2x1 lr()
+"create(glue:nswe bg:white)" -> in graphPanel()
 
 % ---
 % graphEdit
-"set(glue:nswe bg:white)" -> ui_in graphEdit(editor/graphEdit) ui_out -> place#3 editPanel()
-graphEdit() actions_out -> actions_in editPanel()
-graphEdit() action#newComp -> actions_in graphPanel()
+"create(glue:nswe bg:white)" -> in graphEdit(editor/graphEdit) out -> place editPanel()
+graphEdit() action#newComp -> in graphPanel()
 % from graph to graph
-graphPanel() action#displayGraph -> actions_in graphEdit()
+graphPanel() action#displayGraph -> in graphEdit()
 
 % ---
 % linkEdit
 % creation
-"set(glue:nswe bg:white)" -> ui_in linkEdit(editor/linkEdit) ui_out -> place#2 editPanel()
-linkEdit() actions_out -> actions_in editPanel()
+ "create(glue:nswe bg:white)" -> in linkEdit(editor/linkEdit) out -> place editPanel()
 % from graph to link
-graphPanel() action#displayLink -> actions_in linkEdit()
-graphPanel() action#displayComp -> actions_in linkEdit()
+graphPanel() action#displayLink -> in linkEdit()
+graphPanel() action#displayComp -> in linkEdit()
 % Cancel link edit
-linkEdit() action#displayGraph -> actions_in graphEdit()
+linkEdit() action#displayGraph -> in graphEdit()
 
 
 % ---
 % CompEdit
 % creation
-"set(glue:nswe bg:white)" -> ui_in compEdit(editor/compEdit) ui_out -> place#1 editPanel()
-compEdit() actions_out -> actions_in editPanel()
-% grom graph to comp
-graphPanel() action#displayComp -> actions_in compEdit()
+"create(glue:nswe bg:white)" -> in compEdit(editor/compEdit) out -> place editPanel()
+% from graph to comp
+graphPanel() action#displayComp -> in compEdit()
 % From link to graphedit
-compEdit() action#displayGraph -> actions_in graphEdit()
+compEdit() action#displayGraph -> in graphEdit()
 
 % ---
 % graphEdit show cancel linkEdit and compEdit
-graphPanel() action#displayGraph -> actions_in linkEdit()
-graphPanel() action#displayGraph -> actions_in compEdit()
+graphPanel() action#displayGraph -> in linkEdit()
+graphPanel() action#displayGraph -> in compEdit()
 

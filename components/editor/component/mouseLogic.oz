@@ -7,9 +7,10 @@ define
    fun {CompNewGen Name}
       {Comp.new comp(
 		   name:Name type:'components/editor/component/mouseLogic'
-		   inPorts(
-		      input(proc{$ In Out Comp} IP in
-			       IP = {In.get}
+		   inPorts(input)
+		   outPorts(dnd show)
+		   procedure(proc{$ Ins Out Comp} IP in
+			       IP = {Ins.input.get}
 			       case {Label IP}
 			       of 'ButtonPress' then
 				  Comp.state.dnd := false
@@ -25,8 +26,6 @@ define
 			       else skip
 			       end
 			    end)
-		      )
-		   outPorts(dnd show)
 		   state(dnd:false)
 		   )
       }

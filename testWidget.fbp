@@ -1,101 +1,71 @@
-td(ui/td) ui_out -> frame sf(ui/scrollframe) ui_out -> ui_in w(ui/window)
-"start(tdscrollbar:true lrscrollbar:true)" -> ui_in sf()
-td() actions_out -> actions_in sf() actions_out -> actions_in w(ui/window) actions_out -> input d(display)
+td(QTk/td) out -> frame scrollframe(QTk/scrollframe) out -> in w(QTk/window) out -> input d(display)
+"create(tdscrollbar:true glue:nswe)" -> in scrollframe()
 "opt(pre:default)" -> options d()
-"start" -> ui_in td() .
+"create" -> in td()
 
-b(ui/button) ui_out -> place#1 td()
-b() actions_out -> actions_in td()
-"start(text:"Test" glue:ew)" -> ui_in b()
-
-% Canvas -> more in testCanvas.fbp
-canvas(ui/canvas) ui_out -> place#2 td()
-canvas() actions_out -> actions_in td()
-"start(10 10 190 30 tags:"rect")" -> ui_in rect(ui/canvas/rectangle) ui_out -> widget canvas()
-rect() actions_out -> actions_in canvas()
-"set(width:200 height:40)" -> ui_in canvas()
-"set(fill:red)" -> actions_in rect()
-
-cb(ui/checkbutton) ui_out -> place#3 td()
-cb() actions_out -> actions_in td()
-"start(text:"check button" init:true)" -> ui_in cb()
-
-ddlb(ui/dropdownlistbox) ui_out -> place#4 td()
-ddlb() actions_out -> actions_in td()
-"["choice1" "choice2" "choice3" "choice4"]" -> list ddlb()
-"start" -> ui_in ddlb()
-
-entry(ui/entry) ui_out -> place#5 td()
-entry() actions_out -> actions_in td()
-"start(init:"type here" width:40)" -> ui_in entry()
-"set(width:20)" -> actions_in entry()
-
-%GRID
-grid(ui/grid) ui_out -> place#6 td()
-grid() actions_out -> actions_in td()
-"start(text:"1")" -> ui_in l1(ui/label) ui_out -> grid#1 grid()
-"start(text:"2")" -> ui_in l2(ui/label) ui_out -> grid#2 grid()
-"newline" -> grid#3 grid()
-"empty" -> grid#4 grid()
-"start(text:"3")" -> ui_in bGrid(ui/button) ui_out -> grid#5 grid()
-"start(bg:white)" -> ui_in grid()
-bGrid() actions_out -> actions_in grid()
-"start(text:"5")" -> ui_in l5(ui/label) ui_out -> input ipedit(ipEdit) out -> actions_in grid()
-l5() actions_out -> actions_in grid()
-"opt(text:configure(_ column:1 row:1))" -> options ipedit()
-
-label(ui/label) ui_out -> place#7 td()
-label() actions_out -> actions_in td()
-"set(text:"alabel")" -> ui_in label()
-
-lb(ui/listbox) ui_out -> place#8 td()
-lb() actions_out -> actions_in td()
-"["choice1" "choice2" "choice3" "choice4"]" -> list lb()
-"start(tdscrollbar:true)" -> ui_in lb()
-"set(height:3)" -> actions_in lb()
-			    
-%MENU -> TODO
-
-message(ui/message) ui_out -> place#9 td()
-message() actions_out -> actions_in td()
-"start(aspect:90 init:"This is a message widget")" -> ui_in message()
-
-numberentry(ui/numberentry) ui_out -> place#91 td()
-numberentry() actions_out -> actions_in td()
-"start(min:0 max:100 init:50)" -> ui_in numberentry()
-
-panel(ui/panel) ui_out -> place#92 td()
-panel() actions_out -> actions_in td()
-"start(text:"b1")" -> ui_in bp1(ui/button) ui_out -> panel pf1(ui/panelframe) ui_out -> panel#1 panel()
-bp1() actions_out -> actions_in panel()
-""Panel1"" -> title pf1()
-"start(text:"b2")" -> ui_in bp2(ui/button) ui_out -> panel pf2(ui/panelframe) ui_out -> panel#2 panel()
-bp2() actions_out -> actions_in panel()
-""Panel2"" -> title pf2()
-"start(bg:white)" -> ui_in panel()
-
-placeholder(ui/placeholder) ui_out -> place#93 td()
-placeholder() actions_out -> actions_in td()
-"start" -> ui_in bph(ui/button) ui_out -> place#1 placeholder()
-bph() actions_out -> actions_in placeholder()
-"start(text:'last')" -> ui_in bph2(ui/button) ui_out -> place#2 placeholder()
-bph2() actions_out -> actions_in placeholder()
-"start" -> ui_in placeholder()
-%"display" -> actions_in bph()
-
-"start(text:'b1' group:g1)" -> ui_in rb1(ui/radiobutton) ui_out -> place#1 lrrb(ui/lr)
-rb1() actions_out -> actions_in lrrb()
-"start(text:'b2' group:g1)" -> ui_in rb2(ui/radiobutton) ui_out -> place#2 lrrb()
-rb2() actions_out -> actions_in lrrb()
-"start(text:'b3' group:g1)" -> ui_in rb3(ui/radiobutton) ui_out -> place#3 lrrb()
-rb3() actions_out -> actions_in lrrb()
-"start" -> ui_in lrrb()
-
-lrrb() ui_out -> place#94 td()
-lrrb() actions_out -> actions_in td()
-
-"start(glue:ew)" -> ui_in text(ui/text) ui_out -> place#95 td()
-text() actions_out -> actions_in td()
+b(QTk/button) out -> place#1 td()
+"create(text:"Test" glue:ew)" -> in b()
+b() action#button_clicked -> input d2(display)
+"opt(pre:'catch')" -> options d2()
 
 
+"create" -> in lr(QTk/lr) out -> place#2 td()
+label(editor/labelentry) out -> place#1 lr()
+"create(init:"checkbox : ")" -> in label()
+checkbutton(QTk/checkbutton) out -> place#2 lr()
+"create" -> in checkbutton()
 
+dropdownlistbox(QTk/dropdownlistbox) out -> place#3 td()
+"create" -> in dropdownlistbox()
+"["choice1" "choice2" "choice3"]" -> list dropdownlistbox()
+
+grid(QTk/grid) out -> place#4 td()
+"create" -> in grid()
+"create(label(text:"hello"))" -> grid#1x1 grid()
+"create(label(text:"world"))" -> grid#2x2 grid()
+"create(label(text:"helloworld") columnspan:2)" -> grid#1x5 grid()
+
+entry(QTk/entry) out -> place#5 td()
+"create(init:"here")" -> in entry()
+
+listbox(QTk/listbox) out -> place#6 td()
+"create" -> in listbox()
+"["hello" "world" "helloworld"]" -> list listbox()
+
+message(QTk/message) out -> place#7 td()
+"create(init:"this is a fractalide card" aspect:70)" -> in message()
+
+numberentry(QTk/numberentry) out -> place#8 td()
+"create(init:0 min:0 max:10)" -> in numberentry()
+
+panel(QTk/panel) out -> place#9 td()
+"create" -> in panel()
+"create(init:"first panel")" -> in l1(QTk/label) out -> input addT1(QTk/addTitle) output -> panel#1 panel()
+"opt(title:"panel 1")" -> options addT1()
+"create(init:"third panel")" -> in l3(QTk/label) out -> input addT3(QTk/addTitle) output -> panel#7 panel()
+"opt(title:"panel 3")" -> options addT3()
+"create(init:"second panel")" -> in l2(QTk/label) out -> input addT2(QTk/addTitle) output -> panel#3 panel()
+"opt(title:"panel 2")" -> options addT2()
+b() action#button_clicked -> input ipDelete(ipEdit) out -> panel#3 panel()
+"opt(text:delete)" -> options ipDelete()
+
+placeholder(QTk/placeholder) out -> place#10 td()
+"create" -> in placeholder()
+"create(init:"place 1")" -> in lph1(QTk/label) out -> place placeholder()
+"create(init:"place 2")" -> in lph2(QTk/label) out -> place placeholder()
+"display" -> in lph1()
+b() action#button_clicked -> input ipDisplay(ipEdit) out -> in lph2()
+"opt(text:display)" -> options ipDisplay()
+
+"create" -> in lrradio(QTk/lr) out -> place#11 td()
+"create(text:"choice 1" group:r1)" -> in rb1(QTk/radiobutton) out -> place#1 lrradio()
+"create(text:"choice 2" group:r1)" -> in rb2(QTk/radiobutton) out -> place#2 lrradio()
+"create(text:"choice 3" group:r2)" -> in rb3(QTk/radiobutton) out -> place#3 lrradio()
+"create(text:"choice 4" group:r2)" -> in rb4(QTk/radiobutton) out -> place#4 lrradio()
+
+text(QTk/text) out -> place#12 td()
+"create()" -> in text()
+
+canvas(QTk/canvas) out -> place#13 td()
+"create(width:500 height:500 bg:red)" -> in canvas()
+"create(10 10 100 100)" -> in arc(QTk/canvas/arc) out -> widget canvas()
