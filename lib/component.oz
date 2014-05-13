@@ -58,7 +58,8 @@ define
 	       description: "the description and documentation of the component"
 	       inPorts:'in'(
 			  name:port(q:AQueue)
-			  name2:arrayPort(q:queues(a:AQueue b:AnOtherQueue)
+			  name2:arrayPort(qs:queues(a:AQueue b:AnOtherQueue)
+					  connect(a:2 b:1)
 					  size:10
 					  )
 			  )
@@ -119,7 +120,7 @@ define
 	     case Port
 	     of port(q:Queue) then
 		{Record.adjoinAt Acc Name Queue}
-	     [] arrayPort(qs:Queues size:_) then SubBuffer in
+	     [] arrayPort(qs:Queues connect:_ size:_) then SubBuffer in
 		SubBuffer = {Record.foldLInd Queues
 			     fun{$ IndArray AccArray QueueArray}
 				{Record.adjoinAt AccArray IndArray QueueArray}
@@ -261,18 +262,28 @@ define
 	     [] getOutPort(Port ?R) then
 		R=State.outPorts.Port
 		State
-	     [] addinArrayPort(Port Index) then
-		try
-		   if {HasFeature State.inPorts Port} then NPort NInPorts in
-		      NPort = {Record.adjoinAt State.inPorts.Port qs {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}}
-		      NInPorts = {Record.adjoinAt State.inPorts Port NPort}
-		      {Record.adjoinAt State inPorts NInPorts}
-		   else
-		      State
-		   end
-		catch E then
-		   raise cannot_addinArrayPort(error:E state:State name:State.name type:State.type) end
-		end
+	     [] connect(Port Index) then NewArrayPort NewInputPorts in 
+		NewArrayPort = if {Not {HasFeature State.inPorts.Port.qs Index}} then NQS NC in
+				  NQS = {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}
+				  NC = {Record.adjoinAt State.inPorts.Port.connect Index 1}
+				  {Record.adjoinList State.inPorts.Port [qs#NQS connect#NC]}
+			       else NC in
+				  NC = {Record.adjoinAt State.inPorts.Port.connect Index State.inPorts.Port.connect.Index+1}
+				  {Record.adjoinAt State.inPorts.Port connect NC}
+			       end
+		NewInputPorts = {Record.adjoinAt State.inPorts Port NewArrayPort}
+		{Record.adjoinAt State inPorts NewInputPorts}
+	     [] disconnect(Port Index) then NewArrayPort NewInputPorts in
+		NewArrayPort = if State.inPorts.Port.connect.Index == 1 then NQS NC in
+				  NQS = {Record.subtract State.inPorts.Port.qs Index}
+				  NC = {Record.subtract State.inPorts.Port.connect Index}
+				  {Record.adjoinList State.inPorts.Port [qs#NQS connect#NC]}
+			       else NC in
+				  NC = {Record.adjoinAt State.inPorts.Port.connect Index State.inPorts.Port.connect.Index-1}
+				  {Record.adjoinAt State.inPorts.Port connect NC}
+			       end
+		NewInputPorts = {Record.adjoinAt State.inPorts Port NewArrayPort}
+		{Record.adjoinAt State inPorts NewInputPorts}
 	     % Interact with the component
 	     [] send(InPort#N Msg Ack) then
 		try
@@ -298,6 +309,7 @@ define
 		{Exec State}
 	     [] bind(OutPort#N Comp Name) then NAPort NPort NOutPorts in
 		try
+		   if {HasFeature Name 2} then {Comp connect(Name.1 Name.2)} end
 		   NAPort = Comp#Name | State.outPorts.OutPort.N
 		catch _ then
 		   NAPort = Comp#Name | nil
@@ -306,6 +318,7 @@ define
 		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
 		{Record.adjoinAt State outPorts NOutPorts}
 	     [] bind(OutPort Comp Name) then NPort NOutPorts in
+		if {HasFeature Name 2} then {Comp connect(Name.1 Name.2)} end
 		NPort = Comp#Name | State.outPorts.OutPort
 		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
 		{Record.adjoinAt State outPorts NOutPorts}
@@ -313,7 +326,10 @@ define
 		if {HasFeature State.outPorts.OutPort Sub} then
 		   NAPort = {FoldL State.outPorts.OutPort.Sub
 			     fun {$ Acc P}
-				if Comp == P.1 then Acc else P|Acc end
+				if Comp == P.1 then
+				   if {HasFeature P.2 2} then {Comp disconnect(P.2.1 P.2.2)} end
+				   Acc
+				else P|Acc end
 			     end
 			     nil
 			    }
@@ -327,10 +343,13 @@ define
 		else
 		   State
 		end
-	     [] unBound(OutPort Comp) andthen {HasFeature State.outPorts OutPort} then NPort NOutPorts in 
+	     [] unBound(OutPort Comp) andthen {HasFeature State.outPorts OutPort} then NPort NOutPorts in
 		NPort = {FoldL State.outPorts.OutPort
 			 fun {$ Acc P}
-			    if Comp == P.1 then Acc else P|Acc end
+			    if Comp == P.1 then
+			       if {HasFeature P.2 2} then {Comp disconnect(P.2.1 P.2.2)} end
+			       Acc
+			    else P|Acc end
 			 end
 			 nil
 			}
@@ -364,7 +383,7 @@ define
       {Record.foldL In
        fun {$ Acc P} Size in
 	  Size = if {HasFeature P size} then P.size else 25 end
-	  {Record.adjoinAt Acc {Label P} arrayPort(qs:queues() size:Size)}
+	  {Record.adjoinAt Acc {Label P} arrayPort(qs:queues() connect:c() size:Size)}
        end
        'arrayIn'()
       }
