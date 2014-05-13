@@ -76,7 +76,8 @@ define
       [] stop then
 	 {Comp.state.comp stop}
       [] addinArrayPort then
-	 {Comp.state.comp addinArrayPort(IP.1 IP.2)}
+	 %{Comp.state.comp addinArrayPort(IP.1 IP.2)}
+	 skip
       [] delete then
 	 Comp.state.comp := nil
       [] displayComp then

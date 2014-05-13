@@ -31,11 +31,10 @@ define
 			       % Create the grid component
       Grid = {GridComp.new grid}
       {Grid bind(out {OutPort Out} nil)}
-      {Grid addinArrayPort(grid '1x1')}
       {Grid send('in' create(bg:white) A1)}
       {Wait A1}
 			       % send to grid#1 to initialize the grid
-      {Grid send(grid#'1x1' create(label(text:"no option" bg:white)) A3)}
+      {Grid send('in' configure(label(text:"no option" bg:white) row:1 column:1) A3)}
       {Wait A3}
 			       % If there is options :
       if {Label IP.1} == component andthen {Record.width IP.1.options} > 0 then Opt in
