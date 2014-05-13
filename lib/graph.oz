@@ -301,9 +301,6 @@ define
 		     raise at_component(IC error:Error) end
 		  end
 		  NName = {VirtualString.toAtom Stack.1}
-		  if {Label IP} == '#' then %It's bind to a specific arrayport
-		     {NGraph.nodes.IC.comp addinArrayPort(IP.1 IP.2)}
-		  end
 		  FGraph = {Record.adjoinAt NGraph inLinks NName#IC#IP|NGraph.inLinks}
 		  {Rec Stack.1|nil Xr.2 FGraph}
 	       end
@@ -323,7 +320,6 @@ define
 	       catch X then
 		  raise at_component(IC error:X) end
 	       end
-	       if {Label IP} == '#' then {FGraph.nodes.IC.comp addinArrayPort(IP.1 IP.2)} end
 	       %Bind on the component
 	       {FGraph.nodes.OC.comp bind(OP FGraph.nodes.IC.comp IP)}
 	       %Bind on the graph
