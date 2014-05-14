@@ -49,6 +49,26 @@ define
 		catch E then
 		   raise cannot_send(error:E state:State name:State.name type:State.type) end
 		end
+	     [] setParentEntryPoint(ParentEntryPoint) then
+		{Record.adjoinAt State parentEntryPoint ParentEntryPoint}
+	     [] connect(Port Index) then
+		try
+		   for X in State.inPorts.Port do
+		      {X.1 connect(X.2 Index)}
+		   end
+		   State
+		catch E then
+		   raise cannot_connect(error:E state:State name:State.name type:State.type) end
+		end
+	     [] disconnect(Port Index) then
+		try
+		   for X in State.inPorts.Port do
+		      {X.1 disconnect(X.2 Index)}
+		   end
+		   State
+		catch E then
+		   raise cannot_disconnect(error:E state:State name:State.name type:State.type) end
+		end
 	     [] bind(OutPort#N Comp Name) then
 		try
 		   for X in State.outPorts.OutPort do
@@ -76,15 +96,6 @@ define
 		catch E then
 		   raise cannot_unBound(error:E state:State name:State.name type:State.type) end
 		end
-	     [] addinArrayPort(Port Index) then
-		try
-		   for X in State.inPorts.Port do
-		      {X.1 addinArrayPort(X.2 Index)}
-		   end
-		   State
-		catch E then
-		   raise cannot_addinArrayPort(error:E state:State name:State.name type:State.type) end
-		end
 	     [] start then
 		{GraphModule.start State.graph}
 		State
@@ -105,8 +116,15 @@ define
 	  _
 	 }
       end
+      EntryPoint
    in
-      proc {$ Msg} {Send Point Msg} end
+      EntryPoint = proc {$ Msg} {Send Point Msg} end
+      % Bind all the parentEntryPoint
+      {Record.forAll Graph.nodes
+       proc{$ Comp}
+	  {Comp.comp setParentEntryPoint(EntryPoint)}
+       end}
+      EntryPoint
    end
    fun {Init Name Type G}
       InPorts = {FoldL G.inLinks
@@ -137,7 +155,7 @@ define
 	      }
       OutPortsFinal = {Record.adjoinAt OutPorts 'ERROR' Error}
    in
-      subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPortsFinal graph:G)
+      subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPortsFinal graph:G parentEntryPoint:nil)
    end
    fun {Rename Rec OName NName} Temp in
       Temp = {Record.adjoinAt Rec NName Rec.OName}

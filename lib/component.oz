@@ -262,6 +262,8 @@ define
 	     [] getOutPort(Port ?R) then
 		R=State.outPorts.Port
 		State
+	     [] setParentEntryPoint(ParentEntryPoint) then
+		{Record.adjoinAt State parentEntryPoint ParentEntryPoint}
 	     [] connect(Port Index) then NewArrayPort NewInputPorts in 
 		NewArrayPort = if {Not {HasFeature State.inPorts.Port.qs Index}} then NQS NC in
 				  NQS = {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}
@@ -417,7 +419,7 @@ define
 			       inPorts:'in'() outPorts:out('ERROR':nil)
 			       procedure:nil state:{NewDictionary}
 			       threads:nil options:opt()
-			       run:true entryPoint:_
+			       run:true entryPoint:_ parentEntryPoint:nil
 			      )
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}
