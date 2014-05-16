@@ -6,35 +6,38 @@ awOut() action => action
 % ---
 % UI flow
 awIn() action#create -> in create(editor/component/create)
-create() bg -> in bg(QTk/canvas/oval) out -> in awOut()
-create() border -> in border(QTk/canvas/oval) out -> in awOut()
 create() name -> in name(QTk/canvas/text) out -> in awOut()
 create() comp -> in compManager(editor/component/compManager) out -> in awOut()
+create() image -> in image(QTk/canvas/image) out -> in awOut()
+"photo(file:"./components/editor/images/circle.gif")" -> input im(QTk/image) output -> image image()
+create() canvas -> options scLogic(editor/component/singleclickLogic)
+
 % --- 
 % Mouse logic : drag&drop, show/hide, inComponent/outComponent
-bg() action#Enter -> in mouseLogic(editor/component/mouseLogic)
-bg() action#Leave -> in mouseLogic()
-bg() action#ButtonPress -> in mouseLogic()
-bg() action#ButtonRelease -> in mouseLogic()
-bg() action#Motion -> in mouseLogic()
+image() action#Enter -> in mouseLogic(editor/component/mouseLogic)
+image() action#Leave -> in mouseLogic()
+image() action#ButtonPress -> in mouseLogic()
+image() action#ButtonRelease -> in mouseLogic()
+image() action#Motion -> in mouseLogic()
+name() action#Enter -> in mouseLogic(editor/component/mouseLogic)
+name() action#Leave -> in mouseLogic()
+name() action#ButtonPress -> in mouseLogic()
+name() action#ButtonRelease -> in mouseLogic()
+name() action#Motion -> in mouseLogic()
+
 % drag&drop
-mouseLogic() dnd -> input dnd(dnd/dndLogic) move -> in bg()
-dnd() move -> in name()
-dnd() move -> in border()
-dnd() move -> in awOut() action#move -> input discard(discard)
+mouseLogic() move -> in name()
+mouseLogic() move -> in awOut() action#move -> input discard(discard)
+mouseLogic() move -> in image()
 % incomp/outcomp
 mouseLogic() out -> in awOut()
-% show
-mouseLogic() disp -> in compManager()
 
-% ---
-% Border managment
-border() action#ButtonPress -> in compManager()
-compManager() createLink -> comp createLinkLogic(editor/component/createLinkLogic)
-border() action#ButtonPress -> input ieGetPos(ipEdit) out -> in name()
+mouseLogic() sc -> click scLogic()
+mouseLogic() sc -> input ieGetPos(ipEdit) out -> in name()
 "opt(text:getCoords(output:getPos))" -> options ieGetPos()
-name() action#getPos -> pos createLinkLogic()
-createLinkLogic() out -> in awOut()
+name() action#getPos -> pos scLogic()
+scLogic() out -> in compManager()
+
 
 % ---
 % Rename
@@ -54,7 +57,6 @@ awIn() action#newComp -> in compManager()
 awIn() action#options -> in compManager()
 % delete
 awIn() action#delete -> in compManager()
-awIn() action#delete -> in border()
-awIn() action#delete -> in bg()
 awIn() action#delete -> in name()
+awIn() action#delete -> in image()
 awIn() action#delete -> in awOut() action#delete -> input discard()

@@ -42,7 +42,8 @@ ml() link -> input createLink()
 createLink() out -> widget canvas()
 
 % ---
-% New comp from outside
+% New comp from outsideµ
+ht() output -> options createComp()
 awIn() action#newComp -> input getPos(editor/getPosition) output -> input createComp()
 canvas() action#getHandleML -> input ht(editor/handleTransform) output -> options getPos()
 createComp() out -> widget canvas()

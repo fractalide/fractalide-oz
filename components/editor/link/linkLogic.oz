@@ -67,6 +67,8 @@ define
 				  
 	 {IP.ePoint bind(action#move Comp.parentEntryPoint moveEnd)}
 	 {IP.ePoint bind(action#delete Comp.parentEntryPoint 'in')}
+	 % Show the line just after creation
+	 {Out.out displayLink(Comp.parentEntryPoint to:Comp.state.inPortName 'from':Comp.state.outPortName)}
       [] toPortChange then
 	 {Out.toPort set(text:IP.1)}
 	 {UnBound Comp.state.outComp Comp.state.outPortName Comp.state.inComp Comp.state.inPortName}

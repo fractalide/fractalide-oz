@@ -8,7 +8,7 @@ define
       {Comp.new comp(
 		   name:Name type:'components/editor/component/mouseLogic'
 		   inPorts('in')
-		   outPorts(dnd out disp)
+		   outPorts(move out sc)
 		   procedure(proc{$ Ins Out Comp} IP in
 				IP = {Ins.'in'.get}
 				case {Label IP}
@@ -19,18 +19,26 @@ define
 				[] 'ButtonPress' then
 				   Comp.state.dnd := false
 				   Comp.state.click := true
-				   {Out.dnd IP}
+				   Comp.state.lastX := IP.x
+				   Comp.state.lastY := IP.y
 				[] 'Motion' then
-				   Comp.state.dnd := true
-				   {Out.dnd IP}
-				[] 'ButtonRelease' then
-				   if {Not Comp.state.dnd} then
-				      {Out.disp displayComp(Comp.parentEntryPoint)}
+				   if Comp.state.click then MX MY in
+				      Comp.state.dnd := true
+				      MX = IP.x - Comp.state.lastX
+				      MY = IP.y - Comp.state.lastY
+				      {Out.move move(MX MY)}
+				      Comp.state.lastX := IP.x
+				      Comp.state.lastY := IP.y
 				   end
-				   {Out.dnd IP}
+				[] 'ButtonRelease' then
+				   if {Not Comp.state.dnd} then 
+				      {Out.sc IP}
+				   end
+				   Comp.state.click := false
+				   Comp.state.dnd := false
 				end
 			     end)
-		   state(dnd:false click:false)
+		   state(dnd:false click:false lastX:0 lastY:0)
 		   )
       }
    end
