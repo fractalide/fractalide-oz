@@ -4,34 +4,22 @@ import
 export
    new: CompNewGen
 define
-   fun {CompNewGen Name} Width Height in
-      % Width and Height of a component
-      Width = 120.0
-      Height = 70.0
+   fun {CompNewGen Name} Radius in
+      Radius = 50.0
       {Comp.new comp(
 		   name:Name type:'components/editor/component/create'
-		   inPorts(input)
-		   outPorts(rect inPorts outPorts name pos comp)
-		   procedure(proc{$ Ins Out Comp} Rec X X2 Y Y2 W2 H2 in
-			       Rec = {Ins.input.get}
-			       % Compute the initial position
-			       W2 = Width/2.0
-			       H2 = Height/2.0
-			       X = Rec.x - W2
-			       Y = Rec.y - H2
-			       X2 = X+Width
-			       Y2 = Y+Height
-			       % Create the main box
-			       {Out.rect create(X Y X2 Y2 width:3 fill:white)}
-			       % Create the port panels
-			       {Out.inPorts create(side:right x:Rec.x-H2-30.0 y:Rec.y)}
-			       {Out.outPorts create(side:left x:Rec.x+H2+30.0 y:Rec.y)}
-			       % Create the name
-			       {Out.name create(init:{Atom.toString Rec.name})}
-			       % Create the "real" comp
-			       {Out.comp create(name:{Atom.toString Rec.name})}
-			       {Out.pos create(Rec.x Rec.y)}
-			    end)
+		   inPorts('in')
+		   outPorts(bg border name comp)
+		   procedure(proc{$ Ins Out Comp} IP X Y in
+				IP = {Ins.'in'.get}
+				X = IP.x
+				Y = IP.y
+				{Out.bg create(X-Radius+5.0 Y-Radius+5.0 X+Radius-5.0 Y+Radius-5.0 width:0 fill:white)}
+				{Out.bg lower}
+				{Out.border create(X-Radius Y-Radius X+Radius Y+Radius width:5)}
+				{Out.name create(X Y text:{Atom.toString IP.name})}
+				{Out.comp create(name:{Atom.toString IP.name})}
+			     end)
 		   )
       }
    end

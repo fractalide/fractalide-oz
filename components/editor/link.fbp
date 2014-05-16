@@ -4,8 +4,23 @@ in => in awIn(QTk/actionsWrapper) out -> in awOut(QTk/actionsWrapper) out => out
 awOut() action => action
 
 % UI flow
-awIn() action#create ->  input create(editor/link/create) line -> in line(QTk/canvas/line) out -> in awOut()
-create() outComp -> input linkLogic(editor/link/linkLogic)
+awIn() action#create -> input create(editor/link/create) 
+create() line -> in line(QTk/canvas/line) out -> in awOut()
+create() outComp -> input linkLogic(editor/link/linkLogic) out -> in awOut()
+create() name -> in labelFrom(QTk/canvas/text) out -> in awOut()
+create() name -> in labelTo(QTk/canvas/text) out -> in awOut()
+
+% ---
+% moveBegin, moveEnd, moveEndMotion
+moveBegin => moveBegin moveL(editor/link/move) output -> in line()
+moveEnd => moveEnd moveL()
+
+% ---
+% Name ports management
+linkLogic() toPort -> input d(display) output -> in labelTo()
+linkLogic() fromPort -> input d2(display) output -> in labelFrom()
+moveL() toPort -> in labelTo()
+moveL() fromPort -> in labelFrom()
 
 % ---
 % Receive the second component to bound the real comp
@@ -15,24 +30,23 @@ awIn() action#inComp -> input linkLogic()
 % Delete : the line and unbound the comp
 awIn() action#delete -> in line()
 awIn() action#delete -> input linkLogic()
+awIn() action#delete -> in labelTo()
+awIn() action#delete -> in labelFrom()
 
 % ---
 % Lower action
 awIn() action#lower -> in line()
 
 % ---
-% moveBegin, moveEnd, moveEndMotion
-awIn() action#moveBegin -> move moveL(editor/link/move) output -> in line()
-awIn() action#moveEnd -> move moveL()
-awIn() action#moveEndPos -> move moveL()
-awIn() action#moveBeginPos -> move moveL()
-
-% ---
 % Line clicked
-line() action#ButtonRelease -> input ieGetAwIn(ipEdit) out -> in awIn()
-"opt(text:getEntryPoint(output:displayLink))" -> options ieGetAwIn()
+line() action#ButtonRelease -> input linkLogic()
 line() action#ButtonRelease -> input ieSetWidth(ipEdit) out -> in line()
 "opt(text:set(width:2))" -> options ieSetWidth()
+
+% ---
+% Rename the port from ouside
+awIn() action#toPortChange -> input linkLogic()
+awIn() action#fromPortChange -> input linkLogic()
 
 % ---
 % Open Close from outside

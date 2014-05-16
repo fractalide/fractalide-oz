@@ -20,12 +20,14 @@ canvas() action#ButtonRelease -> input ml()
 createComp(editor/createComp) action#inComponent -> input ml()
 createComp() action#outComponent -> input ml()
 % Move link only if in [beginLink endLink]
-canvas() action#beginLink -> input ml()
-canvas() action#endLink -> input ml()
+createLink(editor/createLink) ml -> input ml()
+createLink() ml -> input ml()
 
 % ---
 % Click to get back to graphEdit
+% or the component want to close
 ml() click -> input ieGraphEdit(ipEdit) out -> in awOut()
+createComp() action#closeComp -> input d(display) output -> input ieGraphEdit()
 "set(text:displayGraph)" -> options ieGraphEdit()
 
 % ---
@@ -35,8 +37,7 @@ scan() canvas -> in canvas()
 
 % ---
 % Create the links
-canvas() action#beginLink -> input createLink(editor/createLink)
-canvas() action#endLink -> input createLink()
+createComp() action#createLink -> input createLink()
 ml() link -> input createLink()
 createLink() out -> widget canvas()
 

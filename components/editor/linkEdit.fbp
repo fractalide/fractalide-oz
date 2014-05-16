@@ -20,6 +20,11 @@ addButton() action#button_clicked -> input ieAdd(ipEdit) out -> input disp()
 "opt(text:delete)" -> options ieAdd()
 
 % ---
+% Manage the to and from ports
+disp() ports -> in portOptions(editor/editPanel/portOptions) out -> place#2 td()
+portOptions() action#toPortChange -> input disp()
+portOptions() action#fromPortChange -> input disp()
+% ---
 % cancel : displayGraph
 awIn() action#displayGraph -> input disp()
 awIn() action#displayComp -> input disp()

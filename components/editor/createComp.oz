@@ -7,8 +7,12 @@ export
 define
    Unique = {NewCell 0}
    fun {OutPortWrapper Out} 
-      proc{$ send(_ Msg Ack)}
-	 {SendOut Out Msg}
+      proc{$ send(Port Msg Ack)}
+	 if Port == 'ERROR' then
+	    {Out.'ERROR' Msg}
+	 else
+	    {SendOut Out Msg}
+	 end
 	 Ack = ack
       end
    end

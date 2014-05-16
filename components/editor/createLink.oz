@@ -16,7 +16,7 @@ define
       {Comp.new comp(
 		   name:Name type:'components/editor/createLink'
 		   inPorts(input)
-		   outPorts(out)
+		   outPorts(out ml)
 		   procedure(proc{$ Ins Out Comp}
 				{InputProc Ins.input Out Comp}
 			     end)
@@ -27,29 +27,31 @@ define
    proc{InputProc In Out Comp} IP in
       IP = {In.get}
       case IP
-      of beginLink(entryPoint:BPoint x:X y:Y comp:OutComp name:Name) andthen {Not Comp.state.click} then L CompName in
+      of createLink(entryPoint:BPoint x:X y:Y comp:OutComp) andthen {Not Comp.state.click} then L CompName in
 	 CompName = {VirtualString.toAtom "link"#@Unique}
 	 Unique := @Unique + 1
 	 L = {SubComp.new CompName type "./components/editor/link.fbp"}
 	 Comp.state.link := L
 				  % Bind port and create it
 	 {L bind(out {OutPortWrapper Out} out)}
-	 {L bind('ERROR' {OutPortWrapper Out} 'ERROR')}
+	 {L bind('ERROR' {OutPortWrapper Out} out)}
 				  % Set the initial position
-	 {L send('in' moveBegin(x:X y:Y) _)}
-	 {L send('in' moveEnd(x:X y:Y) _)}
+	 {L send(moveBegin position(x:X y:Y) _)}
+	 {L send(moveEnd position(x:X y:Y) _)}
 	 {L send('in' lower _)}
 	 {L start}
-	 {L send('in' create(x:X y:Y outComp:OutComp outPortName:Name bPoint:BPoint subComp:L) _)}
+	 {L send('in' create(x:X y:Y outComp:OutComp entryPoint:BPoint) _)}
 	 Comp.state.click := true
-      [] endLink(entryPoint:EPoint x:X y:Y comp:InComp name:Name) andthen Comp.state.click then 
-	 {Comp.state.link send('in' moveEndPos(x:X y:Y) _)}
+	 {Out.ml beginLink}
+      [] createLink(entryPoint:EPoint x:X y:Y comp:InComp) andthen Comp.state.click then 
+	 {Comp.state.link send(moveEnd position(x:X y:Y) _)}
 				  % send info about the "real" port
-	 {Comp.state.link send('in' inComp(comp:InComp name:Name ePoint:EPoint) _)}
+	 {Comp.state.link send('in' inComp(comp:InComp ePoint:EPoint) _)}
 	 Comp.state.link := nil
 	 Comp.state.click := false
+	 {Out.ml endLink}
       [] 'Motion'(state:_ x:X y:Y) andthen Comp.state.link \= nil andthen Comp.state.click then
-	 {Comp.state.link send('in' moveEndPos(x:{Int.toFloat X} y:{Int.toFloat Y}) _)}
+	 {Comp.state.link send(moveEnd mousePosition(x:{Int.toFloat X} y:{Int.toFloat Y}) _)}
       else
 	 skip
       end

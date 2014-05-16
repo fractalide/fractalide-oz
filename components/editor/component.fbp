@@ -3,114 +3,53 @@
 in => in awIn(QTk/actionsWrapper) out -> in awOut(QTk/actionsWrapper) out => out
 awOut() action => action
 
+% ---
 % UI flow
-awIn() action#create -> input create(editor/component/create) rect -> in rect(QTk/canvas/rectangle) out -> in awOut()
-% Ports panels
-create() inPorts -> in inPortsPanel(editor/component/portPanel) out -> in awOut()
-create() outPorts -> in outPortsPanel(editor/component/portPanel) out -> in awOut()
-% name
-create() name -> in name(editor/labelentry) out -> place#1 td(QTk/td) out -> window winCanvas(QTk/canvas/window) out -> in awOut()
-create() pos -> in winCanvas()
-"create(bg:white)" -> in td()
-% The size logic component
-create() rect -> input sizeLogic(editor/component/sizeLogic)
+awIn() action#create -> in create(editor/component/create)
+create() bg -> in bg(QTk/canvas/oval) out -> in awOut()
+create() border -> in border(QTk/canvas/oval) out -> in awOut()
+create() name -> in name(QTk/canvas/text) out -> in awOut()
+create() comp -> in compManager(editor/component/compManager) out -> in awOut()
+% --- 
+% Mouse logic : drag&drop, show/hide, inComponent/outComponent
+bg() action#Enter -> in mouseLogic(editor/component/mouseLogic)
+bg() action#Leave -> in mouseLogic()
+bg() action#ButtonPress -> in mouseLogic()
+bg() action#ButtonRelease -> in mouseLogic()
+bg() action#Motion -> in mouseLogic()
+% drag&drop
+mouseLogic() dnd -> input dnd(dnd/dndLogic) move -> in bg()
+dnd() move -> in name()
+dnd() move -> in border()
+dnd() move -> in awOut() action#move -> input discard(discard)
+% incomp/outcomp
+mouseLogic() out -> in awOut()
+% show
+mouseLogic() disp -> in compManager()
 
 % ---
-% Create the mouse logic
-rect() action#ButtonPress -> input mouseLogic(editor/component/mouseLogic)
-rect() action#ButtonRelease -> input mouseLogic()
-rect() action#Motion -> input mouseLogic()
+% Border managment
+border() action#ButtonPress -> in compManager()
+compManager() createLink -> comp createLinkLogic(editor/component/createLinkLogic)
+border() action#ButtonPress -> input ieGetPos(ipEdit) out -> in name()
+"opt(text:getCoords(output:getPos))" -> options ieGetPos()
+name() action#getPos -> pos createLinkLogic()
+createLinkLogic() out -> in awOut()
 
 % ---
-% Drag&Drop
-mouseLogic() dnd -> input dnd(dnd/dndLogic) move -> in rect()
-
-dnd() move -> in inPortsPanel()
-dnd() move -> in outPortsPanel()
-dnd() move -> in winCanvas()
+% show/hide
+awIn() action#displayComp -> input discard()
+awIn() action#closeComp -> input discard()
 
 % ---
-% Grab when mouse over
-rect() action#Enter -> input ieEnter(ipEdit) out -> input icLogic(editor/component/inCompLogic)
-rect() action#Leave -> input ieLeave(ipEdit) out -> input icLogic()
-icLogic() output -> in awOut()
-"opt(text:inComponent)" -> options ieEnter()
-"opt(text:outComponent)" -> options ieLeave()
-rect() action#ButtonPress -> input icLogic()
-rect() action#ButtonRelease -> input icLogic()
-inPortsPanel() action#Enter -> input ieEnter()
-inPortsPanel() action#Leave -> input ieLeave()
-outPortsPanel() action#Enter -> input ieEnter()
-outPortsPanel() action#Leave -> input ieLeave()
-inPortsPanel() action#ButtonPress -> input icLogic()
-
-
-% ---
-% The size logic modification
-dnd() move -> input sizeLogic()
-inPortsPanel() action#right -> input sizeLogic()
-outPortsPanel() action#left -> input sizeLogic()
-sizeLogic() newPos -> in rect()
-
-% ---
-% The "real" component
-% The manager
-create() comp -> input compManager(editor/component/compManager)
-
-% At link creation, add the real comp entry point to the record
-outPortsPanel() action#beginLink -> input compManager() output -> in awOut()
-outPortsPanel() action#endLink -> input compManager()
-inPortsPanel() action#beginLink -> input compManager()
-inPortsPanel() action#endLink -> input compManager()
-
-% ---
-% Show hide port panel and color the rect
-awIn() action#openPorts -> in inPortsPanel()
-awIn() action#openPorts -> in outPortsPanel()
-awIn() action#closePorts -> in inPortsPanel()
-awIn() action#closePorts -> in outPortsPanel()
-awIn() action#openPorts -> input ieColorBlue(ipEdit) out -> in rect()
-awIn() action#closePorts -> input ieColorBlack(ipEdit) out -> in rect()
-"opt(text:set(outline:blue))" -> options ieColorBlue()
-"opt(text:set(outline:black))" -> options ieColorBlack()
-
-% ---
-% Show and hide from ports panel to port panel
-inPortsPanel() action#openPorts -> in inPortsPanel()
-outPortsPanel() action#openPorts -> in outPortsPanel()
-% filter closePorts if close for display the same component
-inPortsPanel() action#closePorts -> input filter(editor/component/filterClose) output -> in inPortsPanel()
-outPortsPanel() action#closePorts -> input filter(editor/component/filterClose) output -> in outPortsPanel()
-"getEntryPoint(output:getEPFilter)" -> in awIn() action#getEPFilter -> input filter()
-
-% ---
-% addinArrayPort
-inPortsPanel() action#addinArrayPort -> input compManager()
-
-% ---
-% Events from compEdit
-% start stop
-awIn() action#start -> input compManager()
-awIn() action#stop -> input compManager()
-% new comp
-awIn() action#newComp -> input compManager()
+% Events from outside
+awIn() action#start -> in compManager()
+awIn() action#stop -> in compManager()
+awIn() action#newComp -> in compManager()
+awIn() action#options -> in compManager()
 % delete
-awIn() action#delete -> input compManager()
-awIn() action#delete -> in inPortsPanel()
-awIn() action#delete -> in outPortsPanel()
-awIn() action#delete -> in rect()
+awIn() action#delete -> in compManager()
+awIn() action#delete -> in border()
+awIn() action#delete -> in bg()
 awIn() action#delete -> in name()
-awIn() action#delete -> in td()
-awIn() action#delete -> in winCanvas()
-% select a new type of comp
-compManager() newInPort -> in inPortsPanel()
-compManager() newOutPort -> in outPortsPanel()
-% Options
-awIn() action#options -> input compManager()
-
-
-% ---
-% Click for the compEdit in editPanel
-mouseLogic() show -> input ieCompEdit(ipEdit) out -> in awIn()
-"opt(text:getEntryPoint(output:displayComp))" -> options ieCompEdit()
-awIn() action#displayComp -> input compManager()
+awIn() action#delete -> in awOut() action#delete -> input discard()
