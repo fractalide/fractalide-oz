@@ -26,12 +26,12 @@ define
 					       action:proc{$} F E in
 							 F = {H get(firstselection:$)}
 							 E = {List.nth {H get($)} F}
-							 {QTkHelper.sendOut Out select(firstselection:F element:E)}
+							 {Comp.entryPoint send('in' select(firstselection:F element:E) _)}
 						      end
 					      )}
 	 {Out.out create(B)}
 	 {Wait H}
-	 {QTkHelper.bindEvents H Out}
+	 {QTkHelper.bindEvents H Comp.entryPoint}
 	 Comp.state.handle := H
 	 {QTkHelper.feedBuffer Out Comp}
       else

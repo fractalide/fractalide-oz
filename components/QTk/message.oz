@@ -18,7 +18,7 @@ define
 				   B = {Record.adjoin IP message(handle:H)}
 				   {Out.out create(B)}
 				   {Wait H}
-				   {QTkHelper.bindEvents H Out}
+				   {QTkHelper.bindEvents H Comp.entryPoint}
 				   Comp.state.handle := H
 				   {QTkHelper.feedBuffer Out Comp}
 				else

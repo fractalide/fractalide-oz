@@ -17,12 +17,12 @@ define
 				of create then H B in
 				   B = {Record.adjoin IP radiobutton(handle:H
 								     action:proc{$}
-									       {QTkHelper.sendOut Out check({H get($)})}
+									       {Comp.entryPoint send('in' check({H get($)}) _)}
 									    end
 								    )}
 				   {Out.out create(B)}
 				   {Wait H}
-				   {QTkHelper.bindEvents H Out}
+				   {QTkHelper.bindEvents H Comp.entryPoint}
 				   Comp.state.handle := H
 				   {QTkHelper.feedBuffer Out Comp}
 				else

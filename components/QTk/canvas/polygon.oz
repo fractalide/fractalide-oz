@@ -18,7 +18,7 @@ define
 				   B = {Record.adjoin {QTkHelper.recordIncInd IP} create(polygon handle:H)}
 				   {Out.out B}
 				   {Wait H}
-				   {QTkHelper.bindBasicEvents H Out}
+				   {QTkHelper.bindBasicEvents H Comp.entryPoint}
 				   Comp.state.handle := H
 				   {QTkHelper.feedBuffer Out Comp}
 				else

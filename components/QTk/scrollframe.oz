@@ -12,7 +12,7 @@ define
 	 B = {Record.adjoin RevI.1 scrollframe(RevF.1 handle:H)}
 	 {Out.out create(B)}
 	 {Wait H}
-	 {QTkHelper.bindEvents H Out}
+	 {QTkHelper.bindEvents H Comp.entryPoint}
 	 Comp.state.handle := H
 	 {QTkHelper.feedBuffer Out Comp}
 	 Comp.state.init := {Reverse RevI.2}

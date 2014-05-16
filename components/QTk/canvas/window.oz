@@ -12,7 +12,7 @@ define
 	 B = {Record.adjoin {QTkHelper.recordIncInd RevI.1} create(window window:RevW.1 handle:H)}
 	 {Out.out B}
 	 {Wait H}
-	 {QTkHelper.bindBasicEvents H Out}
+	 {QTkHelper.bindBasicEvents H Comp.entryPoint}
 	 Comp.state.handle := H
 	 {QTkHelper.feedBuffer Out Comp}
 	 Comp.state.window := {Reverse RevW.2}
