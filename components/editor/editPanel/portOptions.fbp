@@ -1,0 +1,24 @@
+% ---
+% Logic stream
+in => in awIn(QTk/actionsWrapper)
+awIn() out -> in awOut(QTk/actionsWrapper) out => out
+awOut() action => action
+
+% ---
+% UI stream
+awIn() action#create -> in create(editor/editPanel/createPortOptions) grid -> in grid(QTk/grid) out -> in awOut()
+
+% ---
+% The 6 fields
+"create(init:"from" bg:white)" -> in labelfrom(QTk/label) out -> grid#1x1 grid()
+"create(init:":" bg:white)" -> in labelcfrom(QTk/label) out -> grid#2x1 grid()
+create() from -> in labelentryfrom(editor/labelentry) out -> grid#3x1 grid()
+"create(init:"to" bg:white)" -> in labelto(QTk/label) out -> grid#1x2 grid()
+"create(init:":" bg:white)" -> in labelcto(QTk/label) out -> grid#2x2 grid()
+create() to -> in labelentryto(editor/labelentry) out -> grid#3x2 grid()
+
+
+labelentryto() action#textChanged -> in irto(ipRename) out -> in awOut()
+"opt(name:toPortChange)" -> options irto()
+labelentryfrom() action#textChanged -> in irfrom(ipRename) out -> in awOut()
+"opt(name:fromPortChange)" -> options irfrom()

@@ -262,6 +262,8 @@ define
 	     [] getOutPort(Port ?R) then
 		R=State.outPorts.Port
 		State
+	     [] setParentEntryPoint(ParentEntryPoint) then
+		{Record.adjoinAt State parentEntryPoint ParentEntryPoint}
 	     [] connect(Port Index) then NewArrayPort NewInputPorts in 
 		NewArrayPort = if {Not {HasFeature State.inPorts.Port.qs Index}} then NQS NC in
 				  NQS = {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}
@@ -286,12 +288,15 @@ define
 		{Record.adjoinAt State inPorts NewInputPorts}
 	     % Interact with the component
 	     [] send(InPort#N Msg Ack) then
-		try
+		if {HasFeature State.inPorts InPort} andthen {HasFeature State.inPorts.InPort.qs N} then
 		   {State.inPorts.InPort.qs.N.put Msg Ack}
-		catch E then
-		   raise cannot_send(error:E dest:InPort#N state:State name:State.name type:State.type) end
+		   {Exec State}
+		else Out in
+		   Out = {PrepareOut State.outPorts}
+		   {Out.'ERROR' cannot_send_array(dest:InPort#N state:State name:State.name type:State.type)}
+		   Ack = ack
+		   State
 		end
-		{Exec State}
 	     [] send('START' _ Ack) then
 		Ack = ack
 		{Exec State}
@@ -305,56 +310,87 @@ define
 		NState = {Record.adjoinAt State options NOptions}
 		if {Record.width State.inPorts} > 0 then {Exec NState} else NState end
 	     [] send(InPort Msg Ack) then
-		{State.inPorts.InPort.q.put Msg Ack}
-		{Exec State}
+		if {HasFeature State.inPorts InPort} then
+		   {State.inPorts.InPort.q.put Msg Ack}
+		   {Exec State}
+		else Out in
+		   Out = {PrepareOut State.outPorts}
+		   {Out.'ERROR' cannot_send(state:State name:State.name type:State.type)}
+		   Ack = ack
+		   State
+		end
 	     [] bind(OutPort#N Comp Name) then NAPort NPort NOutPorts in
 		try
 		   if {HasFeature Name 2} then {Comp connect(Name.1 Name.2)} end
-		   NAPort = Comp#Name | State.outPorts.OutPort.N
-		catch _ then
-		   NAPort = Comp#Name | nil
-		end
-		NPort = {Record.adjoinAt State.outPorts.OutPort N NAPort}
-		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
-		{Record.adjoinAt State outPorts NOutPorts}
-	     [] bind(OutPort Comp Name) then NPort NOutPorts in
-		if {HasFeature Name 2} then {Comp connect(Name.1 Name.2)} end
-		NPort = Comp#Name | State.outPorts.OutPort
-		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
-		{Record.adjoinAt State outPorts NOutPorts}
-	     [] unBound(OutPort#Sub Comp) then NAPort NPort NOutPorts in
-		if {HasFeature State.outPorts.OutPort Sub} then
-		   NAPort = {FoldL State.outPorts.OutPort.Sub
-			     fun {$ Acc P}
-				if Comp == P.1 then
-				   if {HasFeature P.2 2} then {Comp disconnect(P.2.1 P.2.2)} end
-				   Acc
-				else P|Acc end
-			     end
-			     nil
-			    }
-		   if NAPort \= nil then
-		      NPort = {Record.adjoinAt State.outPorts.OutPort Sub NAPort}
+		   if {HasFeature State.outPorts.OutPort N} then
+		      NAPort = Comp#Name | State.outPorts.OutPort.N
 		   else
-		      NPort = {Record.subtract State.outPorts.OutPort Sub}
+		      NAPort = Comp#Name | nil
 		   end
+		   NPort = {Record.adjoinAt State.outPorts.OutPort N NAPort}
 		   NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
 		   {Record.adjoinAt State outPorts NOutPorts}
-		else
+		catch E then Out in
+		   Out = {PrepareOut State.outPorts}
+		   {Out.'ERROR' cannot_bind_array(error:E state:State name:State.name type:State.type)}
 		   State
 		end
-	     [] unBound(OutPort Comp) andthen {HasFeature State.outPorts OutPort} then NPort NOutPorts in
-		NPort = {FoldL State.outPorts.OutPort
-			 fun {$ Acc P}
-			    if Comp == P.1 then
-			       if {HasFeature P.2 2} then {Comp disconnect(P.2.1 P.2.2)} end
-			       Acc
-			    else P|Acc end
-			 end
-			 nil
-			}
-		NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
-		{Record.adjoinAt State outPorts NOutPorts}
+	     [] bind(OutPort Comp Name) then NPort NOutPorts in
+		try
+		   if {HasFeature Name 2} then {Comp connect(Name.1 Name.2)} end
+		   NPort = Comp#Name | State.outPorts.OutPort
+		   NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
+		   {Record.adjoinAt State outPorts NOutPorts}
+		catch E then Out in
+		   Out = {PrepareOut State.outPorts}
+		   {Out.'ERROR' cannot_bind(error:E state:State name:State.name type:State.type)}
+		   State
+		end
+	     [] unBound(OutPort#Sub Comp) then NAPort NPort NOutPorts in
+		try
+		   if {HasFeature State.outPorts.OutPort Sub} then
+		      NAPort = {FoldL State.outPorts.OutPort.Sub
+				fun {$ Acc P}
+				   if Comp == P.1 then
+				      if {HasFeature P.2 2} then {Comp disconnect(P.2.1 P.2.2)} end
+				      Acc
+				   else P|Acc end
+				end
+				nil
+			       }
+		      if NAPort \= nil then
+			 NPort = {Record.adjoinAt State.outPorts.OutPort Sub NAPort}
+		      else
+			 NPort = {Record.subtract State.outPorts.OutPort Sub}
+		      end
+		      NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
+		      {Record.adjoinAt State outPorts NOutPorts}
+		   else
+		      State
+		   end
+		catch E then Out in
+		   Out = {PrepareOut State.outPorts}
+		   {Out.'ERROR' cannot_unBound(error:E state:State name:State.name type:State.type)}
+		   State
+		end
+	     [] unBound(OutPort Comp) then NPort NOutPorts in
+		try
+		   NPort = {FoldL State.outPorts.OutPort
+			    fun {$ Acc P}
+			       if Comp == P.1 then
+				  if {HasFeature P.2 2} then {Comp disconnect(P.2.1 P.2.2)} end
+				  Acc
+			       else P|Acc end
+			    end
+			    nil
+			   }
+		   NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
+		   {Record.adjoinAt State outPorts NOutPorts}
+		catch E then Out in
+		   Out = {PrepareOut State.outPorts}
+		   {Out.'ERROR' cannot_unBound(error:E state:State name:State.name type:State.type)}
+		   State
+		end
 	     end
 	  end
           % The accumulator
@@ -417,7 +453,7 @@ define
 			       inPorts:'in'() outPorts:out('ERROR':nil)
 			       procedure:nil state:{NewDictionary}
 			       threads:nil options:opt()
-			       run:true entryPoint:_
+			       run:true entryPoint:_ parentEntryPoint:nil
 			      )
       NState = {Record.foldLInd GivenRecord
 		fun {$ Ind S Rec}

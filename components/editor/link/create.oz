@@ -8,12 +8,13 @@ define
       {Comp.new comp(
 		   name:Name type:'components/editor/link/create'
 		   inPorts(input)
-		   outPorts(line outComp)
+		   outPorts(line outComp name)
 		   procedure(proc{$ Ins Out Comp} Rec in
 			       Rec = {Ins.input.get}
-			       {Out.line create(Rec.x Rec.y Rec.x Rec.y arrow:last width:0)}
+			       {Out.line create(Rec.x Rec.y Rec.x+100.0 Rec.y+100.0 arrow:last)}
 			       {Out.line lower}
-			       {Out.outComp outComp(comp:Rec.outComp name:Rec.outPortName bPoint:Rec.bPoint subComp:Rec.subComp)}
+				{Out.outComp outComp(comp:Rec.outComp bPoint:Rec.entryPoint)}
+				{Out.name create(text:"" Rec.x Rec.y)}
 			    end)
 		   )
       }

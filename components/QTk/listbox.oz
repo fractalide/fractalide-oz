@@ -27,12 +27,12 @@ define
 						 F = {H get(firstselection:$)}
 						 S = {H get(selection:$)}
 						 E = {List.nth {H get($)} F}
-						 {QTkHelper.sendOut Out select(firstselection:F selection:S element:E)}
+						 {Comp.entryPoint send('in' select(firstselection:F selection:S element:E) _)}
 					      end
 				      )}
 	 {Out.out create(B)}
 	 {Wait H}
-	 {QTkHelper.bindEvents H Out}
+	 {QTkHelper.bindEvents H Comp.entryPoint}
 	 Comp.state.handle := H
 	  {QTkHelper.feedBuffer Out Comp}
       else

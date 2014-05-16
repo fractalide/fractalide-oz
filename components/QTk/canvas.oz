@@ -27,7 +27,7 @@ define
 	 B = {Record.adjoin IP canvas(handle:H)}
 	 {Out.out create(B)}
 	 {Wait H}
-	 {QTkHelper.bindEvents H Out}
+	 {QTkHelper.bindEvents H Comp.entryPoint}
 	 Comp.state.handle := H
 	 {QTkHelper.feedBuffer Out Comp}
       else

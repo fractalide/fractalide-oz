@@ -9,8 +9,8 @@ define
       {Comp.new comp(
 		   name:Name type:'components/editor/linkEdit/display'
 		   inPorts(input)
-		   outPorts(disp output options)
-		   state(comp:nil)
+		   outPorts(disp output options name type)
+		   state(comp:nil name:nil)
 		   procedure(proc{$ Ins Out Comp} {InputProc Ins.input Out Comp} end)
 		   )
       }
@@ -21,28 +21,35 @@ define
       of displayComp then Ack S in
 	 {Out.disp display}
 	 if Comp.state.comp \= nil then A in
-	    {Comp.state.comp send('in' closePorts A)}
+	    {Comp.state.comp send('in' closeComp A)}
 	    {Wait A}
 	 end
 	 Comp.state.comp := IP.1
-	 {IP.1 send('in' openPorts Ack)}
+	 {IP.1 send('in' displayComp Ack)}
 	 S = {(IP.2) getState($)}
 	 {Out.options state(S)}
 	 {Wait Ack}
+	 {Out.name set(text:S.name)}
+	 {Out.type set(text:S.type)}
+	 Comp.state.name := S.name
       [] start then Ack in
 	 {Comp.state.comp send('in' start Ack)}
 	 {Wait Ack}
       [] stop then Ack in
 	 {Comp.state.comp send('in' stop Ack)}
 	 {Wait Ack}
-      [] newComp then Ack S in
+      [] newComp then Ack S NS in
+	 S = {(IP.1) getState($)}
+	 NS = {Record.adjoinAt S name Comp.state.name}
+	 {(IP.1) changeState(NS)}
 	 {Comp.state.comp send('in' IP Ack)}
 	 {Wait Ack}
-	 S = {(IP.1) getState($)}
 	 {Out.options state(S)}
+	 {Out.name set(text:NS.name)}
+	 {Out.type set(text:NS.type)}
       [] displayGraph then
 	 if Comp.state.comp \= nil then Ack in 
-	    {Comp.state.comp send('in' closePorts Ack)}
+	    {Comp.state.comp send('in' closeComp Ack)}
 	    {Wait Ack}
 	 end
 	 Comp.state.comp := nil
@@ -58,6 +65,10 @@ define
 	 {Wait Ack}
 	 S = {Comp.state.comp getState($)}
 	 {Wait S}
+      [] textChanged then Ack in
+	 Comp.state.name := IP.1
+	 {Comp.state.comp send('in' nameChange(IP.1) Ack)}
+	 {Wait Ack}
       end
    end
 end

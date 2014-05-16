@@ -9,32 +9,43 @@ awOut() action => action
 awIn() action#create -> in td(QTk/td) out -> in awOut()
 
 % ---
+% Name and type
+"create(init:"")" -> in labelName(editor/labelentry) out -> place#1 td()
+"create(text:"" bg:white)" -> in labelType(QTk/label) out -> place#2 td()
+
+% ---
 % Creation of buttons
 % select
-selectButton(QTk/button) out -> place#1 td()
+selectButton(QTk/button) out -> place#3 td()
 "create(text:"select" glue:sew)" -> in selectButton()
 % start and stop
 "create(text:"start" glue:ens)" -> in startButton(QTk/button) out -> place#1 lr(QTk/lr)
 "create(text:"stop" glue:wns)" -> in stopButton(QTk/button) out -> place#2 lr()
-lr() out -> place#2 td()
+lr() out -> place#4 td()
 "create(bg:white)" -> in lr()
 % delete
-deleteButton(QTk/button) out -> place#3 td()
+deleteButton(QTk/button) out -> place#5 td()
 "create(text:"delete" glue:new)" -> in deleteButton()
 
 % ---
 % creation of options panel
-"create(bg:white glue:new)" -> in optionsEdit(editor/editPanel/optionsEdit) out -> place#4 td()
+"create(bg:white glue:new)" -> in optionsEdit(editor/editPanel/optionsEdit) out -> place#6 td()
 
 % ---
 % Switch to compEdit
 awIn() action#displayComp -> input disp(editor/editPanel/displayComp) disp -> in td()
 disp() output -> in awOut()
 disp() options -> in optionsEdit()
+disp() name -> in labelName()
+disp() type -> in labelType()
+
+% ---
+% rename logic
+labelName() action#textChanged -> input disp()
 
 % ---
 % select logic
-selectButton() action#button_clicked -> input newComp(editor/component/compLoad) output -> type genComp(graph/generator) output -> input disp()
+selectButton() action#button_clicked -> input newComp(editor/editPanel/compLoad) output -> type genComp(graph/generator) output -> input disp()
 
 % ---
 % start stop logic

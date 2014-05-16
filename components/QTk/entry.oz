@@ -17,12 +17,12 @@ define
 				of create then H B in
 				   B = {Record.adjoin IP entry(handle:H
 							       action:proc{$}
-									 {QTkHelper.sendOut Out change}
+									 {Comp.entryPoint send('in' change _)}
 								      end
 							      )}
 				   {Out.out create(B)}
 				   {Wait H}
-				   {QTkHelper.bindEvents H Out}
+				   {QTkHelper.bindEvents H Comp.entryPoint}
 				   Comp.state.handle := H
 				   {QTkHelper.feedBuffer Out Comp}
 				else

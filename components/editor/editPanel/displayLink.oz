@@ -10,7 +10,7 @@ define
 		   inPorts(
 		      input
 		      )
-		   outPorts(disp output)
+		   outPorts(disp output ports)
 		   state(link:nil)
 		   procedure(proc{$ Ins Out Comp} {InputProc Ins.input Out Comp} end)
 		   )
@@ -28,6 +28,8 @@ define
 	 Comp.state.link := IP.1
 	 {IP.1 send('in' open Ack)}
 	 {Wait Ack}
+	 % creation of the two ports names
+	 {Out.ports create(to:IP.to 'from':IP.'from')}
       [] delete then Ack Ack2 in
 	 {Comp.state.link send('in' close Ack)}
 	 {Wait Ack}
@@ -47,6 +49,12 @@ define
 	    {Wait Ack}
 	 end
 	 Comp.state.link := nil
+      [] toPortChange then Ack in
+	 {Comp.state.link send('in' IP Ack)}
+	 {Wait Ack}
+      [] fromPortChange then Ack in
+	 {Comp.state.link send('in' IP Ack)}
+	 {Wait Ack}
       end
    end
 

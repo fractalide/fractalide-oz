@@ -4,8 +4,8 @@ lr(QTk/grid) out -> in win(QTk/window)
 "create(glue:nswe bg:white borderwidth:3)" -> in lr()
 "columnconfigure(2 weight:1)" -> in lr()
 "rowconfigure(1 weight:1)" -> in lr()
-%win() out -> input disp(display)
-%"opt(pre:'default ')" -> options disp()
+win() out -> input disp(display)
+"opt(pre:'default ')" -> options disp()
 "set(title:"Fractallide")" -> in win()
 
 % ---

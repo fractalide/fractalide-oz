@@ -67,31 +67,31 @@ define
 	 end
       end
    end
-   proc {BindBasicEvents Handle Out}
+   proc {BindBasicEvents Handle EP}
       for E in ['ButtonPress' 'ButtonRelease'] do
 	 {Handle bind(event:"<"#{Atom.toString E}#">"
 		      args:[int(b) int(x) int(y)]
-		      action: proc {$ B X Y} {SendOut Out E(button:B x:X y:Y)} end
+		      action: proc {$ B X Y} {EP send('in' E(button:B x:X y:Y) _)} end
 		     )}
       end
       {Handle bind(event:"<Motion>"
 		   args:[int(x) int(y) string(s)]
-		   action: proc{$ X Y S} {SendOut Out 'Motion'(x:X y:Y state:S)} end
+		   action: proc{$ X Y S} {EP send('in' 'Motion'(x:X y:Y state:S) _)} end
 		  )}
       for E in ['Enter' 'Leave'] do
 	 {Handle bind(event:"<"#{Atom.toString E}#">"
 		      args:[string(d) int(f) string(m) int(x) int(y) string(s)]
-		      action: proc{$ D F M X Y S} {SendOut Out E(detail:D focus:F mode:M x:X y:Y state:S)} end
+		      action: proc{$ D F M X Y S} {EP send('in' E(detail:D focus:F mode:M x:X y:Y state:S) _)} end
 		     )}
       end
       for E in ['KeyPress' 'KeyRelease'] do
 	 {Handle bind(event:"<"#{Atom.toString E}#">"
 		      args:[int(k) int(x) int(y) string(s) string('A') string('T') string('W') string('K') int('X') int('Y')]
-		      action: proc {$ K X Y S A T W TK XR YR} {SendOut Out E(key:K x:X y:Y state:S ascii:A type:T path:W textual_string:TK x_root:XR y_root:YR)} end
+		      action: proc {$ K X Y S A T W TK XR YR} {EP send('in' E(key:K x:X y:Y state:S ascii:A type:T path:W textual_string:TK x_root:XR y_root:YR) _)} end
 		     )}
       end
    end
-   proc {BindEvents Handle Out} Events in
+   proc {BindEvents Handle EP} Events in
       Events = ['Activate'
 		'Deactivate'
 		'FocusIn'
@@ -99,10 +99,10 @@ define
 	       ]
       for E in Events do
 	 {Handle bind(event:"<"#{Atom.toString E}#">"
-		      action: proc{$} {SendOut Out E} end
+		      action: proc{$} {EP send('in' E _)} end
 		     )}
       end
-      {BindBasicEvents Handle Out}
+      {BindBasicEvents Handle EP}
    end
    fun {RecordIncInd Rec} NRec in
       NRec = {Record.make create
