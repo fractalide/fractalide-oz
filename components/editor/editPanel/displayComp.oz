@@ -10,7 +10,7 @@ define
 		   name:Name type:'components/editor/linkEdit/display'
 		   inPorts(input)
 		   outPorts(disp output options name type)
-		   state(comp:nil)
+		   state(comp:nil name:nil)
 		   procedure(proc{$ Ins Out Comp} {InputProc Ins.input Out Comp} end)
 		   )
       }
@@ -31,19 +31,22 @@ define
 	 {Wait Ack}
 	 {Out.name set(text:S.name)}
 	 {Out.type set(text:S.type)}
+	 Comp.state.name := S.name
       [] start then Ack in
 	 {Comp.state.comp send('in' start Ack)}
 	 {Wait Ack}
       [] stop then Ack in
 	 {Comp.state.comp send('in' stop Ack)}
 	 {Wait Ack}
-      [] newComp then Ack S in
+      [] newComp then Ack S NS in
+	 S = {(IP.1) getState($)}
+	 NS = {Record.adjoinAt S name Comp.state.name}
+	 {(IP.1) changeState(NS)}
 	 {Comp.state.comp send('in' IP Ack)}
 	 {Wait Ack}
-	 S = {(IP.1) getState($)}
 	 {Out.options state(S)}
-	 {Out.name set(text:S.name)}
-	 {Out.type set(text:S.type)}
+	 {Out.name set(text:NS.name)}
+	 {Out.type set(text:NS.type)}
       [] displayGraph then
 	 if Comp.state.comp \= nil then Ack in 
 	    {Comp.state.comp send('in' closeComp Ack)}
@@ -62,6 +65,10 @@ define
 	 {Wait Ack}
 	 S = {Comp.state.comp getState($)}
 	 {Wait S}
+      [] textChanged then Ack in
+	 Comp.state.name := IP.1
+	 {Comp.state.comp send('in' nameChange(IP.1) Ack)}
+	 {Wait Ack}
       end
    end
 end

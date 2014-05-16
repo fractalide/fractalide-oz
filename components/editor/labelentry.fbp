@@ -30,6 +30,10 @@ setText() textchange -> in awOut()
 awOut() action#ButtonPress -> input d(discard)
 
 % ---
+% set from outside
+awIn() action#set -> in label()
+
+% ---
 % delete
 awIn() action#delete -> in label()
 awIn() action#delete -> in entry()

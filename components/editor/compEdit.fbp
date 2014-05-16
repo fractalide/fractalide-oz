@@ -10,7 +10,7 @@ awIn() action#create -> in td(QTk/td) out -> in awOut()
 
 % ---
 % Name and type
-"create(text:"" bg:white)" -> in labelName(QTk/label) out -> place#1 td()
+"create(init:"")" -> in labelName(editor/labelentry) out -> place#1 td()
 "create(text:"" bg:white)" -> in labelType(QTk/label) out -> place#2 td()
 
 % ---
@@ -38,6 +38,11 @@ disp() output -> in awOut()
 disp() options -> in optionsEdit()
 disp() name -> in labelName()
 disp() type -> in labelType()
+
+% ---
+% rename logic
+labelName() action#textChanged -> input disp()
+
 % ---
 % select logic
 selectButton() action#button_clicked -> input newComp(editor/editPanel/compLoad) output -> type genComp(graph/generator) output -> input disp()

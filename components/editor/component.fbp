@@ -37,6 +37,11 @@ name() action#getPos -> pos createLinkLogic()
 createLinkLogic() out -> in awOut()
 
 % ---
+% Rename
+awIn() action#nameChange -> in compManager()
+compManager() name -> in name()
+
+% ---
 % show/hide
 awIn() action#displayComp -> input discard()
 awIn() action#closeComp -> input discard()

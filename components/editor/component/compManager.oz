@@ -14,7 +14,7 @@ define
       {CompLib.new comp(
 		      name:Name type:'components/editor/component/compManager'
 		      inPorts('in')
-		      outPorts(out createLink)
+		      outPorts(out createLink name)
 		      procedure(proc{$ Ins Out Comp} {InputProc Ins.'in' Out Comp} end)
 		      state(comp:_)
 		      )
@@ -50,6 +50,11 @@ define
       [] options then Ack in
 	 {Comp.state.comp send(options IP Ack)}
 	 {Wait Ack}
+      [] nameChange then S NS in
+	 S = {Comp.state.comp getState($)}
+	 NS = {Record.adjoinAt S name {VirtualString.toAtom IP.1}}
+	 {Comp.state.comp changeState(NS)}
+	 {Out.name set(text:IP.1)}
       end
    end
 end
