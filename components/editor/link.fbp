@@ -17,8 +17,8 @@ moveEnd => moveEnd moveL()
 
 % ---
 % Name ports management
-linkLogic() toPort -> input d(display) output -> in labelTo()
-linkLogic() fromPort -> input d2(display) output -> in labelFrom()
+linkLogic() toPort -> in labelTo()
+linkLogic() fromPort -> in labelFrom()
 moveL() toPort -> in labelTo()
 moveL() fromPort -> in labelFrom()
 

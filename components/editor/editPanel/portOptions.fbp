@@ -12,13 +12,28 @@ awIn() action#create -> in create(editor/editPanel/createPortOptions) grid -> in
 % The 6 fields
 "create(init:"from" bg:white)" -> in labelfrom(QTk/label) out -> grid#1x1 grid()
 "create(init:":" bg:white)" -> in labelcfrom(QTk/label) out -> grid#2x1 grid()
-create() from -> in labelentryfrom(editor/labelentry) out -> grid#3x1 grid()
+create() from -> in portfrom(editor/labelentry) out -> grid#3x1 grid()
+"create(bg:white)" -> in listfrom(QTk/dropdownlistbox) out -> grid#4x1 grid()
+create() listfrom -> list listfrom()
+
 "create(init:"to" bg:white)" -> in labelto(QTk/label) out -> grid#1x2 grid()
 "create(init:":" bg:white)" -> in labelcto(QTk/label) out -> grid#2x2 grid()
-create() to -> in labelentryto(editor/labelentry) out -> grid#3x2 grid()
+create() to -> in portto(editor/labelentry) out -> grid#3x2 grid()
+"create(bg:white)" -> in listto(QTk/dropdownlistbox) out -> grid#4x2 grid()
+create() listto -> list listto()
 
+% ---
+% select on list put in label
+listfrom() action#select -> in fromselect(editor/editPanel/selectPort) out -> in awOut()
+fromselect() label -> in portfrom()
+"opt(name:fromPortChange)" -> options fromselect()
+listto() action#select -> in toselect(editor/editPanel/selectPort) out -> in awOut()
+toselect() label -> in portto()
+"opt(name:toPortChange)" -> options toselect()
 
-labelentryto() action#textChanged -> in irto(ipRename) out -> in awOut()
+% ---
+% Manual edit
+portto() action#textChanged -> in irto(ipRename) out -> in awOut()
 "opt(name:toPortChange)" -> options irto()
-labelentryfrom() action#textChanged -> in irfrom(ipRename) out -> in awOut()
+portfrom() action#textChanged -> in irfrom(ipRename) out -> in awOut()
 "opt(name:fromPortChange)" -> options irfrom()
