@@ -28,8 +28,8 @@ define
 	 Comp.state.comp := {CompLib.new comp(name:{VirtualString.toAtom IP.name}
 					      type:dummy)}
 	 {Comp.state.comp bind('ERROR' {OutPortWrapper Out} out)}
-      [] 'ButtonPress' then 
-	 {Out.createLink createLink(comp:Comp.state.comp entryPoint:Comp.parentEntryPoint)}
+      [] createLink then 
+	 {Out.out {Record.adjoinAt IP comp Comp.state.comp}}
       [] newComp then 
          % Delete old port
 	 {Out.out delete}

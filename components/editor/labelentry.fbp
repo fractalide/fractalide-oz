@@ -32,6 +32,12 @@ awOut() action#ButtonPress -> input d(discard)
 % ---
 % set from outside
 awIn() action#set -> in label()
+awIn() action#set -> in entry()
+
+% hack : have to change display in entryDisplay/labelDisplay
+% Used in selectPort
+awIn() action#display -> in entry()
+awIn() action#getFocus -> in entry()
 
 % ---
 % delete

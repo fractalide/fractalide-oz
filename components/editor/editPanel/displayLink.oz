@@ -29,7 +29,7 @@ define
 	 {IP.1 send('in' open Ack)}
 	 {Wait Ack}
 	 % creation of the two ports names
-	 {Out.ports create(to:IP.to 'from':IP.'from')}
+	 {Out.ports create(to:IP.to 'from':IP.'from' fromComp:IP.fromComp toComp:IP.toComp)}
       [] delete then Ack Ack2 in
 	 {Comp.state.link send('in' close Ack)}
 	 {Wait Ack}
