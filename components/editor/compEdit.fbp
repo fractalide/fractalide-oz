@@ -11,7 +11,7 @@ awIn() action#create -> in td(QTk/td) out -> in awOut()
 % ---
 % Name and type
 "create(init:"")" -> in labelName(editor/labelentry) out -> place#1 td()
-"create(text:"" bg:white)" -> in labelType(QTk/label) out -> place#2 td()
+"create(text:"" bg:white width:10)" -> in labelType(QTk/label) out -> place#2 td()
 
 % ---
 % Creation of buttons
