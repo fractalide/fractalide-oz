@@ -18,7 +18,6 @@ define
 			
 				{Out.name create(X Y text:{Atom.toString IP.name})}
 				{Out.comp create(name:{Atom.toString IP.name})}
-				{Out.canvas opt(canvas:IP.canvas)}
 			     end)
 		   )
       }

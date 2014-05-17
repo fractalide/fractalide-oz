@@ -9,7 +9,6 @@ define
 		   name:Name type:'components/editor/component/createLinkLogic'
 		   inPorts(click pos)
 		   outPorts(out)
-		   options(canvas:_)
 		   procedure(proc{$ Ins Out Comp} IP Pos in
 				IP = {Ins.click.get}
 				Pos = {Ins.pos.get}.1
