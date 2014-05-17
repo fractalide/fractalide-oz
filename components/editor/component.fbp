@@ -10,7 +10,6 @@ create() name -> in name(QTk/canvas/text) out -> in awOut()
 create() comp -> in compManager(editor/component/compManager) out -> in awOut()
 create() image -> in image(QTk/canvas/image) out -> in awOut()
 "photo(file:"./components/editor/images/circle.gif")" -> input im(QTk/image) output -> image image()
-create() canvas -> options scLogic(editor/component/singleclickLogic)
 
 % --- 
 % Mouse logic : drag&drop, show/hide, inComponent/outComponent
@@ -32,7 +31,7 @@ mouseLogic() move -> in image()
 % incomp/outcomp
 mouseLogic() out -> in awOut()
 
-mouseLogic() sc -> click scLogic()
+mouseLogic() sc -> click scLogic(editor/component/singleclickLogic)
 mouseLogic() sc -> input ieGetPos(ipEdit) out -> in name()
 "opt(text:getCoords(output:getPos))" -> options ieGetPos()
 name() action#getPos -> pos scLogic()

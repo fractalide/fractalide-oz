@@ -29,6 +29,8 @@ define
 	     of getState(?Resp) then
 		Resp = State
 		State
+	     [] changeState(NewState) then
+		NewState
 	     [] send(InPort#N Msg Ack) then
 		try
 		   for X in State.inPorts.InPort do

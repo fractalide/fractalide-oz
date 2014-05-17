@@ -29,14 +29,13 @@ define
 		   inPorts(input)
 		   outPorts(out)
 		   outArrayPorts(action)
-		   options(canvas:_)
 		   procedure(proc{$ Ins Out Comp} IP IPF C Name in
 				IP = {Ins.input.get}
 			       % Unique name
 				Name = {VirtualString.toAtom "comp"#@Unique}
 				Unique := @Unique + 1
 			       % Transform int in float
-				IPF = create(button:IP.button x:{Int.toFloat IP.x} y:{Int.toFloat IP.y} name:Name canvas:Comp.options.canvas)
+				IPF = create(button:IP.button x:{Int.toFloat IP.x} y:{Int.toFloat IP.y} name:Name)
 				C = {SubComp.new Name "editor/component" "./components/editor/component.fbp"}
 				{Wait C}
 			       % Bind the port of the new component and start it
