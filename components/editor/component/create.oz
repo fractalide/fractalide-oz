@@ -8,16 +8,14 @@ define
       {Comp.new comp(
 		   name:Name type:'components/editor/component/create'
 		   inPorts('in')
-		   outPorts(name comp image canvas)
-		   procedure(proc{$ Ins Out Comp} IP X Y in
+		   outPorts(comp uiObj)
+		   procedure(proc{$ Ins Out Comp} IP X Y Name in
 				IP = {Ins.'in'.get}
 				X = IP.x
 				Y = IP.y
-				{Out.image create(X Y)}
-				{Out.image lower}
-			
-				{Out.name create(X Y text:{Atom.toString IP.name})}
-				{Out.comp create(name:{Atom.toString IP.name})}
+				Name = {Atom.toString IP.name}
+				{Out.uiObj create(x:X y:Y name:IP.name path:"./components/editor/images/circle.gif")}
+				{Out.comp create(name:Name)}
 			     end)
 		   )
       }

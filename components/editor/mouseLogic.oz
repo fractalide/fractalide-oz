@@ -36,10 +36,10 @@ define
 				   elseif Comp.state.drag andthen Comp.state.outComp then
 				      {Out.drag IP}
 				   end
-				[] inComponent then
+				[] inObject then
 				   Comp.state.outComp := false
 				   Comp.state.drag := false
-				[] outComponent then
+				[] outObject then
 				   Comp.state.outComp := true
 				else
 				   skip
