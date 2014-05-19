@@ -21,11 +21,11 @@ define
       of displayComp then Ack S in
 	 {Out.disp display}
 	 if Comp.state.comp \= nil then A in
-	    {Comp.state.comp send('in' closeComp A)}
+	    {Comp.state.comp send('in' closeObj A)}
 	    {Wait A}
 	 end
 	 Comp.state.comp := IP.1
-	 {IP.1 send('in' displayComp Ack)}
+	 {IP.1 send('in' displayObj Ack)}
 	 S = {(IP.2) getState($)}
 	 {Out.options state(S)}
 	 {Wait Ack}
@@ -49,7 +49,7 @@ define
 	 {Out.type set(text:NS.type)}
       [] displayGraph then
 	 if Comp.state.comp \= nil then Ack in 
-	    {Comp.state.comp send('in' closeComp Ack)}
+	    {Comp.state.comp send('in' closeObj Ack)}
 	    {Wait Ack}
 	 end
 	 Comp.state.comp := nil

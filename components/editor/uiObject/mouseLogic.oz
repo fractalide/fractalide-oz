@@ -6,16 +6,16 @@ export
 define
    fun {CompNewGen Name}
       {Comp.new comp(
-		   name:Name type:'components/editor/component/mouseLogic'
+		   name:Name type:'components/editor/uiObject/mouseLogic'
 		   inPorts('in')
 		   outPorts(move out sc)
 		   procedure(proc{$ Ins Out Comp} IP in
 				IP = {Ins.'in'.get}
 				case {Label IP}
 				of 'Enter' then
-				   {Out.out inComponent}
+				   {Out.out inObject}
 				[] 'Leave' then
-				   {Out.out outComponent}
+				   {Out.out outObject}
 				[] 'ButtonPress' then
 				   Comp.state.dnd := false
 				   Comp.state.click := true

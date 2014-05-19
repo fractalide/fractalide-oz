@@ -1,0 +1,57 @@
+% ---
+% Action flow
+in => in awIn(QTk/actionsWrapper) out -> in awOut(QTk/actionsWrapper) out => out
+awOut() action => action
+
+% ---
+% UI flow
+awIn() action#create -> in create(editor/uiObject/create)
+create() name -> in name(QTk/canvas/text) out -> in awOut()
+create() image -> in image(QTk/canvas/image) out -> in awOut()
+create() photo -> input im(QTk/image) output -> image image()
+
+% --- 
+% Mouse logic : drag&drop, show/hide, inObject/outObject
+image() action#Enter -> in mouseLogic(editor/uiObject/mouseLogic)
+image() action#Leave -> in mouseLogic()
+image() action#ButtonPress -> in mouseLogic()
+image() action#ButtonRelease -> in mouseLogic()
+image() action#Motion -> in mouseLogic()
+name() action#Enter -> in mouseLogic()
+name() action#Leave -> in mouseLogic()
+name() action#ButtonPress -> in mouseLogic()
+name() action#ButtonRelease -> in mouseLogic()
+name() action#Motion -> in mouseLogic()
+
+% drag&drop
+mouseLogic() move -> in name()
+mouseLogic() move -> in image()
+% For the links
+mouseLogic() move -> in awOut()
+% inObj/outObj
+mouseLogic() out -> in awOut()
+
+% Click
+mouseLogic() sc -> click scLogic(editor/uiObject/singleclickLogic)
+mouseLogic() sc -> input ieGetPos(ipEdit) out -> in name()
+"opt(text:getCoords(output:getPos))" -> options ieGetPos()
+name() action#getPos -> pos scLogic()
+scLogic() out -> in awOut()
+
+% ---
+% Rename
+awIn() action#nameChange -> in transformName(editor/uiObject/transformName) out -> in name()
+
+% ---
+% Change image
+awIn() action#photo -> input im()
+
+% ---
+% show/hide 
+% NOT yet use
+awIn() action#displayObj -> input discard(discard)
+awIn() action#closeObj -> input discard()
+
+% Delete
+awIn() action#delete -> in name()
+awIn() action#delete -> in image()
