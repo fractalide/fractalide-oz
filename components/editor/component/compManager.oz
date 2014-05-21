@@ -62,7 +62,7 @@ define
       [] nameChange then S NS in
 	 S = {Comp.state.comp getState($)}
 	 NS = {Record.adjoinAt S name {VirtualString.toAtom IP.1}}
-	 {Comp.state.comp changeState(NS)}
+	 {Comp.state.comp setState(NS)}
       end
    end
 end

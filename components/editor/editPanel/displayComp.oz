@@ -41,7 +41,7 @@ define
       [] newComp then Ack S NS in
 	 S = {(IP.1) getState($)}
 	 NS = {Record.adjoinAt S name Comp.state.name}
-	 {(IP.1) changeState(NS)}
+	 {(IP.1) setState(NS)}
 	 {Comp.state.comp send('in' IP Ack)}
 	 {Wait Ack}
 	 {Out.options state(S)}

@@ -29,7 +29,7 @@ define
 	     of getState(?Resp) then
 		Resp = State
 		State
-	     [] changeState(NewState) then
+	     [] setState(NewState) then
 		NewState
 	     [] send(InPort#N Msg Ack) then
 		try
@@ -107,11 +107,6 @@ define
 	     [] stop then
 		{GraphModule.stop State.graph}
 		State
-	     %% Help methods
-	     [] renameInPort(OName NName) then 
-		{Record.adjoinAt State inPorts {Rename State.inPorts OName NName}}
-	     [] renameOutPort(OName NName) then
-		{Record.adjoinAt State outPorts {Rename State.outPorts OName NName}}
 	     end
 	  end
 	  {Init Name Type Graph}
@@ -158,10 +153,6 @@ define
       OutPortsFinal = {Record.adjoinAt OutPorts 'ERROR' Error}
    in
       subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPortsFinal graph:G parentEntryPoint:nil)
-   end
-   fun {Rename Rec OName NName} Temp in
-      Temp = {Record.adjoinAt Rec NName Rec.OName}
-      {Record.subtract Temp OName}
    end
 end
       
