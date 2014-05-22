@@ -1,9 +1,6 @@
 functor
 export
    new: NewStateComponent
-   setProcedureInPort: SetProcedureInPort
-   resetInPort: ResetInPort
-   setNameInPort: SetNameInPort
 define 
    /*
    * NewQueue : return a bounded buffer, as presented in CTM book
@@ -211,22 +208,14 @@ define
 	     */			      
 	     fun {Exec State} Sync in
 	        % Look for sync
-		try
-		   Sync = {CheckSync State}
-		catch E then
-		   raise cannot_sync(error:E state:State name:State.name type:State.type) end
-		end
+		Sync = {CheckSync State}
 		if {Not Sync} then
 		   State
 		else Ins Out Th in
-		   try
 		   % Build a record with all the buffers of all input ports.
-		      Ins = {PrepareIns State.inPorts}
+		   Ins = {PrepareIns State.inPorts}
 		   % Build a procedure to send IP to the output ports. 
-		      Out = {PrepareOut State.outPorts}
-		   catch E then
-		      raise prepare_ins_out(error:E state:State name:State.name type:State.type) end
-		   end
+		   Out = {PrepareOut State.outPorts}
 		   thread
 		      Th = {Thread.this}
 		      try
@@ -247,7 +236,7 @@ define
 	     case Msg
 	     % Operation on the component
 	     of getState(?R) then R=State State
-	     [] changeState(NState) then NState
+	     [] setState(NState) then NState
 	     [] start then NState in
 		NState = {Record.adjoinAt State run true}
 		{Exec NState}
@@ -264,7 +253,7 @@ define
 		State
 	     [] setParentEntryPoint(ParentEntryPoint) then
 		{Record.adjoinAt State parentEntryPoint ParentEntryPoint}
-	     [] connect(Port Index) then NewArrayPort NewInputPorts in 
+	     [] connect(Port Index) then NewArrayPort in 
 		NewArrayPort = if {Not {HasFeature State.inPorts.Port.qs Index}} then NQS NC in
 				  NQS = {Record.adjoinAt State.inPorts.Port.qs Index {NewQueue State.inPorts.Port.size}}
 				  NC = {Record.adjoinAt State.inPorts.Port.connect Index 1}
@@ -273,9 +262,8 @@ define
 				  NC = {Record.adjoinAt State.inPorts.Port.connect Index State.inPorts.Port.connect.Index+1}
 				  {Record.adjoinAt State.inPorts.Port connect NC}
 			       end
-		NewInputPorts = {Record.adjoinAt State.inPorts Port NewArrayPort}
-		{Record.adjoinAt State inPorts NewInputPorts}
-	     [] disconnect(Port Index) then NewArrayPort NewInputPorts in
+		{NestedRecord adjoinAt State [inPorts Port] NewArrayPort}
+	     [] disconnect(Port Index) then NewArrayPort in
 		NewArrayPort = if State.inPorts.Port.connect.Index == 1 then NQS NC in
 				  NQS = {Record.subtract State.inPorts.Port.qs Index}
 				  NC = {Record.subtract State.inPorts.Port.connect Index}
@@ -284,8 +272,7 @@ define
 				  NC = {Record.adjoinAt State.inPorts.Port.connect Index State.inPorts.Port.connect.Index-1}
 				  {Record.adjoinAt State.inPorts.Port connect NC}
 			       end
-		NewInputPorts = {Record.adjoinAt State.inPorts Port NewArrayPort}
-		{Record.adjoinAt State inPorts NewInputPorts}
+		{NestedRecord adjoinAt State [inPorts Port] NewArrayPort}
 	     % Interact with the component
 	     [] send(InPort#N Msg Ack) then
 		if {HasFeature State.inPorts InPort} andthen {HasFeature State.inPorts.InPort.qs N} then
@@ -305,8 +292,8 @@ define
 		if State.threads \= nil andthen {Thread.state State.threads} \= terminated then {Thread.terminate State.threads} end
 		State
 	     [] send(options Msg Ack) then NOptions NState in
-		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
 		Ack = ack
+		NOptions = {Record.adjoinList State.options {Record.toListInd Msg}}
 		NState = {Record.adjoinAt State options NOptions}
 		if {Record.width State.inPorts} > 0 then {Exec NState} else NState end
 	     [] send(InPort Msg Ack) then
@@ -319,7 +306,7 @@ define
 		   Ack = ack
 		   State
 		end
-	     [] bind(OutPort#N Comp Name) then NAPort NPort NOutPorts in
+	     [] bind(OutPort#N Comp Name) then NAPort in
 		try
 		   if {HasFeature Name 2} then {Comp connect(Name.1 Name.2)} end
 		   if {HasFeature State.outPorts.OutPort N} then
@@ -327,26 +314,23 @@ define
 		   else
 		      NAPort = Comp#Name | nil
 		   end
-		   NPort = {Record.adjoinAt State.outPorts.OutPort N NAPort}
-		   NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
-		   {Record.adjoinAt State outPorts NOutPorts}
+		   {NestedRecord adjoinAt State [outPorts OutPort N] NAPort}
 		catch E then Out in
 		   Out = {PrepareOut State.outPorts}
 		   {Out.'ERROR' cannot_bind_array(error:E state:State name:State.name type:State.type)}
 		   State
 		end
-	     [] bind(OutPort Comp Name) then NPort NOutPorts in
+	     [] bind(OutPort Comp Name) then NPort in
 		try
 		   if {HasFeature Name 2} then {Comp connect(Name.1 Name.2)} end
 		   NPort = Comp#Name | State.outPorts.OutPort
-		   NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
-		   {Record.adjoinAt State outPorts NOutPorts}
+		   {NestedRecord adjoinAt State [outPorts OutPort] NPort}
 		catch E then Out in
 		   Out = {PrepareOut State.outPorts}
 		   {Out.'ERROR' cannot_bind(error:E state:State name:State.name type:State.type)}
 		   State
 		end
-	     [] unBound(OutPort#Sub Comp) then NAPort NPort NOutPorts in
+	     [] unBound(OutPort#Sub Comp) then NAPort NPort in
 		try
 		   if {HasFeature State.outPorts.OutPort Sub} then
 		      NAPort = {FoldL State.outPorts.OutPort.Sub
@@ -363,8 +347,7 @@ define
 		      else
 			 NPort = {Record.subtract State.outPorts.OutPort Sub}
 		      end
-		      NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
-		      {Record.adjoinAt State outPorts NOutPorts}
+		      {NestedRecord adjoinAt State [outPorts OutPort] NPort}
 		   else
 		      State
 		   end
@@ -373,7 +356,7 @@ define
 		   {Out.'ERROR' cannot_unBound(error:E state:State name:State.name type:State.type)}
 		   State
 		end
-	     [] unBound(OutPort Comp) then NPort NOutPorts in
+	     [] unBound(OutPort Comp) then NPort in
 		try
 		   NPort = {FoldL State.outPorts.OutPort
 			    fun {$ Acc P}
@@ -384,8 +367,7 @@ define
 			    end
 			    nil
 			   }
-		   NOutPorts = {Record.adjoinAt State.outPorts OutPort NPort}
-		   {Record.adjoinAt State outPorts NOutPorts}
+		   {NestedRecord adjoinAt State [outPorts OutPort] NPort}
 		catch E then Out in
 		   Out = {PrepareOut State.outPorts}
 		   {Out.'ERROR' cannot_unBound(error:E state:State name:State.name type:State.type)}
@@ -481,60 +463,25 @@ define
    fun {NewStateComponent ARecord}
       {NewComponent {NewState ARecord}}
    end
-   %Function to modify a state
-   %General function
-   fun {ChangeState List Val State}
-      fun {ChangeStateRec Xs S}
-	 case Xs
-	 of nil then Val
-	 [] X|Xr then
-	    {AdjoinAt S X {ChangeStateRec Xr S.X}}
+   /*
+   PRE: Action is an understable method of {Record.}, Init is the initial record, List is a list of features, Value is the new value
+   POST: A new record where the action is done on the last element of the list with the value. If the action require no value, it must be set at undefined
+   */
+   fun {NestedRecord Action Init List Value}
+      fun {Rec Ls R}
+	 case Ls
+	 of L|nil then
+	    if {IsDet Value} then 
+	       {Record.Action R L Value}
+	    else
+	       {Record.Action R L}
+	    end
+	 [] L|Lr then
+	    {Record.adjoinAt R L {Rec Lr R.L}}
 	 end
       end
    in
-      {ChangeStateRec List State}
+      {Rec List Init}
    end
-   fun {SetProcedureInPort State Port Proc}
-      {ChangeState [inPorts Port procedure] Proc State}
-   end
-   fun {ResetInPort State Port}
-      % TODO
-      State
-   end
-   fun {SetNameInPort State Port Name} NState in
-      NState = {ChangeState [inPorts Name] State.inPorts.Port State}
-      {Record.adjoinAt NState inPorts {Record.subtract NState.inPorts Port}}
-   end
-   % fun {AddInPort State Port}
-   %    case Port
-   %    of port(name:N procedure:P) then
-   % 	 {ChangeState [inPorts N] port(q:{NewQueue} p:P s:nil) State}
-   %    [] arrayPort(name:N procedure:P) then
-   % 	 {ChangeState [inPorts N] port(qs:queues() p:P s:[nil]) State}
-   %    end
-   % end
-   % fun {RemoveInPort State Port}
-   %    {Record.adjoinAt State inPorts {Record.subtract State.inPorts Port}}
-   % end
-   % fun {AddOutPort State Port}
-   %    {ChangeState  [outPorts Port] nil State}
-   % end
-   % fun {RemoveOutPort State Port}
-   %    {Record.adjoinAt State outPorts {Record.subtract State.outPorts Port}}
-   % end
-   % %% Have to name Procedure to do it correctly
-   % fun {AddProc State Proc}
-   %    {ChangeState [procedures] Proc State}
-   % end
-   % fun {RemoveProc State Proc}
-   %    %TODO
-   %    State
-   % end
-   % fun {AddVar State Var}
-   %    {ChangeState [var Var] _ State}
-   % end
-   % fun {RemoveVar State Var}
-   %    {Record.adjoinAt State var {Record.subtract State.var Var}}
-   % end
 end
 	 

@@ -1,1 +1,0 @@
-gen(generator) output -> input lb(loadbalancer) output => out
