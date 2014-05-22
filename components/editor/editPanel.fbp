@@ -1,0 +1,45 @@
+% ---
+% Logic stream
+in => in awIn(QTk/actionsWrapper)
+awIn() out -> in awOut(QTk/actionsWrapper) out => out
+awOut() action => action
+
+% Create the place holder
+order(ipOrder) out -> place editPanel(QTk/placeholder) out -> in awOut()
+"create(glue:nsw bg:white)" -> in editPanel()
+
+% ---
+% graphEdit
+"create(glue:nswe bg:white)" -> in graphEdit(editor/graphEdit) out -> place editPanel()
+graphEdit() action#create -> in#3 order()
+graphEdit() action#newComp -> in awOut()
+% from graph to graph
+awIn() action#displayGraph -> in graphEdit()
+
+% ---
+% linkEdit
+% creation
+ "create(glue:nswe bg:white)" -> in linkEdit(editor/linkEdit) out -> place editPanel()
+linkEdit() action#create -> in#2 order()
+% from graph to link
+awIn() action#displayLink -> in linkEdit()
+awIn() action#displayComp -> in linkEdit()
+% Cancel link edit
+linkEdit() action#displayGraph -> in awOut()
+
+
+% ---
+% CompEdit
+% creation
+"create(glue:nswe bg:white)" -> in compEdit(editor/compEdit) out -> place editPanel()
+compEdit() action#create -> in#1 order()
+% from graph to comp
+awIn() action#displayComp -> in compEdit()
+% From link to graphedit
+compEdit() action#displayGraph -> in awOut()
+
+% ---
+% graphEdit show cancel linkEdit and compEdit
+awIn() action#displayGraph -> in linkEdit()
+awIn() action#displayGraph -> in compEdit()
+
