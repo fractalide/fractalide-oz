@@ -7,7 +7,7 @@ awOut() action => action
 % UI flow
 awIn() action#create -> in create(editor/component/create)
 create() uiObj -> in uiObj(editor/uiObject) out -> in awOut()
-create() comp -> in compManager(editor/component/compManager) out -> input fdsq(display) output -> in awOut()
+create() comp -> in compManager(editor/component/compManager) out -> in awOut()
 
 % ---
 % uiObject events

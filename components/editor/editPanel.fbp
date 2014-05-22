@@ -6,7 +6,7 @@ awOut() action => action
 
 % Create the place holder
 order(ipOrder) out -> place editPanel(QTk/placeholder) out -> in awOut()
-"create(glue:nsw bg:white)" -> in editPanel()
+awIn() action#create -> in editPanel()
 
 % ---
 % graphEdit

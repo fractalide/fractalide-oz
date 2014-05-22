@@ -8,16 +8,12 @@ define
       {Comp.new comp(
 		   name:Name type:'components/editor/mouseLogic'
 		   inPorts(input)
-		   outPorts(dclick drag link click)
+		   outPorts(drag link click)
 		   procedure(proc{$ Ins Out Comp} IP in
 				IP = {Ins.input.get}
 				case {Label IP}
-				of 'ButtonPress' andthen Comp.state.outComp then X Y New in
+				of 'ButtonPress' andthen Comp.state.outComp then
 				   Comp.state.drag := true
-				   X = {Comp.options.canvas canvasx(IP.x $)}
-				   Y = {Comp.options.canvas canvasy(IP.y $)}
-				   New = {Record.adjoinAt {Record.adjoinAt IP x X} y Y}
-				   {Out.dclick New}
 				   {Out.drag IP}
 				[] 'ButtonRelease' andthen Comp.state.drag andthen Comp.state.outComp then
 				   Comp.state.drag := false
