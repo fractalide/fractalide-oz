@@ -21,13 +21,12 @@ createComp(editor/createComp) action#inObject -> input ml()
 createComp() action#outObject -> input ml()
 % Move link only if in [beginLink endLink]
 createLink(editor/createLink) ml -> input ml()
-createLink() ml -> input ml()
 
 % ---
 % Click to get back to graphEdit
 % or the component want to close
 ml() click -> input ieGraphEdit(ipEdit) out -> in awOut()
-createComp() action#closeComp -> input d(display) output -> input ieGraphEdit()
+createComp() action#closeComp -> input ieGraphEdit()
 "set(text:displayGraph)" -> options ieGraphEdit()
 
 % ---
@@ -42,7 +41,7 @@ ml() link -> input createLink()
 createLink() out -> widget canvas()
 
 % ---
-% New comp from outsideµ
+% New comp from outside
 awIn() action#newComp -> input getPos(editor/getPosition) output -> input createComp()
 canvas() action#getHandleML -> input ht(editor/handleTransform) output -> options getPos()
 createComp() out -> widget canvas()

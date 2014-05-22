@@ -10,7 +10,7 @@ win() out -> input disp(display)
 
 % ---
 % editPanel
-order(ipOrder) out -> place editPanel(QTk/placeholder) out -> grid#1x1 lr()
+editPanel(editor/editPanel) out -> grid#1x1 lr()
 "create(glue:nsw bg:white)" -> in editPanel()
 
 % ---
@@ -19,37 +19,8 @@ graphPanel(editor/graphPanel) out -> grid#2x1 lr()
 "create(glue:nswe bg:white)" -> in graphPanel()
 
 % ---
-% graphEdit
-"create(glue:nswe bg:white)" -> in graphEdit(editor/graphEdit) out -> place editPanel()
-graphEdit() action#create -> in#3 order()
-graphEdit() action#newComp -> in graphPanel()
-% from graph to graph
-graphPanel() action#displayGraph -> in graphEdit()
-
-% ---
-% linkEdit
-% creation
- "create(glue:nswe bg:white)" -> in linkEdit(editor/linkEdit) out -> place editPanel()
-linkEdit() action#create -> in#2 order()
-% from graph to link
-graphPanel() action#displayLink -> in linkEdit()
-graphPanel() action#displayComp -> in linkEdit()
-% Cancel link edit
-linkEdit() action#displayGraph -> in graphEdit()
-
-
-% ---
-% CompEdit
-% creation
-"create(glue:nswe bg:white)" -> in compEdit(editor/compEdit) out -> place editPanel()
-compEdit() action#create -> in#1 order()
-% from graph to comp
-graphPanel() action#displayComp -> in compEdit()
-% From link to graphedit
-compEdit() action#displayGraph -> in graphEdit()
-
-% ---
-% graphEdit show cancel linkEdit and compEdit
-graphPanel() action#displayGraph -> in linkEdit()
-graphPanel() action#displayGraph -> in compEdit()
-
+% Communication between the two
+graphPanel() action#displayGraph -> in editPanel()
+graphPanel() action#displayLink -> in editPanel()
+graphPanel() action#displayComp -> in editPanel()
+editPanel() action#newComp -> in graphPanel()
