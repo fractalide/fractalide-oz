@@ -1,13 +1,39 @@
-% First step : two calculator in ph
-test1(calculator/calculator) out -> place ph(QTk/placeholder) out -> place#1 td(QTk/td) out -> in win(QTk/window)
-test2(calculator/calculator) out -> place ph()
+% First step : three calculator in stack
+calc1(calculator/calculator) out -> card#1 stack(stack/stack) out -> place#1 td(QTk/td) out -> in win(QTk/window)
+calc2(calculator/calculator) out -> card#2 stack()
+calc3(calculator/calculator) out -> card#4 stack()
 win() out -> input disp(display)
-"create()" -> in ph()
-% Second step : a button to switch
-button(QTk/button) out -> place#2 td()
-button() action#button_clicked -> input st(ipEdit) out -> input lb(loadbalancer) output#1 -> in test1()
-lb() output#2 -> in test2()
-"opt(text:display)" -> options st()
-"create(text:"next calculator")" -> in button()
+"create()" -> in stack()
+
+
+% Second step : several buttons to switch
+"create()" -> in grid(QTk/grid) out -> place#2 td()
+% next
+nextButton(QTk/button) out -> grid#1x1 grid()
+nextButton() action#button_clicked -> input next(ipEdit) out -> in stack()
+"opt(text:next)" -> options next()
+"create(text:"next calculator")" -> in nextButton()
+% previous
+prevButton(QTk/button) out -> grid#2x1 grid()
+prevButton() action#button_clicked -> input previous(ipEdit) out -> in stack()
+"opt(text:previous)" -> options previous()
+"create(text:"previous calculator")" -> in prevButton()
+% goto1
+goto1Button(QTk/button) out -> grid#3x1 grid()
+goto1Button() action#button_clicked -> input goto1(ipEdit) out -> in stack()
+"opt(text:goto(1))" -> options goto1()
+"create(text:"goto 1")" -> in goto1Button()
+% goto2
+goto2Button(QTk/button) out -> grid#4x1 grid()
+goto2Button() action#button_clicked -> input goto2(ipEdit) out -> in stack()
+"opt(text:goto(2))" -> options goto2()
+"create(text:"goto 2")" -> in goto2Button()
+% goto3
+goto3Button(QTk/button) out -> grid#5x1 grid()
+goto3Button() action#button_clicked -> input goto3(ipEdit) out -> in stack()
+"opt(text:goto(3))" -> options goto3()
+"create(text:"goto 3")" -> in goto3Button()
+
+
 "opt(pre:'default ')" -> options disp()
 "create" -> in td()

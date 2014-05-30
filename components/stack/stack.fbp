@@ -1,0 +1,3 @@
+in => in stack(stack/stackManager) out -> in ph(QTk/placeholder) out => out
+card => card stack()
+ph() action => action
