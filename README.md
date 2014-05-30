@@ -25,10 +25,11 @@ Usage
 * `git clone git://github.com/fractalide/fractallang.git`
 * `cd fractallang`
 * `make`
-* `ozengine testSub.ozf testCanvas.fbp`
-* `ozengine testSub.ozf testWidget.fbp`
-* `ozengine testSub.ozf test.fbp`
-* `ozengine testSub.ozf testDnD.ozf`
+* `ozengine launcher.ozf testCanvas.fbp`
+* `ozengine launcher.ozf testWidget.fbp`
+* `ozengine launcher.ozf test.fbp`
+* `ozengine launcher.ozf testDnD.ozf`
+* `ozengine launcher.ozf components/editor/editor.fbp`
 
 License
 --------
