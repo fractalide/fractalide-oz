@@ -23,14 +23,15 @@ Usage
 * `cd fractalide`
 * `make && make editor`
 * `$ ./fractalide.sh`
-* `ozengine launcher.ozf testCanvas.fbp`
-* `ozengine launcher.ozf testWidget.fbp`
-* `ozengine launcher.ozf test.fbp`
-* `ozengine launcher.ozf testDnD.ozf`
+* `cd tests`
+* `./test_this.sh testCanvas.fbp`
+* `./test_this.sh testWidget.fbp`
+* `./test_this.sh test.fbp`
+* `./test_this.sh testDnD.ozf`
 
 License
 --------
 All code is AGPL v3-or-later.
-All content published on this platform is licensed as Community Commons. 
-This is not a commercial dual license project. You own your contributions. 
+All content published on this platform is licensed as Community Commons.
+This is not a commercial dual license project. You own your contributions.
 If you want privacy, encrypt your content. (This will eventually be automatic)
