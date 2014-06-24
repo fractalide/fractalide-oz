@@ -31,6 +31,6 @@ Usage
 License
 --------
 All code is AGPL v3-or-later.
-All content published on this platform is licensed as Community Commons. 
+All content published on this platform is licensed as Creative Commons. 
 This is not a commercial dual license project. You own your contributions. 
 If you want privacy, encrypt your content. (This will eventually be automatic)
