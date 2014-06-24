@@ -21,12 +21,12 @@ Usage
 * Setup Oz's environmental variables; point `OZHOME` to the root folder and put the `bin` folder on `PATH`
 * `git clone git://github.com/fractalide/fractalide.git`
 * `cd fractalide`
-* `make`
+* `make && make editor`
+* `$ ./fractalide.sh`
 * `ozengine launcher.ozf testCanvas.fbp`
 * `ozengine launcher.ozf testWidget.fbp`
 * `ozengine launcher.ozf test.fbp`
 * `ozengine launcher.ozf testDnD.ozf`
-* `ozengine launcher.ozf components/editor/editor.fbp`
 
 License
 --------
