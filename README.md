@@ -12,7 +12,7 @@ The current TCP/IP point-to-point Internet is not suitable for handling the insa
 
 Developing IoT applications controlling real life objects isn't as smooth as it could be. Our aim is to use your finger to download already created components and simply wire them up to control your IOIO-OTG board. This will reduce development time down to mere minutes as opposed to hours if not days when including the setup of the development environment.
 
-Textual code isn't very approachable to the average non-programmer. If this Internet of Things is to be ubiqitous then the common person will have to be able to program the Internet of Things. We feel the combination of Hypercard with a Flow Based Programming (FBP) language is a much better approach to programming for the average person. By using [Mozart Oz](www.mozart-oz.org) to implement FBP we deliver some 30 odd factored language concepts to FBP component developers. A few of those concepts allows for the Declarative Concurrent paradigm which enables the simple creation of open Internet applications. 
+Textual code isn't very approachable to the average non-programmer. If this Internet of Things is to be ubiqitous then the common person will have to be able to program the Internet of Things. We feel the combination of Hypercard with a Flow Based Programming (FBP) language is a much better approach to programming for the average person. By using [Mozart Oz](http://www.mozart-oz.org) to implement FBP we deliver some 30 odd factored language concepts to FBP component developers. A few of those concepts allows for the Declarative Concurrent paradigm which enables the simple creation of open Internet applications. 
 
 Community
 --------
@@ -22,7 +22,7 @@ IRC   : freenode #fractalide
 Usage
 -----
 
-* You'll need to setup the latest version of [mozart](www.github.com/mozart/mozart2) (as we found a bug in Mozart2 stdlib that prevented correct rendering of the Canvas element, so the Sourceforge binary won't work)
+* You'll need to setup the latest version of [mozart](http://www.github.com/mozart/mozart2) (as we found a bug in Mozart2 stdlib that prevented correct rendering of the Canvas element, so the Sourceforge binary won't work)
 * Setup Oz's environmental variables; point `OZHOME` to the root folder and put the `bin` folder on `PATH`
 * `git clone git://github.com/fractalide/fractalide.git`
 * `cd fractalide`
