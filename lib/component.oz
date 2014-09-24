@@ -431,7 +431,7 @@ define
    end
    fun {NewState Name Type GivenRecord}
       DefaultState NState in
-      DefaultState = component(name:Name type:Type description:""
+      DefaultState = component(name:Name type:Type description:_
 			       inPorts:'in'() outPorts:out('ERROR':nil)
 			       procedure:nil state:{NewDictionary}
 			       threads:nil options:opt()
@@ -454,6 +454,7 @@ define
 		end
 		DefaultState
 	       }
+      if {Not {IsDet NState.description}} then raise component_description_not_defined(NState) end end
       NState
    end
    fun {NewStateComponent Name Type ARecord}
