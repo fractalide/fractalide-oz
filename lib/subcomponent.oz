@@ -100,10 +100,10 @@ define
 		   raise cannot_unBound(error:E state:State name:State.name type:State.type) end
 		end
 	     [] start then
-		{Fractalide.start State.graph}
+		{Start State.graph}
 		State
 	     [] stop then
-		{Fractalide.stop State.graph}
+		{Stop State.graph}
 		State
 	     end
 	  end
@@ -179,6 +179,23 @@ define
       OutPortsFinal = {Record.adjoinAt OutPorts 'ERROR' Error}
    in
       subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPortsFinal graph:{Record.adjoinAt G nodes Nodes} parentEntryPoint:nil)
+   end
+   proc {Start Graph}
+      {Record.forAll Graph.nodes
+       proc {$ Comp}
+	  {Comp.comp start}
+       end
+      }
+   end
+   proc {Stop Graph}
+      {Record.forAll Graph.nodes
+       proc {$ Comp} State in
+	  {Comp.comp getState(State)}
+	  if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
+	     {Comp.comp stop}
+	  end
+       end
+      }
    end
 end
       

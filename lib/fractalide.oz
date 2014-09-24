@@ -6,36 +6,31 @@ import
    Component at './component.ozf'
    SubComponent at './subcomponent.ozf'
 export
-   load: Load
-   start: Start
-   stop: Stop
+   Load
 define
+   ComponentCache = {NewDictionary}
+   SubComponentCache = {NewDictionary}
    fun {Load Name Type}
-      try C in
-	 [C] = {Module.link ["./components/"#Type#".ozf"]}
-	 {Component.new Name Type C.component}
-      catch system(module(notFound load _)) then F1 F2 C in
-	 F1 = {New Open.file init(name:"./components/"#Type#".fbp" flags:[read])}
-	 F2 = {F1 read(list:$ size:all)}
-	 C = {FBP.parse F2}
-	 {SubComponent.new Name Type C}
+      if {Dictionary.member ComponentCache Type} then
+	 {Component.new Name Type ComponentCache.Type}
+      elseif {Dictionary.member SubComponentCache Type} then
+	 {SubComponent.new Name Type SubComponentCache.Type}
+      else
+	 try C in
+	    [C] = {Module.link ["./components/"#Type#".ozf"]}
+	    ComponentCache.Type := C.component
+	    {Component.new Name Type C.component}
+	 catch system(module(notFound load _)) then F1 F2 C in
+	    try
+	       F1 = {New Open.file init(name:"./components/"#Type#".fbp" flags:[read])}
+	       F2 = {F1 read(list:$ size:all)}
+	       C = {FBP.parse F2}
+	       SubComponentCache.Type := C
+	       {SubComponent.new Name Type C}
+	    catch E then
+	       raise component_not_loaded(name:Name type:Type error:E) end
+	    end
+	 end
       end
-   end
-   proc {Start Graph}
-      {Record.forAll Graph.nodes
-       proc {$ Comp}
-	  {Comp.comp start}
-       end
-      }
-   end
-   proc {Stop Graph}
-      {Record.forAll Graph.nodes
-       proc {$ Comp} State in
-	  {Comp.comp getState(State)}
-	  if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
-	     {Comp.comp stop}
-	  end
-       end
-      }
    end
 end
