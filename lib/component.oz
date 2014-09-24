@@ -429,9 +429,9 @@ define
       }
       D
    end
-   fun {NewState GivenRecord}
+   fun {NewState Name Type GivenRecord}
       DefaultState NState in
-      DefaultState = component(name:_ type:_ description:""
+      DefaultState = component(name:Name type:Type description:""
 			       inPorts:'in'() outPorts:out('ERROR':nil)
 			       procedure:nil state:{NewDictionary}
 			       threads:nil options:opt()
@@ -448,20 +448,16 @@ define
 		   [] state then {Record.adjoinAt S state {BuildNState Rec}}
 		   [] options then {Record.adjoinAt S options Rec}
 		   else
-		      if Ind == name then {Record.adjoinAt S name Rec}
-		      elseif Ind == type then {Record.adjoinAt S type Rec}
-		      elseif Ind == description then {Record.adjoinAt S description Rec}
+		      if Ind == description then {Record.adjoinAt S description Rec}
 		      else raise unknown_arg(Ind Rec S) end end
 		   end
 		end
 		DefaultState
 	       }
-      if {Not {IsDet NState.name}} then raise component_name_not_defined(NState) end end
-      if {Not {IsDet NState.type}} then raise component_type_not_defined(NState) end end
       NState
    end
-   fun {NewStateComponent ARecord}
-      {NewComponent {NewState ARecord}}
+   fun {NewStateComponent Name Type ARecord}
+      {NewComponent {NewState Name Type ARecord}}
    end
    /*
    PRE: Action is an understable method of {Record.}, Init is the initial record, List is a list of features, Value is the new value

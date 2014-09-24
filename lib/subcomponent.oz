@@ -1,6 +1,6 @@
 functor
 import
-   GraphModule at './graph.ozf'
+   Fractalide at './fractalide.ozf'
 export
    new: NewSubComponent
 define
@@ -11,6 +11,7 @@ define
 		   destComp:node(comp:<P/1> inPortBinded:[...])
 		   destComp2:node(comp:<P/1> inPortBinded:[...])
 		   outLinks:[name#destComp#destPortName ...]
+		   edges:[...]
 		  ))
       inPorts:inPorts(
 		 a:[<P/1>#a <P/1>#b]
@@ -19,8 +20,8 @@ define
       outPorts:outPorts(
 		  o:[<P/1>#out ...]))
    */
-   fun {NewSubComponent Name Type FileName}
-      Graph = {GraphModule.loadGraph FileName}
+   fun {NewSubComponent Name Type Graph}
+      TheGraph = {Init Name Type Graph}
       Stream Point = {NewPort Stream}
       thread
 	 {FoldL Stream
@@ -99,17 +100,14 @@ define
 		   raise cannot_unBound(error:E state:State name:State.name type:State.type) end
 		end
 	     [] start then
-		{GraphModule.start State.graph}
-		State
-	     [] startUI then
-		{GraphModule.startUI State.graph}
+		{Fractalide.start State.graph}
 		State
 	     [] stop then
-		{GraphModule.stop State.graph}
+		{Fractalide.stop State.graph}
 		State
 	     end
 	  end
-	  {Init Name Type Graph}
+	  TheGraph
 	  _
 	 }
       end
@@ -117,34 +115,62 @@ define
    in
       EntryPoint = proc {$ Msg} {Send Point Msg} end
       % Bind all the parentEntryPoint
-      {Record.forAll Graph.nodes
+      {Record.forAll TheGraph.graph.nodes
        proc{$ Comp}
 	  {Comp.comp setParentEntryPoint(EntryPoint)}
        end}
       EntryPoint
    end
+   % Initialize the graph
+   % 1) create the component
+   % 2) make the edges
+   % 3) Prepare inPorts
+   % 4) Prepare outPorts
+   % 5) Prepare Error ports
    fun {Init Name Type G}
+      Nodes
+      % 1) create the components
+      {Record.foldLInd G.nodes
+       fun {$ Name Acc Node} C in
+	  C = {Fractalide.load Name Node.type}
+	  if {HasFeature Node opt} then
+	     {C send(options opt(arg:Node.opt) _)}
+	     {Record.adjoinAt Acc Name node(type:Node.type opt:Node.opt comp:C)}
+	  else
+	     {Record.adjoinAt Acc Name node(type:Node.type comp:C)}
+	  end
+       end
+       nodes()
+       Nodes
+      }
+      % 2) edges
+      for Edge in G.edges do
+	 {Nodes.(Edge.1).comp bind(Edge.2 Nodes.(Edge.4).comp Edge.3)}
+      end
+      % 3) InPorts
       InPorts = {FoldL G.inLinks
 		 fun {$ Acc Name#CompName#PortName}
 		    if {List.member Name {Arity Acc}} then
-		       {Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|Acc.Name}
+		       {Record.adjoinAt Acc Name Nodes.CompName.comp#PortName|Acc.Name}
 		    else
-		       {Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|nil}
+		       {Record.adjoinAt Acc Name Nodes.CompName.comp#PortName|nil}
 		    end
 		 end
 		 inPorts
 		}
+      % 4) OutPorts
       OutPorts = {FoldL G.outLinks
 		  fun {$ Acc Name#CompName#PortName}
 		     if {List.member Name {Arity Acc}} then
-			{Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|Acc.Name}
+			{Record.adjoinAt Acc Name Nodes.CompName.comp#PortName|Acc.Name}
 		     else
-			{Record.adjoinAt Acc Name G.nodes.CompName.comp#PortName|nil}
+			{Record.adjoinAt Acc Name Nodes.CompName.comp#PortName|nil}
 		     end
 		  end
 		  outPorts
 		 }
-      Error = {Record.foldL G.nodes
+      % 5) Errors
+      Error = {Record.foldL Nodes
 	       fun {$ Acc Comp}
 		  Comp.comp#'ERROR'|Acc
 	       end
@@ -152,7 +178,7 @@ define
 	      }
       OutPortsFinal = {Record.adjoinAt OutPorts 'ERROR' Error}
    in
-      subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPortsFinal graph:G parentEntryPoint:nil)
+      subcomponent(name:Name type:Type inPorts:InPorts outPorts:OutPortsFinal graph:{Record.adjoinAt G nodes Nodes} parentEntryPoint:nil)
    end
 end
       
