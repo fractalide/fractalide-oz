@@ -1,16 +1,11 @@
 functor
-import
-   Comp at '../lib/component.ozf'
 export
-   new: CompNewArgs
+   Component
 define
-   fun {CompNewArgs Name}
-      {Comp.new comp(name:Name type:discard
-		     inPorts(input)
-		     procedure(proc{$ Ins Out Comp}
-				  _ = {Ins.input.get}
-			       end)
-		    )
-      }
-   end
+   Component = comp(description:"discard the IP"
+		    inPorts(input)
+		    procedure(proc{$ Ins Out Comp}
+				 _ = {Ins.input.get}
+			      end)
+		   )
 end

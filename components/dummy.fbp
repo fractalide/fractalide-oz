@@ -1,0 +1,4 @@
+"opt(pre:d1)" -> options d1(display)
+"opt(pre:d2)" -> options d2(display)
+"a" -> input dd(display) output -> input#1 c(concat) out -> input d1()
+"b" -> input ddd(display) output -> input#2 c()
