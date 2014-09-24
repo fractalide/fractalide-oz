@@ -1,8 +1,6 @@
 functor
-import
-   Comp at '../lib/component.ozf'
 export
-   new: CompNew
+   Component
 define
    proc {FunPort1 Bufs Out Comp}
       Num IP P
@@ -13,16 +11,13 @@ define
       {P IP}
       Comp.state.cpt := Num
    end
-   fun {CompNew Name}
-      {Comp.new comp(
-		   name:Name type:loadbalancer
-		   inPorts(input)
-		   outArrayPorts(output)
-		   procedure(FunPort1)
-		   state(cpt:0)
-		   )
-      }
-   end
+   Component = comp(
+		  description:"loadbalancer"
+		  inPorts(input)
+		  outArrayPorts(output)
+		  procedure(FunPort1)
+		  state(cpt:0)
+		  )
 end
       
    
