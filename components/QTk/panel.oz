@@ -1,9 +1,8 @@
 functor
 import
-   Comp at '../../lib/component.ozf'
    QTkHelper
 export
-   new: CompNewArgs
+   Component
 define
    fun {GetNext List Sub}
       fun {Rec Ls After}
@@ -24,33 +23,35 @@ define
       Before = if B \= all then List.B else B end
       After#Before
    end
-   fun {CompNewArgs Name}
-      {Comp.new comp(
-		   name:Name type:'QTk/panel'
-		   inPorts('in')
-		   inArrayPorts(panel)
-		   outPorts(out)
-		   outArrayPorts(action)
-		   procedure(proc{$ Ins Out Comp}
-				if {Ins.'in'.size} > 0 then {InProc Ins.'in' Out Comp} end
-				{Record.forAllInd Ins.panel
-				 proc{$ Name Buf}
-				    if {Buf.size} > 0 then  {PanelProc Name Ins.panel Out Comp} end
-				 end}
-			     end)
-		   state(handle:_ buffer:nil list:h)
-		   )}
-   end
+   Component = comp(
+		  description:"The QTk panel"
+		  inPorts('in')
+		  inArrayPorts(panel)
+		  outPorts(out)
+		  outArrayPorts(action)
+		  procedure(proc{$ Ins Out Comp}
+			       if {Ins.'in'.size} > 0 then {InProc Ins.'in' Out Comp} end
+			       {Record.forAllInd Ins.panel
+				proc{$ Name Buf}
+				   if {Buf.size} > 0 then  {PanelProc Name Ins.panel Out Comp} end
+				end}
+			    end)
+		  state(handle:_ buffer:nil list:h t:nil)
+		  )
    proc{InProc In Out Comp} IP in
       IP = {In.get}
       case {Label IP}
       of create then H B in
+	 if Comp.state.t \= nil andthen {Thread.state Comp.state.t} \= terminated then {Thread.terminate Comp.state.t} end
 	 B = {Record.adjoin IP panel(handle:H)}
 	 {Out.out create(B)}
-	 {Wait H}
-	 {QTkHelper.bindEvents H Comp.entryPoint}
-	 Comp.state.handle := H
-	 {QTkHelper.feedBuffer Out Comp}
+	 thread
+	    Comp.state.t := {Thread.this}
+	    {Wait H}
+	    {QTkHelper.bindEvents H Comp.entryPoint}
+	    Comp.state.handle := H
+	    {QTkHelper.feedBuffer Out Comp}
+	 end
       else
 	 {QTkHelper.manageIP IP Out Comp}
       end

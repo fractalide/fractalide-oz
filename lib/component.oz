@@ -1,3 +1,20 @@
+/*
+<one line to give the program's name and a brief idea of what it does.>
+Copyright (C) 2014 Noware Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 functor
 export
    new: NewStateComponent
@@ -429,9 +446,9 @@ define
       }
       D
    end
-   fun {NewState GivenRecord}
+   fun {NewState Name Type GivenRecord}
       DefaultState NState in
-      DefaultState = component(name:_ type:_ description:""
+      DefaultState = component(name:Name type:Type description:_
 			       inPorts:'in'() outPorts:out('ERROR':nil)
 			       procedure:nil state:{NewDictionary}
 			       threads:nil options:opt()
@@ -448,20 +465,17 @@ define
 		   [] state then {Record.adjoinAt S state {BuildNState Rec}}
 		   [] options then {Record.adjoinAt S options Rec}
 		   else
-		      if Ind == name then {Record.adjoinAt S name Rec}
-		      elseif Ind == type then {Record.adjoinAt S type Rec}
-		      elseif Ind == description then {Record.adjoinAt S description Rec}
+		      if Ind == description then {Record.adjoinAt S description Rec}
 		      else raise unknown_arg(Ind Rec S) end end
 		   end
 		end
 		DefaultState
 	       }
-      if {Not {IsDet NState.name}} then raise component_name_not_defined(NState) end end
-      if {Not {IsDet NState.type}} then raise component_type_not_defined(NState) end end
+      if {Not {IsDet NState.description}} then raise component_description_not_defined(NState) end end
       NState
    end
-   fun {NewStateComponent ARecord}
-      {NewComponent {NewState ARecord}}
+   fun {NewStateComponent Name Type ARecord}
+      {NewComponent {NewState Name Type ARecord}}
    end
    /*
    PRE: Action is an understable method of {Record.}, Init is the initial record, List is a list of features, Value is the new value

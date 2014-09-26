@@ -1,0 +1,19 @@
+% First step
+canvas(QTk/canvas) out -> in win(QTk/window)
+win() out -> input disp(display)
+"create(glue:nswe bg:white)" -> in canvas()
+"set(title:\"Fractallang\")" -> in win()
+% Image
+imItem(QTk/canvas/image) out -> widget canvas()
+"photo(file:\"logo.gif\")" -> input im(QTk/image) output -> image imItem()
+"create(100 100)" -> in imItem()
+
+% Drag and drop image
+imItem() action#ButtonPress -> input dnd(dnd/dndLogic) move -> in imItem()
+imItem() action#ButtonRelease -> input dnd()
+imItem() action#Motion -> input dnd()
+
+% Options
+"opt(pre:'default ')" -> options disp()
+
+

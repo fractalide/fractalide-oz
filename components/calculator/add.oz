@@ -1,11 +1,8 @@
 functor
-import
-   Comp at '../../lib/component.ozf'
 export
-   new: CompNewArgs
+   Component
 define
-   fun {CompNewArgs Name}
-      {Comp.new comp(name:Name type:add
+   Component = comp(description:"Add two string"
 		     inArrayPorts(input)
 		     procedure(proc{$ Ins Out Component}
 				  {Out.output {Record.foldL Ins.input
@@ -21,6 +18,5 @@ define
 					       0}}
 			       end)
 		     outPorts(output)
-		    )}
-   end
+		    )
 end

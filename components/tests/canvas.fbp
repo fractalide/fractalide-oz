@@ -1,0 +1,48 @@
+% First step
+canvas(QTk/canvas) out -> place#1 td(QTk/td) out -> in win(QTk/window)
+win() out -> input disp(display)
+"create(width:500 height:500)" -> in canvas()
+"create" -> in td()
+"scan(mark 0 0)" -> in canvas()
+"scan(dragto 5 5)" -> in canvas()
+% Arc
+arcItem(QTk/canvas/arc) out -> widget canvas()
+"create(10 10 100 100)" -> in arcItem()
+% Bitmap
+bitmap(QTk/canvas/bitmap) out -> widget canvas()
+"create(10 10 bitmap:warning)" -> in bitmap()
+% Image
+imItem(QTk/canvas/image) out -> widget canvas()
+"photo(file:\"logo.gif\")" -> input im(QTk/image) output -> image imItem()
+"create(350 150)" -> in imItem()
+% Line
+line(QTk/canvas/line) out -> widget canvas()
+"create(0 0 200 50 50 200 200 200)" -> in line()
+"setCoords(0 0 100 100 0 100 200 100)" -> in line()
+% Oval
+oval(QTk/canvas/oval) out -> widget canvas()
+"create(100 100 150 150)" -> in oval()
+% Polygon
+poly(QTk/canvas/polygon) out -> widget canvas()
+"create(150 100 200 120 240 180 210 200 150 150 100 200)" -> in poly()
+% Rectangle
+rect(QTk/canvas/rectangle) out -> widget canvas()
+"getCoords(output:coordRectTest)" -> in rect()
+"create(10 10 100 100)" -> in rect()
+"move(0 100)" -> in rect()
+% Text
+text(QTk/canvas/text) out -> widget canvas()
+"create(150 10 text:\"hello world!\")" -> in text()
+% Window
+winItem(QTk/canvas/window) out -> widget canvas()
+"create(250 350)" -> in winItem()
+"create(text:\"button\")" -> in b(QTk/button) out -> place#1 tdw(QTk/td)
+b2(calculator/calculator) out -> place#2 tdw() out -> window winItem()
+"create" -> in tdw()
+% Options
+"opt(pre:'default ')" -> options disp()
+
+% Get test
+
+"get(width arrow fill output:lineGetTest)" -> in line()
+

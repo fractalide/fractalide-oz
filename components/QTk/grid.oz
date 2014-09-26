@@ -1,9 +1,8 @@
 functor
 import
-   Comp at '../../lib/component.ozf'
    QTkHelper
 export
-   new: CompNewArgs
+   Component
 define
    fun {Split VS Sep}
       fun {Rec Acc Ls}
@@ -22,54 +21,56 @@ define
    in
       {Rec nil {Atom.toString VS}}
    end
-   fun {CompNewArgs Name}
-      {Comp.new comp(
-		   name:Name type:'QTk/grid'
-		   inPorts('in')
-		   inArrayPorts(grid)
-		   outPorts(out)
-		   outArrayPorts(action)
-		   procedure(proc{$ Ins Out Comp}
-				if {Ins.'in'.size} > 0 then {InProc Ins.'in' Out Comp} end
-				{Record.forAllInd Ins.grid
-				 proc{$ Name In}
-				    if {In.size} > 0 then {GridProc Name Ins.grid Out Comp} end
-				 end}
-			     end)
-		   state(handle:_ buffer:nil)
-		   )}
-   end
+   Component = comp(
+		  description:"the QTk grid"
+		  inPorts('in')
+		  inArrayPorts(grid)
+		  outPorts(out)
+		  outArrayPorts(action)
+		  procedure(proc{$ Ins Out Comp}
+			       if {Ins.'in'.size} > 0 then {InProc Ins.'in' Out Comp} end
+			       {Record.forAllInd Ins.grid
+				proc{$ Name In}
+				   if {In.size} > 0 then {GridProc Name Ins.grid Out Comp} end
+				end}
+			    end)
+		  state(handle:_ buffer:nil t:nil)
+		  )
    proc{InProc In Out Comp} IP in
       IP = {In.get}
       case {Label IP}
       of create then H B in
+	 if Comp.state.t \= nil andthen {Thread.state Comp.state.t} \= terminated then {Thread.terminate Comp.state.t} end
 	 B = {Record.adjoin IP grid(handle:H)}
 	 {Out.out create(B)}
-	 {Wait H}
-	 {QTkHelper.bindEvents H Comp.entryPoint}
-	 Comp.state.handle := H
-	 {QTkHelper.feedBuffer Out Comp}
+	 thread
+	    Comp.state.t := {Thread.this}
+	    {Wait H}
+	    {QTkHelper.bindEvents H Comp.entryPoint}
+	    Comp.state.handle := H
+	    {QTkHelper.feedBuffer Out Comp}
+	 end
       else
 	 {QTkHelper.manageIP IP Out Comp}
       end
    end
    proc{GridProc Sub Ins Out Comp} IP in
-       IP = {Ins.Sub.get}
-       case {Label IP}
-       of create then C NIP in
-	  C = {Split Sub "x"}
-	  NIP = if {HasFeature IP.1 glue} then
-		   {Record.adjoin create({Record.subtract IP.1 glue}) configure(row:C.row column:C.column sticky:IP.1.glue)}
-		else
-		   {Record.adjoin IP configure(row:C.row column:C.column)}
-		end
-	  {QTkHelper.manageIP NIP Out Comp}
-       [] configure andthen Sub \= grid then C NIP in
-	  C = {Split Sub "x"}
-	  NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
-	  {QTkHelper.manageIP NIP Out Comp}
-       else
-	  {QTkHelper.manageIP IP Out Comp}
-       end
-    end
+      IP = {Ins.Sub.get}
+      case {Label IP}
+      of create then C NIP in
+	 C = {Split Sub "x"}
+	 NIP = if {HasFeature IP.1 glue} then
+		  {Record.adjoin create({Record.subtract IP.1 glue}) configure(row:C.row column:C.column sticky:IP.1.glue)}
+	       else
+		  {Record.adjoin IP configure(row:C.row column:C.column)}
+	       end
+	 {QTkHelper.manageIP NIP Out Comp}
+      [] configure andthen Sub \= grid then C NIP in
+	 C = {Split Sub "x"}
+	 NIP = {Record.adjoin IP configure(row:C.row column:C.column)}
+	 {QTkHelper.manageIP NIP Out Comp}
+      else
+	 {QTkHelper.manageIP IP Out Comp}
+      end
+   end
 end

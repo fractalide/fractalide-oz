@@ -1,19 +1,14 @@
 functor
-import
-   Comp at '../lib/component.ozf'
 export
-   new: NewConcat
+   Component
 define
-   fun {NewConcat Name}
-      {Comp.new comp(name:Name type:concat
-		     inArrayPorts(input)
-		     outPorts(out)
-		     procedure(proc {$ Ins Out Comp}
-					    Tab = {Record.map Ins.input fun {$ El} {El.get} end}
-					 in
-					    {Out.out Tab}
-					 end)
-		    )
-      }
-   end
+   Component = comp(description:"concat"
+		    inArrayPorts(input)
+		    outPorts(out)
+		    procedure(proc {$ Ins Out Comp}
+				 Tab = {Record.map Ins.input fun {$ El} {El.get} end}
+			      in
+				 {Out.out {Record.toList Tab}}
+			      end)
+		   )
 end
