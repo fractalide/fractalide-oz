@@ -62,6 +62,8 @@ define
 		  {Rec Lr nil comment Acc}
 	       elseif L == "\"".1 then
 		  {Rec Lr nil options Acc}
+	       elseif L == "/".1 andthen Lr \= nil andthen Lr.1 == "*".1 then
+		  {Rec Lr.2 nil multilinecomment Acc}
 	       elseif {IsName L} then
 		  {Rec Ls "'".1|nil name Acc}
 	       else
@@ -105,6 +107,12 @@ define
 		  {Rec Lr nil base Acc}
 	       else
 		  {Rec Lr nil comment Acc}
+	       end
+	    [] multilinecomment then
+	       if L == "*".1 andthen Lr \= nil andthen Lr.1 == "/".1 then
+		  {Rec Lr.2 nil base Acc}
+	       else
+		  {Rec Lr nil multilinecomment Acc}
 	       end
 	    [] options then
 	       if L == "\\".1 then
