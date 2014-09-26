@@ -9,7 +9,7 @@ f2(QTk/entry) out -> place#2 lr()
 lr() out -> place#1 td(QTk/td)
 calcButton(QTk/button) out -> place#2 td()
 fResult(QTk/entry) out -> place#3 td()
-"create(text:"calc")" -> in calcButton()
+"create(text:\"calc\")" -> in calcButton()
 "create" -> in fResult()
 "create" -> in td()
 

@@ -1,21 +1,17 @@
 functor
 import
-   Comp at '../../lib/component.ozf'
    OS
 export
-   new: CompNew
+   Component
 define
-   fun {CompNew Name}
-      {Comp.new comp(name:Name type:buttonLogic
-		     inPorts(input)
-		     outPorts(click color)
-		     procedure(proc{$ Ins Out Comp}
-				  {InputProc Ins.input Out Comp}
-			       end)
-		     state(maj:false ctrl:false)
-		    )
-      }
-   end
+   Component = comp(description:"button logic for calculator"
+		    inPorts(input)
+		    outPorts(click color)
+		    procedure(proc{$ Ins Out Comp}
+				 {InputProc Ins.input Out Comp}
+			      end)
+		    state(maj:false ctrl:false)
+		   )
    proc {InputProc Buf Out Comp}
       IP = {Buf.get}
    in
