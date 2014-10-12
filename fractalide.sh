@@ -1,1 +1,1 @@
-$OZHOME/bin/ozengine launcher.ozf components/editor/editor.fbp
+$OZHOME/bin/ozengine launcher.ozf tests/dnd
