@@ -134,6 +134,8 @@ define
 	     case Port
 	     of port(q:Queue) then
 		{Record.adjoinAt Acc Name Queue}
+	     [] port(q:Queue default:true) then
+		{Record.adjoinAt Acc Name Queue}
 	     [] arrayPort(qs:Queues connect:_ size:_) then SubBuffer in
 		SubBuffer = {Record.foldLInd Queues
 			     fun{$ IndArray AccArray QueueArray}
@@ -198,7 +200,7 @@ define
 	    end
 	 end
       in
-	 if {Record.width Bufs} == 0 then true
+	 if {List.length Bufs} == 1 then true
 	 else {RecCB Bufs} end
       end
       thread
@@ -228,19 +230,27 @@ define
 		Sync = {CheckSync State}
 		if {Not Sync} then
 		   State
-		else Ins Out Th in
+		else Ins Out CompTh Th in
 		   % Build a record with all the buffers of all input ports.
 		   Ins = {PrepareIns State.inPorts}
 		   % Build a procedure to send IP to the output ports. 
 		   Out = {PrepareOut State.outPorts}
+		   CompTh = {Thread.this}
 		   thread
 		      Th = {Thread.this}
 		      try
-			 {State.procedure Ins Out State}
+			 if {State.inPorts.'HALT'.q.size} > 0 then
+			    if {Not {HasFeature State.inPorts.'HALT' default}} then
+			       {State.procedure Ins Out State}
+			    end
+			    {Thread.terminate CompTh}
+			 else
+			    {State.procedure Ins Out State}
+			 end
 		      catch E then
 			 {Out.'ERROR' component_exception(name:State.name type:State.type error:E entryPoint:State.entryPoint)}
 		      end
-		      if {Record.width State.inPorts} > 0 then
+		      if {Record.width State.inPorts} > 1 then
 			 {Send Point exec} %Restart
 		      end
 		   end
@@ -449,7 +459,8 @@ define
    fun {NewState Name Type GivenRecord}
       DefaultState NState in
       DefaultState = component(name:Name type:Type description:_
-			       inPorts:'in'() outPorts:out('ERROR':nil)
+			       inPorts:'in'('HALT':port(q:{NewQueue 25} default:true))
+			       outPorts:out('ERROR':nil)
 			       procedure:nil state:{NewDictionary}
 			       threads:nil options:opt()
 			       run:true entryPoint:_ parentEntryPoint:nil
