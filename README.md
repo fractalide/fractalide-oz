@@ -2,7 +2,7 @@ Who is this for?
 --------
 If you're the kind of person that likes total control over every aspect of your environment then Fractalide's AGPL v3-or-later codebase allows this freedom for everyone. Before you get your knickers in a twist about the choice of license, our business model is to share earnings with FOSS developers whom own the Flow Based Programming components that run on Fractalide. We use Mozart Oz to implement Flow Based Programming components, these in turn implement HyperCard. We've swapped out HyperTalk for a Flow Based Programming Language, thus allowing for maximum modularity, configurability, simplicity and reuseablity. Our target users are those whom are interested in building the Internet of Things using commodity hardware. We do this by supporting and developing around the development board called the IOIO-OTG.
 
-Our main worry and motivation is to prevent a future controlled by a select few IoT overlords. This is why components developed by the community are owned by the community. It prevents a model whereby the community become our programmer slaves.
+Our main worry and motivation is to prevent a future controlled by a select few IoT overlords. This is why components developed by the community are owned by the community. It prevents a model whereby the community become our programmer slaves. Please read: The Epic Struggle of the Internet of Things by Bruce Stirling for more information.
 
 Be warned this project is suitable for language enthusiasts and early adopters.
 
