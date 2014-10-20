@@ -28,11 +28,11 @@ Usage
 * Setup Oz's environmental variables; point `OZHOME` to the root folder and put the `bin` folder on `PATH`
 * `git clone git://github.com/fractalide/fractalide.git`
 * `cd fractalide`
-* `make && make editor`
+* `make`
 * `$ ./fractalide.sh tests/dnd`
 
 License
 --------
 All code is AGPL v3-or-later.
 All content published on this platform is licensed as Community Commons.
-You own your contributions, we help you setup a dual license stranegy.
+You own your contributions, we help you setup a dual license strategy.
