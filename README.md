@@ -29,16 +29,10 @@ Usage
 * `git clone git://github.com/fractalide/fractalide.git`
 * `cd fractalide`
 * `make && make editor`
-* `$ ./fractalide.sh`
-* `cd tests`
-* `./test_this.sh testCanvas.fbp`
-* `./test_this.sh testWidget.fbp`
-* `./test_this.sh test.fbp`
-* `./test_this.sh testDnD.ozf`
+* `$ ./fractalide.sh tests/dnd`
 
 License
 --------
 All code is AGPL v3-or-later.
 All content published on this platform is licensed as Community Commons.
-This is not a commercial dual license project. You own your contributions.
-If you want privacy, encrypt your content. (This will eventually be automatic)
+You own your contributions, we help you setup a dual license stranegy.
