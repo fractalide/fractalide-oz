@@ -164,7 +164,13 @@ define
       for Edge in G.edges do
 	 {Nodes.(Edge.1).comp bind(Edge.2 Nodes.(Edge.4).comp Edge.3)}
       end
-      % 3) InPorts
+      % 3) InPorts : default HALT and the other ones
+      InHalt = {Record.foldL Nodes
+		fun {$ Acc Comp}
+		   {Record.adjoinAt Acc 'HALT' Comp.comp#'HALT'|Acc.'HALT'}
+		end
+		inPorts('HALT':nil)
+	       }
       InPorts = {FoldL G.inLinks
 		 fun {$ Acc Name#CompName#PortName}
 		    if {List.member Name {Arity Acc}} then
@@ -173,7 +179,7 @@ define
 		       {Record.adjoinAt Acc Name Nodes.CompName.comp#PortName|nil}
 		    end
 		 end
-		 inPorts
+		 InHalt
 		}
       % 4) OutPorts
       OutPorts = {FoldL G.outLinks
@@ -208,7 +214,7 @@ define
       {Record.forAll Graph.nodes
        proc {$ Comp} State in
 	  {Comp.comp getState(State)}
-	  if {Label State} == subcomponent orelse {Record.width State.inPorts} == 0 then
+	  if {Label State} == subcomponent orelse {Record.width State.inPorts} > 1 then
 	     {Comp.comp stop}
 	  end
        end
