@@ -24,7 +24,8 @@ IRC   : freenode #fractalide
 Usage
 -----
 
-* You'll need to setup the latest version of [mozart](http://www.github.com/mozart/mozart2) (as we found a bug in Mozart2 stdlib that prevented correct rendering of the Canvas element, so the Sourceforge binary won't work)
+* You'll need to setup the latest version of [Mozart](http://www.github.com/mozart/mozart2) OR
+* Use the Mozart Oz binary: [Mozart binary](http://sourceforge.net/projects/mozart-oz/files/v2.0.0-alpha.0/)
 * Setup Oz's environmental variables; point `OZHOME` to the root folder and put the `bin` folder on `PATH`
 * `git clone git://github.com/fractalide/fractalide.git`
 * `cd fractalide`
